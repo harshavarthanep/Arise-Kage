@@ -1,0 +1,1973 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1">
+<meta name="theme-color" content="#7c3aed">
+<meta name="description" content="Arise Kage — the fitness app that levels you up for real. Track workouts, water, nutrition, and progress photos. 100% free, forever.">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Arise Kage">
+<title>Arise Kage — Level Up. For Real.</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='24' fill='%237c3aed'/%3E%3Cpath d='M30 70 L50 25 L70 70 M38 55 L62 55' stroke='white' stroke-width='7' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+<style id="app-styles">
+/* ====================================================================
+   ARISE KAGE — Core Stylesheet
+   ==================================================================== */
+:root{
+  --bg-0:#0a0a12; --bg-1:#111120; --bg-2:#191a2e; --bg-3:#22243d;
+  --surface:#15162a; --surface-hi:#1e2038;
+  --border:#2c2e4a; --border-hi:#3d3f66;
+  --text-0:#f4f3ff; --text-1:#c7c6e6; --text-2:#8b89ad; --text-3:#5c5a80;
+  --accent:#7c3aed; --accent-2:#a78bfa; --accent-glow:#7c3aedaa;
+  --danger:#f43f5e; --warn:#f59e0b; --good:#22d3aa; --info:#38bdf8;
+  --water:#38bdf8; --xp:#a78bfa; --fire:#fb923c;
+  --rank-e:#8b89ad; --rank-d:#38bdf8; --rank-c:#22d3aa; --rank-b:#a78bfa; --rank-a:#fb923c; --rank-s:#f43f5e; --rank-ss:#ffd54a;
+  --radius-sm:10px; --radius-md:16px; --radius-lg:24px; --radius-xl:32px;
+  --shadow-1:0 2px 8px rgba(0,0,0,.25); --shadow-2:0 8px 30px rgba(0,0,0,.4); --shadow-glow:0 0 24px var(--accent-glow);
+  --font-display:'Kage Display',ui-sans-serif,system-ui,-apple-system,sans-serif;
+  --font-body:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --safe-top:env(safe-area-inset-top,0px); --safe-bottom:env(safe-area-inset-bottom,0px);
+  --dur-fast:.15s; --dur-med:.3s; --dur-slow:.6s; --ease-out:cubic-bezier(.16,1,.3,1); --ease-spring:cubic-bezier(.34,1.56,.64,1);
+}
+:root[data-theme="kage"]{
+  --bg-0:#100905; --bg-1:#1a0f08; --bg-2:#241608; --bg-3:#2e1c0a;
+  --surface:#1c1108; --surface-hi:#28180a;
+  --border:#3a2410; --border-hi:#4d3115;
+  --accent:#ea580c; --accent-2:#fb923c; --accent-glow:#ea580caa; --xp:#fbbf24;
+}
+:root[data-theme="light"]{
+  --bg-0:#f5f4fb; --bg-1:#ffffff; --bg-2:#eeecf9; --bg-3:#e4e1f5;
+  --surface:#ffffff; --surface-hi:#f7f6fd;
+  --border:#e1def2; --border-hi:#cfc9ea;
+  --text-0:#181425; --text-1:#39355a; --text-2:#6b6890; --text-3:#9895b8;
+  --accent:#7c3aed; --accent-2:#6d28d9; --accent-glow:#7c3aed55;
+  --shadow-1:0 2px 8px rgba(40,30,80,.06); --shadow-2:0 8px 30px rgba(40,30,80,.12);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-text-size-adjust:100%;color-scheme:dark}
+:root[data-theme="light"] html{color-scheme:light}
+body{
+  font-family:var(--font-body);background:var(--bg-0);color:var(--text-0);
+  min-height:100vh;min-height:100dvh;overflow-x:hidden;
+  -webkit-font-smoothing:antialiased;line-height:1.4;
+  transition:background var(--dur-med) var(--ease-out),color var(--dur-med) var(--ease-out);
+}
+body::before{
+  content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
+  background:
+    radial-gradient(ellipse 80% 50% at 50% -10%, var(--accent-glow), transparent 60%),
+    radial-gradient(ellipse 60% 40% at 90% 100%, var(--accent-glow), transparent 50%);
+  opacity:.35;
+}
+button,input,select,textarea{font-family:inherit;color:inherit}
+button{background:none;border:none;cursor:pointer;-webkit-tap-highlight-color:transparent}
+a{color:inherit;text-decoration:none}
+::selection{background:var(--accent);color:#fff}
+.reduced-motion *{animation-duration:.001s !important;transition-duration:.001s !important}
+::-webkit-scrollbar{width:8px;height:8px}
+::-webkit-scrollbar-thumb{background:var(--border-hi);border-radius:8px}
+::-webkit-scrollbar-track{background:transparent}
+
+.icon{width:1em;height:1em;display:inline-block;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
+.icon.fill{fill:currentColor;stroke:none}
+
+#app{max-width:520px;margin:0 auto;min-height:100vh;min-height:100dvh;position:relative;display:flex;flex-direction:column}
+
+/* ---------- Top bar ---------- */
+.topbar{
+  position:sticky;top:0;z-index:40;display:flex;align-items:center;justify-content:space-between;
+  padding:calc(var(--safe-top) + 14px) 20px 12px;
+  background:linear-gradient(var(--bg-0) 60%, transparent);
+  backdrop-filter:blur(10px);
+}
+.topbar .brand{display:flex;align-items:center;gap:10px;font-weight:800;letter-spacing:.02em;font-size:17px}
+.topbar .brand .mark{width:30px;height:30px;border-radius:9px;background:linear-gradient(135deg,var(--accent),var(--accent-2));display:flex;align-items:center;justify-content:center;box-shadow:var(--shadow-glow)}
+.topbar .brand .mark svg{width:18px;height:18px;stroke:#fff}
+.topbar .streak{display:flex;align-items:center;gap:5px;font-size:13px;font-weight:700;color:var(--fire);background:var(--surface);border:1px solid var(--border);padding:6px 10px;border-radius:999px}
+.topbar .streak .icon{width:14px;height:14px}
+
+/* ---------- Main / screens ---------- */
+main{flex:1;padding:4px 20px calc(96px + var(--safe-bottom));position:relative}
+.screen{display:none;animation:screenIn var(--dur-med) var(--ease-out)}
+.screen.active{display:block}
+@keyframes screenIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+
+.section-title{font-size:13px;text-transform:uppercase;letter-spacing:.08em;color:var(--text-2);font-weight:700;margin:24px 0 10px;display:flex;align-items:center;justify-content:space-between}
+.section-title .link{color:var(--accent-2);text-transform:none;letter-spacing:0;font-size:13px;cursor:pointer}
+h1.page-title{font-size:26px;font-weight:800;letter-spacing:-.01em;margin-bottom:4px}
+.page-sub{color:var(--text-2);font-size:14px;margin-bottom:18px}
+
+/* ---------- Cards ---------- */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:18px;box-shadow:var(--shadow-1)}
+.card + .card{margin-top:12px}
+.card.tap{cursor:pointer;transition:transform var(--dur-fast) var(--ease-out),border-color var(--dur-fast)}
+.card.tap:active{transform:scale(.98)}
+.card.tap:hover{border-color:var(--border-hi)}
+.card.glow{border-color:var(--accent);box-shadow:var(--shadow-glow)}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+
+/* ---------- Buttons ---------- */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;font-weight:700;font-size:15px;padding:13px 20px;border-radius:var(--radius-md);transition:transform var(--dur-fast) var(--ease-spring),filter var(--dur-fast),box-shadow var(--dur-fast)}
+.btn:active{transform:scale(.96)}
+.btn-primary{background:linear-gradient(135deg,var(--accent),var(--accent-2));color:#fff;box-shadow:0 4px 20px var(--accent-glow)}
+.btn-primary:hover{filter:brightness(1.08)}
+.btn-ghost{background:var(--surface-hi);border:1px solid var(--border);color:var(--text-0)}
+.btn-ghost:hover{border-color:var(--border-hi)}
+.btn-danger{background:color-mix(in srgb, var(--danger) 15%, transparent);color:var(--danger);border:1px solid color-mix(in srgb, var(--danger) 40%, transparent)}
+.btn-sm{padding:8px 14px;font-size:13px;border-radius:10px}
+.btn-block{width:100%}
+.btn-icon{width:44px;height:44px;border-radius:14px;background:var(--surface-hi);border:1px solid var(--border);display:inline-flex;align-items:center;justify-content:center}
+.fab{position:fixed;z-index:35;right:calc(50% - 260px + 20px);bottom:calc(96px + var(--safe-bottom));width:58px;height:58px;border-radius:20px;background:linear-gradient(135deg,var(--accent),var(--accent-2));box-shadow:0 8px 24px var(--accent-glow);display:flex;align-items:center;justify-content:center;color:#fff;transition:transform var(--dur-fast) var(--ease-spring)}
+.fab:active{transform:scale(.9) rotate(90deg)}
+@media (max-width:559px){.fab{right:24px}}
+
+/* ---------- Bottom nav ---------- */
+.bottomnav{position:fixed;left:0;right:0;bottom:0;z-index:30;max-width:520px;margin:0 auto;
+  background:color-mix(in srgb, var(--bg-1) 88%, transparent);backdrop-filter:blur(16px);
+  border-top:1px solid var(--border);padding:8px 6px calc(8px + var(--safe-bottom));
+  display:flex;justify-content:space-around}
+.navbtn{display:flex;flex-direction:column;align-items:center;gap:3px;color:var(--text-2);font-size:10px;font-weight:700;padding:6px 10px;border-radius:12px;position:relative;transition:color var(--dur-fast)}
+.navbtn .icon{width:22px;height:22px;transition:transform var(--dur-fast) var(--ease-spring)}
+.navbtn.active{color:var(--accent-2)}
+.navbtn.active .icon{transform:translateY(-2px) scale(1.08)}
+.navbtn:active .icon{transform:scale(.85)}
+.navbtn .dot{position:absolute;top:2px;right:8px;width:7px;height:7px;border-radius:50%;background:var(--danger);display:none}
+.navbtn .dot.show{display:block}
+
+/* ---------- Progress / rings ---------- */
+.ring-wrap{position:relative;display:flex;align-items:center;justify-content:center;pointer-events:none}
+.ring-wrap svg{transform:rotate(-90deg)}
+.ring-track{fill:none;stroke:var(--border);stroke-width:10}
+.ring-fill{fill:none;stroke-width:10;stroke-linecap:round;transition:stroke-dashoffset .8s var(--ease-out)}
+.ring-center{position:absolute;text-align:center}
+.ring-center .val{font-size:22px;font-weight:800;display:block}
+.ring-center .lbl{font-size:11px;color:var(--text-2)}
+
+.bar-track{height:10px;border-radius:99px;background:var(--border);overflow:hidden}
+.bar-fill{height:100%;border-radius:99px;background:linear-gradient(90deg,var(--accent),var(--accent-2));transition:width .8s var(--ease-out);position:relative}
+.bar-fill.xp{background:linear-gradient(90deg,var(--xp),#fff)}
+.bar-fill.water{background:linear-gradient(90deg,#0284c7,var(--water))}
+.bar-fill.shimmer::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,.5),transparent);animation:shimmer 1.8s infinite}
+@keyframes shimmer{from{transform:translateX(-100%)}to{transform:translateX(100%)}}
+
+/* ---------- Badges / pills / chips ---------- */
+.pill{display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:700;padding:4px 10px;border-radius:99px;background:var(--surface-hi);border:1px solid var(--border);color:var(--text-1)}
+.rank-badge{display:inline-flex;align-items:center;justify-content:center;font-weight:900;font-size:14px;width:34px;height:34px;border-radius:10px;font-style:italic;box-shadow:0 0 0 2px var(--bg-0) inset}
+.chip{padding:9px 14px;border-radius:12px;background:var(--surface-hi);border:1px solid var(--border);font-size:13px;font-weight:700;color:var(--text-1);transition:all var(--dur-fast)}
+.chip.active{background:var(--accent);border-color:var(--accent);color:#fff}
+.chipset{display:flex;gap:8px;flex-wrap:wrap}
+
+/* ---------- Forms ---------- */
+.field{margin-bottom:14px}
+.field label{display:block;font-size:13px;font-weight:700;color:var(--text-2);margin-bottom:6px}
+.input,.select,textarea.input{width:100%;background:var(--surface-hi);border:1.5px solid var(--border);color:var(--text-0);padding:12px 14px;border-radius:12px;font-size:15px;transition:border-color var(--dur-fast)}
+.input:focus,.select:focus,textarea.input:focus{outline:none;border-color:var(--accent)}
+.stepper{display:flex;align-items:center;gap:12px;background:var(--surface-hi);border:1.5px solid var(--border);border-radius:14px;padding:6px}
+.stepper button{width:38px;height:38px;border-radius:10px;background:var(--surface);font-size:20px;font-weight:800;display:flex;align-items:center;justify-content:center}
+.stepper input{flex:1;text-align:center;background:none;border:none;font-size:18px;font-weight:800}
+
+/* ---------- Modal / sheet ---------- */
+.overlay{position:fixed;inset:0;z-index:60;background:rgba(5,4,12,.6);backdrop-filter:blur(4px);display:none;align-items:flex-end;justify-content:center}
+.overlay.show{display:flex}
+:root[data-theme="light"] .overlay{background:rgba(20,15,40,.35)}
+.sheet{width:100%;max-width:520px;background:var(--bg-1);border-radius:28px 28px 0 0;padding:10px 20px calc(24px + var(--safe-bottom));max-height:88vh;overflow-y:auto;animation:sheetUp var(--dur-med) var(--ease-out);border:1px solid var(--border);border-bottom:none}
+@keyframes sheetUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+.sheet .handle{width:40px;height:5px;border-radius:99px;background:var(--border-hi);margin:6px auto 16px}
+.sheet-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.sheet-head h3{font-size:19px;font-weight:800}
+.overlay.center{align-items:center;padding:20px}
+.overlay.center .sheet{border-radius:28px;max-height:85vh}
+
+/* ---------- Toast ---------- */
+#toastHost{position:fixed;top:calc(var(--safe-top) + 10px);left:0;right:0;z-index:90;display:flex;flex-direction:column;align-items:center;gap:8px;pointer-events:none}
+.toast{background:var(--surface-hi);border:1px solid var(--border-hi);color:var(--text-0);padding:11px 18px;border-radius:14px;font-size:13.5px;font-weight:600;box-shadow:var(--shadow-2);display:flex;align-items:center;gap:8px;animation:toastIn var(--dur-med) var(--ease-spring)}
+.toast.good{border-color:var(--good);color:var(--good)}
+.toast.bad{border-color:var(--danger);color:var(--danger)}
+@keyframes toastIn{from{opacity:0;transform:translateY(-14px) scale(.9)}to{opacity:1;transform:none}}
+
+/* ---------- Misc effects ---------- */
+.confetti-canvas{position:fixed;inset:0;z-index:100;pointer-events:none}
+.levelup-overlay{position:fixed;inset:0;z-index:99;display:none;align-items:center;justify-content:center;background:radial-gradient(circle at 50% 40%, color-mix(in srgb,var(--accent) 35%, transparent), rgba(5,4,12,.92))}
+.levelup-overlay.show{display:flex}
+.levelup-card{text-align:center;animation:levelPop .6s var(--ease-spring)}
+@keyframes levelPop{0%{opacity:0;transform:scale(.5) translateY(30px)}100%{opacity:1;transform:none}}
+.levelup-rank{font-size:110px;font-weight:900;font-style:italic;line-height:1;background:linear-gradient(180deg,#fff,var(--accent-2));-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 0 30px var(--accent-glow))}
+.shake{animation:shake .4s}
+@keyframes shake{10%,90%{transform:translateX(-1px)}20%,80%{transform:translateX(2px)}30%,50%,70%{transform:translateX(-4px)}40%,60%{transform:translateX(4px)}}
+.spin{animation:spin 1s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.pulse{animation:pulse 2s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
+.skeleton{background:linear-gradient(90deg,var(--surface-hi),var(--border),var(--surface-hi));background-size:200% 100%;animation:skel 1.4s infinite;border-radius:10px}
+@keyframes skel{from{background-position:200% 0}to{background-position:-200% 0}}
+.empty-state{text-align:center;padding:40px 20px;color:var(--text-2)}
+.empty-state .icon{width:48px;height:48px;margin-bottom:12px;opacity:.5}
+.hidden{display:none !important}
+.flex{display:flex}.items-center{align-items:center}.justify-between{justify-content:space-between}.gap-8{gap:8px}.gap-12{gap:12px}
+.text-2{color:var(--text-2)}.text-sm{font-size:13px}.mt-8{margin-top:8px}.mt-16{margin-top:16px}
+</style>
+</head>
+<body>
+<div id="app"></div>
+
+<script id="app-shell-tpl" type="text/html">
+<!-- ============ SVG ICON SPRITE ============ -->
+<svg style="display:none" id="iconSprite">
+<symbol id="i-home" viewBox="0 0 24 24"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/><path d="M9 20v-6h6v6"/></symbol>
+<symbol id="i-dumbbell" viewBox="0 0 24 24"><path d="M6.5 6.5l11 11"/><rect x="2" y="9" width="4" height="6" rx="1"/><rect x="18" y="9" width="4" height="6" rx="1"/><rect x="5" y="7" width="3" height="10" rx="1"/><rect x="16" y="7" width="3" height="10" rx="1"/></symbol>
+<symbol id="i-droplet" viewBox="0 0 24 24"><path d="M12 2s7 8.5 7 13a7 7 0 0 1-14 0c0-4.5 7-13 7-13z"/></symbol>
+<symbol id="i-apple" viewBox="0 0 24 24"><path d="M12 6c-1-2-3-3-5-2 0 2 1 4 3 5-2 0-4 2-4 6 0 4 3 7 5 7 1 0 2-.5 3-.5s2 .5 3 .5c2 0 5-3 5-7 0-3-1.5-5-3-5.5 1.5-1 2-3 2-5-2.5 0-4.5 1.5-5 3"/></symbol>
+<symbol id="i-camera" viewBox="0 0 24 24"><path d="M4 8h3l2-3h6l2 3h3v12H4z"/><circle cx="12" cy="14" r="4"/></symbol>
+<symbol id="i-trophy" viewBox="0 0 24 24"><path d="M8 4h8v6a4 4 0 0 1-8 0z"/><path d="M8 5H4v2a4 4 0 0 0 4 4M16 5h4v2a4 4 0 0 1-4 4"/><path d="M10 18h4M9 21h6M12 15v3"/></symbol>
+<symbol id="i-share" viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 13.5l6.8 4M15.4 6.5l-6.8 4"/></symbol>
+<symbol id="i-settings" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.6 1.6 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.6 1.6 0 0 0-1.8-.3 1.6 1.6 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.6 1.6 0 0 0-1-1.5 1.6 1.6 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.6 1.6 0 0 0 .3-1.8 1.6 1.6 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.6 1.6 0 0 0 1.5-1 1.6 1.6 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.6 1.6 0 0 0 1.8.3H9a1.6 1.6 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.6 1.6 0 0 0 1 1.5 1.6 1.6 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.6 1.6 0 0 0-.3 1.8V9a1.6 1.6 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.6 1.6 0 0 0-1.5 1z"/></symbol>
+<symbol id="i-flame" viewBox="0 0 24 24"><path d="M12 2s-2 4-2 7a2 2 0 0 0 4 0c0-1 1-1 1 0 0 3 2 4 2 7a5 5 0 0 1-10 0c0-5 3-7 3-9 0-2 1-3 2-5z"/></symbol>
+<symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+<symbol id="i-check" viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></symbol>
+<symbol id="i-x" viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></symbol>
+<symbol id="i-chevron-right" viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></symbol>
+<symbol id="i-chevron-left" viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></symbol>
+<symbol id="i-chevron-down" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></symbol>
+<symbol id="i-edit" viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></symbol>
+<symbol id="i-trash" viewBox="0 0 24 24"><path d="M3 6h18"/><path d="M8 6V4h8v2M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/></symbol>
+<symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></symbol>
+<symbol id="i-calendar" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 10h18"/></symbol>
+<symbol id="i-bolt" viewBox="0 0 24 24"><path d="M13 2L4 14h6l-1 8 9-12h-6z"/></symbol>
+<symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/><path d="M9 12l2 2 4-4"/></symbol>
+<symbol id="i-scale" viewBox="0 0 24 24"><circle cx="12" cy="16" r="5"/><path d="M9 3h6M12 3v8M6 8h12"/></symbol>
+<symbol id="i-ruler" viewBox="0 0 24 24"><path d="M3 16l5-5 12 12-5 5z"/><path d="M8 11l2 2M11 8l2 2M14 5l2 2"/></symbol>
+<symbol id="i-star" viewBox="0 0 24 24"><path d="M12 2l3 7h7l-5.5 4.5L18 21l-6-4-6 4 1.5-7.5L2 9h7z"/></symbol>
+<symbol id="i-gauge" viewBox="0 0 24 24"><path d="M12 21a9 9 0 1 1 9-9"/><path d="M12 12l5-3"/><path d="M3.5 8.5l1.5 1M20.5 8.5L19 9.5M12 2v2"/></symbol>
+<symbol id="i-users" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3"/><path d="M3 20c0-3.5 2.5-6 6-6s6 2.5 6 6"/><circle cx="17" cy="9" r="2.5"/><path d="M15 14c2.8.3 5 2.5 5 6"/></symbol>
+<symbol id="i-bell" viewBox="0 0 24 24"><path d="M6 10a6 6 0 0 1 12 0c0 5 2 6 2 6H4s2-1 2-6z"/><path d="M10 20a2 2 0 0 0 4 0"/></symbol>
+<symbol id="i-moon" viewBox="0 0 24 24"><path d="M21 12.5A8.5 8.5 0 1 1 11.5 3 7 7 0 0 0 21 12.5z"/></symbol>
+<symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.2 4.2l1.4 1.4M18.4 18.4l1.4 1.4M2 12h2M20 12h2M4.2 19.8l1.4-1.4M18.4 5.6l1.4-1.4"/></symbol>
+<symbol id="i-download" viewBox="0 0 24 24"><path d="M12 3v12M7 10l5 5 5-5"/><path d="M4 21h16"/></symbol>
+<symbol id="i-upload" viewBox="0 0 24 24"><path d="M12 21V9M7 14l5-5 5 5"/><path d="M4 3h16"/></symbol>
+<symbol id="i-cloud" viewBox="0 0 24 24"><path d="M7 18a4.5 4.5 0 0 1-1-8.9A5.5 5.5 0 0 1 17 8a4 4 0 0 1-1 8H7z"/></symbol>
+<symbol id="i-lock" viewBox="0 0 24 24"><rect x="4" y="11" width="16" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></symbol>
+<symbol id="i-sparkle" viewBox="0 0 24 24"><path d="M12 2l1.8 5.2L19 9l-5.2 1.8L12 16l-1.8-5.2L5 9l5.2-1.8z"/><path d="M19 15l.8 2.2L22 18l-2.2.8L19 21l-.8-2.2L16 18l2.2-.8z"/></symbol>
+<symbol id="i-target" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/></symbol>
+<symbol id="i-fire2" viewBox="0 0 24 24"><path d="M12 2s-2 4-2 7a2 2 0 0 0 4 0c0-1 1-1 1 0 0 3 2 4 2 7a5 5 0 0 1-10 0c0-5 3-7 3-9 0-2 1-3 2-5z"/></symbol>
+<symbol id="i-list" viewBox="0 0 24 24"><path d="M8 6h13M8 12h13M8 18h13"/><circle cx="3.5" cy="6" r="1"/><circle cx="3.5" cy="12" r="1"/><circle cx="3.5" cy="18" r="1"/></symbol>
+<symbol id="i-copy" viewBox="0 0 24 24"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15H4a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v1"/></symbol>
+<symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7v.01"/></symbol>
+<symbol id="i-heart" viewBox="0 0 24 24"><path d="M12 20s-7-4.5-9.5-9A5.5 5.5 0 0 1 12 6a5.5 5.5 0 0 1 9.5 5c-2.5 4.5-9.5 9-9.5 9z"/></symbol>
+<symbol id="i-refresh" viewBox="0 0 24 24"><path d="M3 12a9 9 0 0 1 15-6.7L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-15 6.7L3 16"/><path d="M3 21v-5h5"/></symbol>
+<symbol id="i-swap" viewBox="0 0 24 24"><path d="M7 4v13M7 4L3 8M7 4l4 4"/><path d="M17 20V7M17 20l4-4M17 20l-4-4"/></symbol>
+<symbol id="i-palette" viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 0 20c1.5 0 2-1 2-2s-.5-1.5-1-2 0-2 1-2h2a4 4 0 0 0 4-4c0-5.5-4-10-8-10z"/><circle cx="7.5" cy="11" r="1.2"/><circle cx="10.5" cy="7.5" r="1.2"/><circle cx="15" cy="8.5" r="1.2"/></symbol>
+</svg>
+
+<!-- ============ SCREEN: ONBOARDING ============ -->
+<div class="screen" id="screen-onboard">
+  <div id="onboardWizard"></div>
+</div>
+
+<!-- ============ APP CHROME (hidden until onboarded) ============ -->
+<div id="appChrome" class="hidden">
+  <div class="topbar">
+    <div class="brand"><span class="mark"><svg class="icon" viewBox="0 0 24 24"><use href="#i-bolt"/></svg></span><span id="brandLabel">ARISE KAGE</span></div>
+    <div class="streak" id="streakPill"><svg class="icon" viewBox="0 0 24 24"><use href="#i-flame"/></svg><span id="streakCount">0</span></div>
+  </div>
+
+  <main>
+    <div class="screen active" id="screen-home"></div>
+    <div class="screen" id="screen-workout"></div>
+    <div class="screen" id="screen-water"></div>
+    <div class="screen" id="screen-body"></div>
+    <div class="screen" id="screen-quests"></div>
+    <div class="screen" id="screen-settings"></div>
+  </main>
+
+  <button class="fab" id="fabBtn" aria-label="Quick add"><svg class="icon" viewBox="0 0 24 24" style="width:26px;height:26px"><use href="#i-plus"/></svg></button>
+
+  <nav class="bottomnav">
+    <button class="navbtn active" data-screen="home"><svg class="icon" viewBox="0 0 24 24"><use href="#i-home"/></svg>Home</button>
+    <button class="navbtn" data-screen="workout"><svg class="icon" viewBox="0 0 24 24"><use href="#i-dumbbell"/></svg>Train</button>
+    <button class="navbtn" data-screen="water"><svg class="icon" viewBox="0 0 24 24"><use href="#i-droplet"/></svg>Water</button>
+    <button class="navbtn" data-screen="body"><svg class="icon" viewBox="0 0 24 24"><use href="#i-camera"/></svg>Body</button>
+    <button class="navbtn" data-screen="quests"><svg class="icon" viewBox="0 0 24 24"><use href="#i-trophy"/></svg>Quests<span class="dot" id="questDot"></span></button>
+    <button class="navbtn" data-screen="settings"><svg class="icon" viewBox="0 0 24 24"><use href="#i-settings"/></svg>More</button>
+  </nav>
+</div>
+
+<div class="overlay" id="sheetOverlay"><div class="sheet" id="sheetBody"></div></div>
+</script>
+
+<div id="toastHost"></div>
+<div class="levelup-overlay" id="levelupOverlay"></div>
+<canvas class="confetti-canvas hidden" id="confettiCanvas"></canvas>
+<script>
+"use strict";
+/* ====================================================================
+   ARISE KAGE — Application Core
+   Storage: localStorage (state) + IndexedDB (photos) + optional Firebase sync
+   ==================================================================== */
+
+const AK = {}; // namespace
+
+/* ---------------- Utilities ---------------- */
+AK.uid = () => 'x' + Math.random().toString(36).slice(2,10) + Math.random().toString(36).slice(2,6);
+AK.clamp = (n,min,max) => Math.max(min, Math.min(max, n));
+AK.fmtDate = (d=new Date()) => { const dt = (d instanceof Date)?d:new Date(d); return dt.getFullYear()+'-'+String(dt.getMonth()+1).padStart(2,'0')+'-'+String(dt.getDate()).padStart(2,'0'); };
+AK.today = () => AK.fmtDate(new Date());
+AK.prettyDate = (iso) => { const d = new Date(iso+'T00:00:00'); return d.toLocaleDateString(undefined,{weekday:'short',month:'short',day:'numeric'}); };
+AK.daysBetween = (a,b) => Math.round((new Date(b) - new Date(a)) / 86400000);
+AK.round1 = (n) => Math.round(n*10)/10;
+AK.escapeHtml = (s='') => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+AK.toast = (msg, type='') => {
+  const host = document.getElementById('toastHost');
+  const el = document.createElement('div');
+  el.className = 'toast ' + type;
+  const iconId = type==='good' ? 'i-check' : type==='bad' ? 'i-x' : 'i-info';
+  el.innerHTML = `<svg class="icon" viewBox="0 0 24 24"><use href="#${iconId}"/></svg><span></span>`;
+  el.querySelector('span').textContent = msg;
+  host.appendChild(el);
+  setTimeout(()=>{ el.style.transition='opacity .3s,transform .3s'; el.style.opacity='0'; el.style.transform='translateY(-10px)'; setTimeout(()=>el.remove(),300); }, 2600);
+};
+
+AK.haptic = (ms=8) => { try{ navigator.vibrate && navigator.vibrate(ms); }catch(e){} };
+
+/* ---------------- Storage layer ---------------- */
+const DB_KEY = 'arisekage_v1';
+AK.defaultState = () => ({
+  profile: null, // {name, unit:'metric'|'imperial', theme:'shadow', goal, createdAt, title}
+  gamification: { xp:0, level:1, rank:'E', streak:0, lastActiveDate:null, unlockedAchievements:[], seenEasterEggs:[] },
+  workouts: [], // {id,date,name,startedAt,durationSec,exercises:[{id,name,category,sets:[{weight,reps,rpe,unit,done}]}],notes}
+  templates: [], // custom routine templates
+  water: {}, // {date: {goalMl, entries:[{id,ts,ml}]}}
+  waterGoalMl: 2600,
+  nutrition: {}, // {date: {entries:[{id,ts,name,cal,protein,carbs,fat}]}}
+  nutritionGoals: { cal:2200, protein:150, carbs:220, fat:70 },
+  metrics: [], // {id,date,weightKg,bodyFatPct,measurements:{chest,waist,hips,arm,thigh}}
+  sleep: {}, // {date: hours}
+  photoMeta: [], // {id,date,tag,note} (blobs live in IndexedDB)
+  settings: {
+    theme: 'shadow', accent: '#7c3aed', unit: 'metric', reducedMotion:false,
+    notifWater:true, notifWorkout:true, firebaseEnabled:false, firebaseConfig:null,
+    quoteAnime: 'both'
+  },
+  quests: { date:null, daily:[] },
+  version: 1
+});
+
+AK.state = null;
+
+AK.load = () => {
+  try {
+    const raw = localStorage.getItem(DB_KEY);
+    AK.state = raw ? Object.assign(AK.defaultState(), JSON.parse(raw)) : AK.defaultState();
+    // deep-merge nested defaults for safety across versions
+    const def = AK.defaultState();
+    for (const k of ['gamification','settings','nutritionGoals']) {
+      AK.state[k] = Object.assign({}, def[k], AK.state[k]||{});
+    }
+  } catch(e) { console.error('load failed', e); AK.state = AK.defaultState(); }
+  return AK.state;
+};
+
+AK.saveTimer = null;
+AK.save = () => {
+  clearTimeout(AK.saveTimer);
+  AK.saveTimer = setTimeout(()=>{
+    try {
+      localStorage.setItem(DB_KEY, JSON.stringify(AK.state));
+      AK.Sync && AK.Sync.queuePush && AK.Sync.queuePush();
+    } catch(e) { console.error('save failed', e); AK.toast('Storage full — export a backup in Settings','bad'); }
+  }, 120);
+};
+
+/* ---------------- IndexedDB (photos) ---------------- */
+AK.PhotoDB = (() => {
+  let dbp = null;
+  const open = () => {
+    if (dbp) return dbp;
+    dbp = new Promise((resolve,reject)=>{
+      const req = indexedDB.open('arisekage_photos', 1);
+      req.onupgradeneeded = () => { const db = req.result; if(!db.objectStoreNames.contains('photos')) db.createObjectStore('photos',{keyPath:'id'}); };
+      req.onsuccess = () => resolve(req.result);
+      req.onerror = () => reject(req.error);
+    });
+    return dbp;
+  };
+  return {
+    async put(rec){ const db = await open(); return new Promise((res,rej)=>{ const tx = db.transaction('photos','readwrite'); tx.objectStore('photos').put(rec); tx.oncomplete=()=>res(true); tx.onerror=()=>rej(tx.error); }); },
+    async get(id){ const db = await open(); return new Promise((res,rej)=>{ const tx = db.transaction('photos','readonly'); const r = tx.objectStore('photos').get(id); r.onsuccess=()=>res(r.result); r.onerror=()=>rej(r.error); }); },
+    async del(id){ const db = await open(); return new Promise((res,rej)=>{ const tx = db.transaction('photos','readwrite'); tx.objectStore('photos').delete(id); tx.oncomplete=()=>res(true); tx.onerror=()=>rej(tx.error); }); },
+    async all(){ const db = await open(); return new Promise((res,rej)=>{ const tx = db.transaction('photos','readonly'); const r = tx.objectStore('photos').getAll(); r.onsuccess=()=>res(r.result||[]); r.onerror=()=>rej(r.error); }); }
+  };
+})();
+</script>
+
+<script>
+/* ---------------- Gamification: XP, Levels, Ranks ---------------- */
+AK.Game = (() => {
+  const RANKS = [
+    {key:'E', label:'E-Rank', min:1, max:4, color:'var(--rank-e)'},
+    {key:'D', label:'D-Rank', min:5, max:9, color:'var(--rank-d)'},
+    {key:'C', label:'C-Rank', min:10, max:16, color:'var(--rank-c)'},
+    {key:'B', label:'B-Rank', min:17, max:24, color:'var(--rank-b)'},
+    {key:'A', label:'A-Rank', min:25, max:34, color:'var(--rank-a)'},
+    {key:'S', label:'S-Rank', min:35, max:49, color:'var(--rank-s)'},
+    {key:'SS', label:'Shadow Monarch', min:50, max:9999, color:'var(--rank-ss)'}
+  ];
+  const xpForLevel = (lvl) => Math.round(100 * Math.pow(lvl, 1.45));
+  const rankFor = (lvl) => RANKS.find(r => lvl>=r.min && lvl<=r.max) || RANKS[RANKS.length-1];
+  function addXp(amount, reason){
+    const g = AK.state.gamification;
+    const beforeLevel = g.level;
+    g.xp += amount;
+    let leveled = false;
+    while (g.xp >= xpForLevel(g.level)) {
+      g.xp -= xpForLevel(g.level);
+      g.level += 1; leveled = true;
+    }
+    g.rank = rankFor(g.level).key;
+    AK.save();
+    if (amount>0) AK.toast(`+${amount} XP${reason?' · '+reason:''}`, 'good');
+    if (leveled) AK.Game.showLevelUp(g.level, beforeLevel);
+    AK.UI && AK.UI.refreshHome && AK.UI.refreshHome();
+    return leveled;
+  }
+  function showLevelUp(newLevel, prevLevel){
+    const rank = rankFor(newLevel);
+    const overlay = document.getElementById('levelupOverlay');
+    overlay.innerHTML = `<div class="levelup-card">
+      <div style="font-size:13px;letter-spacing:.2em;color:var(--text-2);font-weight:800;margin-bottom:6px">LEVEL UP</div>
+      <div class="levelup-rank">${newLevel}</div>
+      <div class="pill" style="margin:14px auto 18px;background:${rank.color}22;border-color:${rank.color};color:${rank.color}">${AK.escapeHtml(rank.label)}</div>
+      <div style="color:var(--text-1);font-size:14px;max-width:280px;margin:0 auto 22px">${AK.escapeHtml(AK.Quotes.random())}</div>
+      <button class="btn btn-primary" id="levelupClose">Continue</button>
+    </div>`;
+    overlay.classList.add('show');
+    AK.Fx.confettiBurst();
+    AK.haptic(20);
+    document.getElementById('levelupClose').onclick = () => overlay.classList.remove('show');
+  }
+  function updateStreak(){
+    const g = AK.state.gamification;
+    const today = AK.today();
+    if (g.lastActiveDate === today) return;
+    if (g.lastActiveDate) {
+      const gap = AK.daysBetween(g.lastActiveDate, today);
+      g.streak = gap === 1 ? g.streak + 1 : 1;
+    } else { g.streak = 1; }
+    g.lastActiveDate = today;
+    AK.save();
+    if ([7,30,50,100,365].includes(g.streak)) AK.Achievements.unlock('streak'+g.streak);
+  }
+  function derivedStats(){
+    // Fun "hunter stat" numbers derived from real logged data — not arbitrary.
+    const workouts = AK.state.workouts;
+    let maxVolumeSet = 0, totalSets=0, totalVolume=0;
+    workouts.forEach(w => w.exercises.forEach(e => e.sets.forEach(s => {
+      if (s.done) { totalSets++; const vol=(s.weight||0)*(s.reps||0); totalVolume+=vol; if ((s.weight||0)>maxVolumeSet) maxVolumeSet=s.weight; }
+    })));
+    const STR = AK.clamp(Math.round(maxVolumeSet/2), 1, 999);
+    const END = AK.clamp(Math.round(totalSets/3), 1, 999);
+    const VIT = AK.clamp(Math.round(AK.state.gamification.streak*2.2), 1, 999);
+    const AGI = AK.clamp(Math.round(workouts.length*1.3), 1, 999);
+    return {STR,END,VIT,AGI,totalVolume:Math.round(totalVolume)};
+  }
+  return { RANKS, xpForLevel, rankFor, addXp, showLevelUp, updateStreak, derivedStats };
+})();
+
+/* ---------------- Quote packs (Naruto & Solo Leveling inspired, original phrasing) ---------------- */
+AK.Quotes = (() => {
+  const pool = [
+    "A rank is earned in silence, one rep no one saw.",
+    "Arise. The version of you that quit yesterday doesn't get a vote today.",
+    "Hard work betrays no one who refuses to stop.",
+    "The weak stay home. The Hunter shows up anyway.",
+    "Your ninja way isn't a slogan — it's whatever you do when it's hard.",
+    "Every S-Rank was once too tired to show up. They came anyway.",
+    "Pain is temporary. Quitting keeps the score forever.",
+    "The Monarch of Shadows didn't wait to feel ready.",
+    "Believe it — consistency beats talent that skips leg day.",
+    "Level up isn't a moment. It's today's set, logged.",
+    "A single step, repeated, becomes a path no one else will walk.",
+    "The dungeon doesn't care about your excuses. Neither should you.",
+    "You don't rise to your goals, you fall to your systems — build better ones.",
+    "Even the strongest shadow started as a whisper of effort."
+  ];
+  let idx = Math.floor(Math.random()*pool.length);
+  return { random: () => pool[Math.floor(Math.random()*pool.length)], daily: () => pool[(new Date().getDate()) % pool.length] };
+})();
+
+/* ---------------- Achievements & Easter Eggs ---------------- */
+AK.Achievements = (() => {
+  const DEFS = [
+    {id:'first_workout', name:'First Blood', desc:'Log your first workout', icon:'i-dumbbell'},
+    {id:'streak7', name:'Week Warrior', desc:'7-day streak', icon:'i-flame'},
+    {id:'streak30', name:'Monthly Monarch', desc:'30-day streak', icon:'i-flame'},
+    {id:'streak50', name:'Iron Will', desc:'50-day streak', icon:'i-flame'},
+    {id:'streak100', name:'Shadow Monarch', desc:'100-day streak', icon:'i-shield'},
+    {id:'streak365', name:'One With The Grind', desc:'365-day streak', icon:'i-star'},
+    {id:'water7', name:'Hydro Hunter', desc:'Hit water goal 7 days', icon:'i-droplet'},
+    {id:'photo_first', name:'Snapshot', desc:'Log your first progress photo', icon:'i-camera'},
+    {id:'photo_30', name:'Time Lapse', desc:'30 progress photos logged', icon:'i-camera'},
+    {id:'workouts_10', name:'Getting Serious', desc:'10 workouts logged', icon:'i-dumbbell'},
+    {id:'workouts_100', name:'Triple Digits', desc:'100 workouts logged', icon:'i-trophy'},
+    {id:'pr_first', name:'New Ceiling', desc:'Log a personal record', icon:'i-bolt'},
+    {id:'konami', name:'Secret Technique', desc:'Found a hidden technique', icon:'i-sparkle', secret:true},
+    {id:'night_owl', name:'Sage Mode', desc:'Logged a workout after midnight', icon:'i-moon', secret:true},
+    {id:'arise_typed', name:'Awakening', desc:'Whispered the word of power', icon:'i-sparkle', secret:true},
+    {id:'perfect_week', name:'Flawless Week', desc:'Hit every daily quest for 7 days straight', icon:'i-shield'},
+  ];
+  function unlock(id){
+    const g = AK.state.gamification;
+    if (g.unlockedAchievements.includes(id)) return;
+    g.unlockedAchievements.push(id);
+    AK.save();
+    const def = DEFS.find(d=>d.id===id);
+    AK.toast(`Achievement unlocked: ${def?def.name:id}`, 'good');
+    AK.Fx.confettiBurst();
+    AK.Game.addXp(25, 'Achievement');
+  }
+  return { DEFS, unlock };
+})();
+</script>
+
+<script>
+/* ---------------- FX: confetti & small visual flourishes ---------------- */
+AK.Fx = (() => {
+  function confettiBurst(){
+    if (AK.state.settings.reducedMotion) return;
+    const canvas = document.getElementById('confettiCanvas');
+    canvas.classList.remove('hidden');
+    canvas.width = innerWidth; canvas.height = innerHeight;
+    const ctx = canvas.getContext('2d');
+    const colors = ['#7c3aed','#a78bfa','#38bdf8','#22d3aa','#fb923c','#f43f5e','#ffd54a'];
+    const N = 90;
+    const parts = Array.from({length:N}, () => ({
+      x: innerWidth/2 + (Math.random()-.5)*120, y: innerHeight*0.35 + (Math.random()-.5)*60,
+      vx:(Math.random()-.5)*13, vy:(Math.random()*-13)-4, g:.35+Math.random()*.15,
+      size:4+Math.random()*5, rot:Math.random()*360, vr:(Math.random()-.5)*14,
+      color: colors[Math.floor(Math.random()*colors.length)], life:1
+    }));
+    let frame=0;
+    function tick(){
+      frame++;
+      ctx.clearRect(0,0,canvas.width,canvas.height);
+      let alive=false;
+      parts.forEach(p=>{
+        p.vy += p.g; p.x+=p.vx; p.y+=p.vy; p.rot+=p.vr; p.life -= 0.008;
+        if (p.life>0 && p.y < canvas.height+20) { alive=true;
+          ctx.save(); ctx.translate(p.x,p.y); ctx.rotate(p.rot*Math.PI/180);
+          ctx.globalAlpha = Math.max(p.life,0); ctx.fillStyle=p.color;
+          ctx.fillRect(-p.size/2,-p.size/2,p.size,p.size*.6); ctx.restore();
+        }
+      });
+      if (alive && frame<260) requestAnimationFrame(tick); else { canvas.classList.add('hidden'); ctx.clearRect(0,0,canvas.width,canvas.height); }
+    }
+    tick();
+  }
+  function ringSvg(pct, size=120, stroke=10, colorVar='--accent'){
+    const r = (size-stroke)/2, c = 2*Math.PI*r, off = c*(1-AK.clamp(pct,0,1));
+    return `<div class="ring-wrap" style="width:${size}px;height:${size}px">
+      <svg width="${size}" height="${size}">
+        <circle class="ring-track" cx="${size/2}" cy="${size/2}" r="${r}" stroke-width="${stroke}"/>
+        <circle class="ring-fill" cx="${size/2}" cy="${size/2}" r="${r}" stroke-width="${stroke}" stroke="var(${colorVar})" stroke-dasharray="${c}" stroke-dashoffset="${off}"/>
+      </svg></div>`;
+  }
+  return { confettiBurst, ringSvg };
+})();
+
+/* ---------------- Exercise Library ---------------- */
+AK.EXLIB = [
+  {name:'Barbell Back Squat', cat:'Legs'}, {name:'Barbell Bench Press', cat:'Push'}, {name:'Deadlift', cat:'Pull'},
+  {name:'Overhead Press', cat:'Push'}, {name:'Barbell Row', cat:'Pull'}, {name:'Pull-Up', cat:'Pull'},
+  {name:'Chin-Up', cat:'Pull'}, {name:'Dip', cat:'Push'}, {name:'Incline Dumbbell Press', cat:'Push'},
+  {name:'Dumbbell Shoulder Press', cat:'Push'}, {name:'Lat Pulldown', cat:'Pull'}, {name:'Seated Cable Row', cat:'Pull'},
+  {name:'Leg Press', cat:'Legs'}, {name:'Romanian Deadlift', cat:'Legs'}, {name:'Bulgarian Split Squat', cat:'Legs'},
+  {name:'Walking Lunge', cat:'Legs'}, {name:'Leg Curl', cat:'Legs'}, {name:'Leg Extension', cat:'Legs'},
+  {name:'Calf Raise', cat:'Legs'}, {name:'Barbell Curl', cat:'Arms'}, {name:'Hammer Curl', cat:'Arms'},
+  {name:'Tricep Pushdown', cat:'Arms'}, {name:'Skull Crusher', cat:'Arms'}, {name:'Lateral Raise', cat:'Push'},
+  {name:'Face Pull', cat:'Pull'}, {name:'Plank', cat:'Core'}, {name:'Hanging Leg Raise', cat:'Core'},
+  {name:'Cable Crunch', cat:'Core'}, {name:'Russian Twist', cat:'Core'}, {name:'Push-Up', cat:'Push'},
+  {name:'Front Squat', cat:'Legs'}, {name:'Hip Thrust', cat:'Legs'}, {name:'Farmer Carry', cat:'Pull'},
+  {name:'Running', cat:'Cardio'}, {name:'Cycling', cat:'Cardio'}, {name:'Rowing Machine', cat:'Cardio'},
+  {name:'Jump Rope', cat:'Cardio'}, {name:'Burpee', cat:'Cardio'}, {name:'Mountain Climber', cat:'Cardio'},
+  {name:'Yoga Flow', cat:'Mobility'}, {name:'Stretch Routine', cat:'Mobility'}
+];
+AK.TEMPLATES_BUILTIN = [
+  {name:'Push / Pull / Legs', tags:['PPL'], days:[
+    {label:'Push', exercises:['Barbell Bench Press','Overhead Press','Incline Dumbbell Press','Lateral Raise','Tricep Pushdown']},
+    {label:'Pull', exercises:['Deadlift','Barbell Row','Pull-Up','Face Pull','Barbell Curl']},
+    {label:'Legs', exercises:['Barbell Back Squat','Romanian Deadlift','Leg Press','Leg Curl','Calf Raise']}
+  ]},
+  {name:'Upper / Lower Split', tags:['UL'], days:[
+    {label:'Upper', exercises:['Barbell Bench Press','Barbell Row','Overhead Press','Lat Pulldown','Barbell Curl','Tricep Pushdown']},
+    {label:'Lower', exercises:['Barbell Back Squat','Romanian Deadlift','Leg Press','Calf Raise','Hanging Leg Raise']}
+  ]},
+  {name:'GZCLP (Beginner Strength)', tags:['GZCLP'], days:[
+    {label:'Day 1 — Squat/Bench', exercises:['Barbell Back Squat','Barbell Bench Press','Lat Pulldown','Plank']},
+    {label:'Day 2 — OHP/Deadlift', exercises:['Overhead Press','Deadlift','Barbell Row','Hanging Leg Raise']},
+    {label:'Day 3 — Bench/Squat', exercises:['Barbell Bench Press','Barbell Back Squat','Lat Pulldown','Cable Crunch']},
+    {label:'Day 4 — Deadlift/OHP', exercises:['Deadlift','Overhead Press','Barbell Row','Plank']}
+  ]},
+  {name:'Full Body (3x/week)', tags:['FullBody'], days:[
+    {label:'Full Body A', exercises:['Barbell Back Squat','Barbell Bench Press','Barbell Row','Plank']},
+    {label:'Full Body B', exercises:['Deadlift','Overhead Press','Pull-Up','Hanging Leg Raise']},
+    {label:'Full Body C', exercises:['Front Squat','Incline Dumbbell Press','Seated Cable Row','Cable Crunch']}
+  ]}
+];
+
+/* ---------------- Daily Quests ---------------- */
+AK.Quests = (() => {
+  const POOL = [
+    {id:'log_water3', label:'Log water 3 times today', xp:15, check: s => (waterEntriesToday()>=3)},
+    {id:'hit_water_goal', label:'Reach your water goal', xp:20, check: s => waterTotalToday() >= AK.state.waterGoalMl},
+    {id:'log_workout', label:'Log a training session', xp:30, check: s => workoutLoggedToday()},
+    {id:'log_sleep', label:'Log last night\'s sleep', xp:10, check: s => !!AK.state.sleep[AK.today()]},
+    {id:'complete_5sets', label:'Complete 5 working sets', xp:20, check: s => setsDoneToday()>=5},
+    {id:'open_app', label:'Check in on your progress', xp:5, check: () => true},
+  ];
+  function waterEntriesToday(){ const w = AK.state.water[AK.today()]; return w? w.entries.length : 0; }
+  function waterTotalToday(){ const w = AK.state.water[AK.today()]; return w? w.entries.reduce((a,e)=>a+e.ml,0) : 0; }
+  function workoutLoggedToday(){ return AK.state.workouts.some(w=>w.date===AK.today()); }
+  function setsDoneToday(){ let n=0; AK.state.workouts.filter(w=>w.date===AK.today()).forEach(w=>w.exercises.forEach(e=>e.sets.forEach(s=>{if(s.done)n++;}))); return n; }
+  function ensureToday(){
+    const q = AK.state.quests;
+    if (q.date === AK.today() && q.daily.length) return;
+    const shuffled = [...POOL].sort(()=>Math.random()-.5).slice(0,4);
+    q.date = AK.today();
+    q.daily = shuffled.map(p => ({id:p.id, label:p.label, xp:p.xp, done:false}));
+    AK.save();
+  }
+  function evaluate(){
+    ensureToday();
+    const q = AK.state.quests;
+    let changed=false;
+    q.daily.forEach(item => {
+      if (item.done) return;
+      const def = POOL.find(p=>p.id===item.id);
+      if (def && def.check()) { item.done = true; changed=true; AK.Game.addXp(item.xp,'Quest'); }
+    });
+    if (changed) AK.save();
+    return q.daily;
+  }
+  return { ensureToday, evaluate, get:()=>AK.state.quests.daily };
+})();
+</script>
+
+<script>
+/* ---------------- Sheet (bottom modal) helper ---------------- */
+AK.Sheet = (() => {
+  const overlay = () => document.getElementById('sheetOverlay');
+  const body = () => document.getElementById('sheetBody');
+  function open(html){
+    body().innerHTML = `<div class="handle"></div>` + html;
+    overlay().classList.add('show');
+  }
+  function close(){ overlay().classList.remove('show'); }
+  return { open, close, body };
+})();
+
+/* ---------------- Router ---------------- */
+AK.Router = (() => {
+  const screens = ['home','workout','water','body','quests','settings'];
+  function go(name){
+    if (!screens.includes(name)) return;
+    screens.forEach(s => document.getElementById('screen-'+s).classList.toggle('active', s===name));
+    document.querySelectorAll('.navbtn').forEach(b => b.classList.toggle('active', b.dataset.screen===name));
+    window.scrollTo(0,0);
+    AK.UI.render(name);
+    location.hash = name;
+  }
+  function init(){
+    document.querySelectorAll('.navbtn').forEach(b => b.addEventListener('click', () => { AK.haptic(); go(b.dataset.screen); }));
+    const startScreen = (location.hash||'').replace('#','') || 'home';
+    go(screens.includes(startScreen)?startScreen:'home');
+  }
+  return { go, init };
+})();
+</script>
+
+<script>
+/* ---------------- Onboarding Wizard ---------------- */
+AK.Onboard = (() => {
+  let step = 0;
+  const data = { name:'', unit:'metric', theme:'shadow', goal:'strength', waterGoal:2600 };
+  const THEMES = [
+    {key:'shadow', label:'Shadow Monarch', accent:'#7c3aed', desc:'Deep violet · Solo Leveling inspired'},
+    {key:'kage', label:'Hidden Village', accent:'#ea580c', desc:'Ember orange · Naruto inspired'},
+    {key:'light', label:'Daybreak', accent:'#7c3aed', desc:'Clean light mode'}
+  ];
+  function render(){
+    const root = document.getElementById('onboardWizard');
+    const steps = [stepWelcome, stepName, stepGoal, stepTheme, stepWater, stepReady];
+    root.innerHTML = steps[step]();
+    bind();
+  }
+  function stepWelcome(){
+    return `<div style="min-height:88vh;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:40px 24px">
+      <div style="width:96px;height:96px;border-radius:28px;background:linear-gradient(135deg,#7c3aed,#a78bfa);display:flex;align-items:center;justify-content:center;box-shadow:0 0 50px #7c3aedaa;margin-bottom:26px">
+        <svg class="icon" viewBox="0 0 24 24" style="width:52px;height:52px;stroke:#fff"><use href="#i-bolt"/></svg>
+      </div>
+      <h1 style="font-size:32px;font-weight:900;letter-spacing:-.02em;margin-bottom:10px">ARISE KAGE</h1>
+      <p style="color:var(--text-2);max-width:300px;margin-bottom:36px">Level up. For real. Track training, water, nutrition and progress photos — no subscriptions, no ads, no locked features. Ever.</p>
+      <button class="btn btn-primary btn-block" data-next>Begin your journey</button>
+    </div>`;
+  }
+  function stepName(){
+    return `<div style="padding:60px 4px 20px">
+      <div class="section-title">Step 1 of 5</div>
+      <h1 class="page-title">Who's leveling up?</h1>
+      <p class="page-sub">This stays on your device.</p>
+      <div class="field"><input class="input" id="obName" placeholder="Your name" value="${AK.escapeHtml(data.name)}" autofocus></div>
+      <button class="btn btn-primary btn-block" data-next>Continue</button>
+    </div>`;
+  }
+  function stepGoal(){
+    const goals = [{k:'strength',l:'Get Stronger',i:'i-dumbbell'},{k:'endurance',l:'Build Endurance',i:'i-flame'},{k:'weight',l:'Manage Weight',i:'i-scale'},{k:'consistency',l:'Just Show Up Daily',i:'i-target'}];
+    return `<div style="padding:60px 4px 20px">
+      <div class="section-title">Step 2 of 5</div>
+      <h1 class="page-title">What's your main quest?</h1>
+      <p class="page-sub">We'll tune quests & suggestions around this.</p>
+      <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:24px">
+      ${goals.map(g=>`<button class="card tap flex items-center gap-12" data-goal="${g.k}" style="text-align:left;${data.goal===g.k?'border-color:var(--accent);box-shadow:var(--shadow-glow)':''}">
+        <svg class="icon" viewBox="0 0 24 24" style="width:22px;height:22px;color:var(--accent-2)"><use href="#${g.i}"/></svg>
+        <b>${g.l}</b></button>`).join('')}
+      </div>
+      <button class="btn btn-primary btn-block" data-next>Continue</button>
+    </div>`;
+  }
+  function stepTheme(){
+    return `<div style="padding:60px 4px 20px">
+      <div class="section-title">Step 3 of 5</div>
+      <h1 class="page-title">Choose your aesthetic</h1>
+      <p class="page-sub">Fully customizable later in Settings.</p>
+      <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:24px">
+      ${THEMES.map(t=>`<button class="card tap flex items-center gap-12" data-theme="${t.key}" style="text-align:left;${data.theme===t.key?'border-color:'+t.accent+';box-shadow:0 0 20px '+t.accent+'55':''}">
+        <span style="width:34px;height:34px;border-radius:10px;background:${t.accent};flex-shrink:0"></span>
+        <span><b style="display:block">${t.label}</b><span class="text-2 text-sm">${t.desc}</span></span></button>`).join('')}
+      </div>
+      <button class="btn btn-primary btn-block" data-next>Continue</button>
+    </div>`;
+  }
+  function stepWater(){
+    return `<div style="padding:60px 4px 20px">
+      <div class="section-title">Step 4 of 5</div>
+      <h1 class="page-title">Daily water goal</h1>
+      <p class="page-sub">A good default is 30–35ml per kg of bodyweight.</p>
+      <div class="stepper mt-16" style="max-width:220px">
+        <button data-w="-250">−</button><input id="obWater" value="${data.waterGoal}" inputmode="numeric"><button data-w="250">+</button>
+      </div>
+      <p class="text-2 text-sm mt-8">milliliters / day</p>
+      <button class="btn btn-primary btn-block mt-16" data-next>Continue</button>
+    </div>`;
+  }
+  function stepReady(){
+    return `<div style="min-height:88vh;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:40px 24px">
+      <svg class="icon" viewBox="0 0 24 24" style="width:64px;height:64px;color:var(--accent-2);margin-bottom:20px"><use href="#i-shield"/></svg>
+      <h1 style="font-size:26px;font-weight:800;margin-bottom:10px">You're E-Rank. For now.</h1>
+      <p style="color:var(--text-2);max-width:280px;margin-bottom:30px">${AK.escapeHtml(AK.Quotes.random())}</p>
+      <button class="btn btn-primary btn-block" data-finish>Arise</button>
+    </div>`;
+  }
+  function bind(){
+    const root = document.getElementById('onboardWizard');
+    root.querySelectorAll('[data-goal]').forEach(b=>b.addEventListener('click',()=>{data.goal=b.dataset.goal; render();}));
+    root.querySelectorAll('[data-theme]').forEach(b=>b.addEventListener('click',()=>{data.theme=b.dataset.theme; render();}));
+    const w = root.querySelector('#obWater');
+    if (w) root.querySelectorAll('[data-w]').forEach(b=>b.addEventListener('click',()=>{ data.waterGoal = AK.clamp(parseInt(w.value||0)+parseInt(b.dataset.w),500,8000); w.value=data.waterGoal; }));
+    const nameInput = root.querySelector('#obName');
+    const next = root.querySelector('[data-next]');
+    if (next) next.addEventListener('click', () => {
+      if (nameInput) data.name = nameInput.value.trim() || 'Hunter';
+      if (w) data.waterGoal = AK.clamp(parseInt(w.value)||2600,500,8000);
+      step++; render();
+    });
+    const finish = root.querySelector('[data-finish]');
+    if (finish) finish.addEventListener('click', complete);
+  }
+  function complete(){
+    AK.state.profile = { name:data.name, unit:data.unit, goal:data.goal, createdAt:Date.now(), title:'Awakened Hunter' };
+    AK.state.settings.theme = data.theme;
+    const chosenTheme = THEMES.find(t=>t.key===data.theme);
+    if (chosenTheme) AK.state.settings.accent = chosenTheme.accent;
+    AK.state.waterGoalMl = data.waterGoal;
+    AK.Game.updateStreak();
+    AK.save();
+    AK.applyTheme();
+    document.getElementById('screen-onboard').classList.remove('active');
+    document.getElementById('appChrome').classList.remove('hidden');
+    AK.Router.init();
+    AK.boot2();
+  }
+  return { render, THEMES };
+})();
+</script>
+
+<script>
+/* ---------------- UI: main render dispatcher ---------------- */
+AK.UI = (() => {
+  function render(screen){
+    AK.Quests.evaluate();
+    const map = {
+      home: renderHome,
+      workout: () => AK.Workout.render(),
+      water: () => AK.Water.render(),
+      body: () => AK.Body.render(),
+      quests: () => AK.QuestsUI.render(),
+      settings: () => AK.Settings.render()
+    };
+    (map[screen]||renderHome)();
+    updateChrome();
+  }
+  function refreshHome(){ if (document.getElementById('screen-home').classList.contains('active')) renderHome(); updateChrome(); }
+  function updateChrome(){
+    document.getElementById('streakCount').textContent = AK.state.gamification.streak;
+    const anyUndone = AK.Quests.get().some(q=>!q.done);
+    document.getElementById('questDot').classList.toggle('show', anyUndone);
+  }
+
+  /* ===================== HOME ===================== */
+  function renderHome(){
+    const el = document.getElementById('screen-home');
+    const p = AK.state.profile, g = AK.state.gamification;
+    const xpNeed = AK.Game.xpForLevel(g.level);
+    const rank = AK.Game.rankFor(g.level);
+    const stats = AK.Game.derivedStats();
+    const waterToday = (AK.state.water[AK.today()]?.entries||[]).reduce((a,e)=>a+e.ml,0);
+    const waterPct = waterToday / AK.state.waterGoalMl;
+    const quests = AK.Quests.get();
+    const questsDone = quests.filter(q=>q.done).length;
+    const lastWorkout = [...AK.state.workouts].sort((a,b)=>b.date.localeCompare(a.date))[0];
+
+    el.innerHTML = `
+      <h1 class="page-title">Hey, ${AK.escapeHtml(p?.name||'Hunter')} 👋</h1>
+      <p class="page-sub">${AK.escapeHtml(AK.Quotes.daily())}</p>
+
+      <div class="card glow">
+        <div class="flex items-center justify-between">
+          <div>
+            <div class="text-2 text-sm">Hunter Level</div>
+            <div style="font-size:34px;font-weight:900;line-height:1.1">${g.level}</div>
+          </div>
+          <div class="rank-badge" style="background:${rank.color}22;color:${rank.color};border:1.5px solid ${rank.color}">${rank.key}</div>
+        </div>
+        <div class="bar-track mt-16"><div class="bar-fill xp" style="width:${AK.clamp(g.xp/xpNeed*100,2,100)}%"></div></div>
+        <div class="flex justify-between mt-8 text-sm text-2"><span>${g.xp} XP</span><span>${xpNeed} XP to Level ${g.level+1}</span></div>
+      </div>
+
+      <div class="grid-3 mt-16">
+        ${statChip('STR', stats.STR, 'i-dumbbell')}
+        ${statChip('END', stats.END, 'i-flame')}
+        ${statChip('VIT', stats.VIT, 'i-shield')}
+      </div>
+
+      <div class="section-title">Today<span class="link" data-nav="quests">Quests ${questsDone}/${quests.length} →</span></div>
+      <div class="grid-2">
+        <div class="card tap" data-nav="water">
+          ${AK.Fx.ringSvg(waterPct, 96, 9, '--water')}
+          <div style="position:relative;margin-top:-72px;text-align:center;pointer-events:none">
+            <div style="font-size:16px;font-weight:800">${Math.round(waterToday)}</div>
+            <div class="text-2" style="font-size:10px">of ${AK.state.waterGoalMl}ml</div>
+          </div>
+          <div class="text-center text-sm" style="text-align:center;font-weight:700;margin-top:6px">💧 Water</div>
+        </div>
+        <div class="card tap" data-nav="workout">
+          <div class="flex items-center justify-between mb-4">
+            <svg class="icon" viewBox="0 0 24 24" style="width:26px;height:26px;color:var(--accent-2)"><use href="#i-dumbbell"/></svg>
+            <span class="pill">${AK.state.gamification.streak}🔥</span>
+          </div>
+          <div style="font-weight:800;margin-top:10px">${lastWorkout ? 'Last: '+AK.escapeHtml(lastWorkout.name) : 'No workouts yet'}</div>
+          <div class="text-2 text-sm">${lastWorkout ? AK.prettyDate(lastWorkout.date) : 'Tap to start one'}</div>
+        </div>
+      </div>
+
+      <div class="section-title">Quick Actions</div>
+      <div class="grid-3">
+        <button class="card tap" style="text-align:center;padding:14px" data-quick="water"><svg class="icon" viewBox="0 0 24 24" style="width:22px;height:22px;color:var(--water)"><use href="#i-droplet"/></svg><div class="text-sm mt-8" style="font-weight:700">Add Water</div></button>
+        <button class="card tap" style="text-align:center;padding:14px" data-quick="workout"><svg class="icon" viewBox="0 0 24 24" style="width:22px;height:22px;color:var(--accent-2)"><use href="#i-dumbbell"/></svg><div class="text-sm mt-8" style="font-weight:700">Start Workout</div></button>
+        <button class="card tap" style="text-align:center;padding:14px" data-quick="photo"><svg class="icon" viewBox="0 0 24 24" style="width:22px;height:22px;color:var(--fire)"><use href="#i-camera"/></svg><div class="text-sm mt-8" style="font-weight:700">Progress Pic</div></button>
+      </div>
+
+      <div class="section-title">Share your progress</div>
+      <button class="card tap flex items-center justify-between" data-nav="sharecard">
+        <span class="flex items-center gap-12"><svg class="icon" viewBox="0 0 24 24" style="width:22px;height:22px;color:var(--accent-2)"><use href="#i-share"/></svg><b>Generate Share Report</b></span>
+        <svg class="icon" viewBox="0 0 24 24"><use href="#i-chevron-right"/></svg>
+      </button>
+    `;
+    el.querySelectorAll('[data-nav]').forEach(b=>b.addEventListener('click',()=>{
+      if (b.dataset.nav==='sharecard') AK.Share.open(); else AK.Router.go(b.dataset.nav);
+    }));
+    el.querySelectorAll('[data-quick]').forEach(b=>b.addEventListener('click',()=>{
+      const k=b.dataset.quick;
+      if (k==='water') AK.Water.quickAddSheet();
+      else if (k==='workout') AK.Router.go('workout');
+      else if (k==='photo') AK.Body.addPhotoFlow();
+    }));
+  }
+  function statChip(label,val,icon){
+    return `<div class="card" style="text-align:center;padding:12px 8px">
+      <svg class="icon" viewBox="0 0 24 24" style="width:18px;height:18px;color:var(--accent-2)"><use href="#${icon}"/></svg>
+      <div style="font-size:20px;font-weight:800;margin-top:4px">${val}</div>
+      <div class="text-2" style="font-size:10px;letter-spacing:.08em">${label}</div>
+    </div>`;
+  }
+
+  return { render, refreshHome, renderHome:()=>renderHome(), _internal:{renderHome} };
+})();
+</script>
+
+<script>
+/* ====================================================================
+   WORKOUT MODULE
+   ==================================================================== */
+AK.Workout = (() => {
+  let activeSession = null; // {id,date,name,startedAt,exercises:[...],notes}
+  let restTimer = { seconds:0, running:false, iv:null };
+
+  function render(){
+    const el = document.getElementById('screen-workout');
+    if (activeSession) return renderActive(el);
+    renderHub(el);
+  }
+
+  function renderHub(el){
+    const history = [...AK.state.workouts].sort((a,b)=>b.date.localeCompare(a.date));
+    el.innerHTML = `
+      <h1 class="page-title">Train</h1>
+      <p class="page-sub">Fast logging. Zero friction. Every set counts.</p>
+      <button class="btn btn-primary btn-block" id="startBlankBtn">
+        <svg class="icon" viewBox="0 0 24 24"><use href="#i-plus"/></svg> Start Empty Workout
+      </button>
+      <div class="section-title">Routines<span class="link" id="newTemplateLink">+ New</span></div>
+      <div style="display:flex;flex-direction:column;gap:10px">
+        ${AK.TEMPLATES_BUILTIN.map((t,ti)=>templateCard(t,'b:'+ti)).join('')}
+        ${AK.state.templates.map((t,ti)=>templateCard(t,'u:'+ti)).join('')}
+      </div>
+      <div class="section-title">History</div>
+      ${history.length===0 ? emptyState('i-dumbbell','No workouts logged yet — start one above.') :
+        history.slice(0,20).map(w=>historyCard(w)).join('')}
+    `;
+    el.querySelector('#startBlankBtn').addEventListener('click', () => startSession('Freestyle Workout', []));
+    el.querySelector('#newTemplateLink').addEventListener('click', openTemplateBuilder);
+    el.querySelectorAll('[data-start-tpl]').forEach(b=>b.addEventListener('click',()=>{
+      const [kind,idx] = b.dataset.startTpl.split(':');
+      const tpl = kind==='b' ? AK.TEMPLATES_BUILTIN[idx] : AK.state.templates[idx];
+      openDayPicker(tpl);
+    }));
+    el.querySelectorAll('[data-view-w]').forEach(b=>b.addEventListener('click',()=>viewWorkout(b.dataset.viewW)));
+  }
+
+  function templateCard(t, key){
+    return `<div class="card tap" data-start-tpl="${key}">
+      <div class="flex items-center justify-between">
+        <b>${AK.escapeHtml(t.name)}</b>
+        <svg class="icon" viewBox="0 0 24 24"><use href="#i-chevron-right"/></svg>
+      </div>
+      <div class="text-2 text-sm mt-8">${t.days.map(d=>d.label).join(' · ')}</div>
+    </div>`;
+  }
+  function historyCard(w){
+    const totalSets = w.exercises.reduce((a,e)=>a+e.sets.filter(s=>s.done).length,0);
+    const vol = Math.round(w.exercises.reduce((a,e)=>a+e.sets.reduce((a2,s)=>a2+(s.done?(s.weight||0)*(s.reps||0):0),0),0));
+    return `<div class="card tap" data-view-w="${w.id}">
+      <div class="flex items-center justify-between"><b>${AK.escapeHtml(w.name)}</b><span class="text-2 text-sm">${AK.prettyDate(w.date)}</span></div>
+      <div class="text-2 text-sm mt-8">${w.exercises.length} exercises · ${totalSets} sets · ${vol}kg volume</div>
+    </div>`;
+  }
+  function emptyState(icon,msg){
+    return `<div class="empty-state"><svg class="icon" viewBox="0 0 24 24"><use href="#${icon}"/></svg><div>${msg}</div></div>`;
+  }
+
+  function openDayPicker(tpl){
+    AK.Sheet.open(`<div class="sheet-head"><h3>${AK.escapeHtml(tpl.name)}</h3><button class="btn-icon" id="shClose"><svg class="icon" viewBox="0 0 24 24"><use href="#i-x"/></svg></button></div>
+      <div style="display:flex;flex-direction:column;gap:10px">
+      ${tpl.days.map((d,i)=>`<button class="card tap" data-day="${i}" style="text-align:left"><b>${AK.escapeHtml(d.label)}</b><div class="text-2 text-sm mt-8">${d.exercises.join(', ')}</div></button>`).join('')}
+      </div>`);
+    document.getElementById('shClose').onclick = AK.Sheet.close;
+    AK.Sheet.body().querySelectorAll('[data-day]').forEach(b=>b.addEventListener('click',()=>{
+      const day = tpl.days[b.dataset.day];
+      AK.Sheet.close();
+      startSession(tpl.name+' — '+day.label, day.exercises);
+    }));
+  }
+
+  function startSession(name, exerciseNames){
+    activeSession = {
+      id: AK.uid(), date: AK.today(), name, startedAt: Date.now(),
+      exercises: exerciseNames.map(n => ({id:AK.uid(), name:n, category: (AK.EXLIB.find(x=>x.name===n)||{}).cat || 'Custom', sets:[ blankSet(n) ]})),
+      notes:''
+    };
+    AK.Router.go('workout');
+  }
+  function lastUsed(name){
+    for (let i=AK.state.workouts.length-1;i>=0;i--){
+      const w = AK.state.workouts[i];
+      const ex = w.exercises.find(e=>e.name===name);
+      if (ex) { const s = [...ex.sets].reverse().find(s=>s.done); if (s) return s; }
+    }
+    return null;
+  }
+  function blankSet(name){
+    const lu = lastUsed(name);
+    return { weight: lu?lu.weight:0, reps: lu?lu.reps:8, rpe:null, done:false };
+  }
+
+  function renderActive(el){
+    const s = activeSession;
+    el.innerHTML = `
+      <div class="flex items-center justify-between mt-8">
+        <button class="btn-icon" id="cancelSession"><svg class="icon" viewBox="0 0 24 24"><use href="#i-x"/></svg></button>
+        <div style="text-align:center"><div style="font-weight:800">${AK.escapeHtml(s.name)}</div><div class="text-2 text-sm" id="sessionTimer">00:00</div></div>
+        <button class="btn-icon" id="finishSession" style="background:var(--good);color:#04231a"><svg class="icon" viewBox="0 0 24 24"><use href="#i-check"/></svg></button>
+      </div>
+      <div id="restBanner"></div>
+      <div id="exerciseList" class="mt-16" style="display:flex;flex-direction:column;gap:14px">
+        ${s.exercises.map((e,ei)=>exerciseBlock(e,ei)).join('')}
+      </div>
+      <button class="btn btn-ghost btn-block mt-16" id="addExerciseBtn"><svg class="icon" viewBox="0 0 24 24"><use href="#i-plus"/></svg> Add Exercise</button>
+    `;
+    bindActive(el);
+    tickTimer();
+    renderRestBanner();
+  }
+  function exerciseBlock(e, ei){
+    return `<div class="card" data-ex="${ei}">
+      <div class="flex items-center justify-between">
+        <b>${AK.escapeHtml(e.name)}</b>
+        <button class="btn-icon" style="width:34px;height:34px" data-swap="${ei}"><svg class="icon" viewBox="0 0 24 24" style="width:16px;height:16px"><use href="#i-swap"/></svg></button>
+      </div>
+      <div style="display:grid;grid-template-columns:26px 1fr 1fr 1fr 34px;gap:8px;align-items:center;margin-top:12px" class="text-2 text-sm">
+        <div>#</div><div>kg</div><div>reps</div><div>RPE</div><div></div>
+      </div>
+      <div class="set-rows" data-rows="${ei}">
+      ${e.sets.map((set,si)=>setRow(e,ei,set,si)).join('')}
+      </div>
+      <button class="btn btn-ghost btn-sm mt-8" data-add-set="${ei}">+ Add Set</button>
+    </div>`;
+  }
+  function setRow(e,ei,set,si){
+    return `<div style="display:grid;grid-template-columns:26px 1fr 1fr 1fr 34px;gap:8px;align-items:center;margin-top:8px" data-row="${si}">
+      <div class="text-sm" style="font-weight:700">${si+1}</div>
+      <input class="input" style="padding:8px" inputmode="decimal" data-field="weight" data-ex="${ei}" data-set="${si}" value="${set.weight||''}">
+      <input class="input" style="padding:8px" inputmode="numeric" data-field="reps" data-ex="${ei}" data-set="${si}" value="${set.reps||''}">
+      <input class="input" style="padding:8px" inputmode="numeric" placeholder="-" data-field="rpe" data-ex="${ei}" data-set="${si}" value="${set.rpe||''}">
+      <button class="btn-icon" style="width:34px;height:34px;background:${set.done?'var(--good)':'var(--surface-hi)'};color:${set.done?'#04231a':'var(--text-2)'}" data-done="${ei}:${si}"><svg class="icon" viewBox="0 0 24 24" style="width:16px;height:16px"><use href="#i-check"/></svg></button>
+    </div>`;
+  }
+  function bindActive(el){
+    el.querySelector('#cancelSession').addEventListener('click', () => {
+      if (confirm('Discard this workout session?')) { activeSession=null; AK.Router.go('workout'); }
+    });
+    el.querySelector('#finishSession').addEventListener('click', finishSession);
+    el.querySelector('#addExerciseBtn').addEventListener('click', () => openExercisePicker());
+    el.querySelectorAll('[data-add-set]').forEach(b=>b.addEventListener('click',()=>{
+      const ei=b.dataset.addSet; const ex=activeSession.exercises[ei];
+      ex.sets.push(blankSet(ex.name)); render();
+    }));
+    el.querySelectorAll('[data-swap]').forEach(b=>b.addEventListener('click',()=>openExercisePicker(parseInt(b.dataset.swap))));
+    el.querySelectorAll('[data-field]').forEach(inp=>inp.addEventListener('change',()=>{
+      const {ex,set,field} = inp.dataset;
+      const s = activeSession.exercises[ex].sets[set];
+      s[field] = field==='rpe' ? (inp.value?parseFloat(inp.value):null) : parseFloat(inp.value)||0;
+    }));
+    el.querySelectorAll('[data-done]').forEach(b=>b.addEventListener('click',()=>{
+      const [ei,si] = b.dataset.done.split(':');
+      const s = activeSession.exercises[ei].sets[si];
+      s.done = !s.done;
+      AK.haptic(12);
+      if (s.done) { checkPR(activeSession.exercises[ei], s); startRest(90); }
+      render();
+    }));
+  }
+  function checkPR(exercise, set){
+    let best = 0;
+    AK.state.workouts.forEach(w => w.exercises.forEach(e => { if (e.name===exercise.name) e.sets.forEach(s=>{ if(s.done && s.weight>best) best=s.weight; }); }));
+    if (set.weight > best) { AK.Achievements.unlock('pr_first'); AK.toast(`New PR on ${exercise.name}! 🎉`,'good'); }
+  }
+  function startRest(sec){
+    restTimer.seconds = sec; restTimer.running = true;
+    clearInterval(restTimer.iv);
+    restTimer.iv = setInterval(()=>{
+      restTimer.seconds--;
+      if (restTimer.seconds<=0){ clearInterval(restTimer.iv); restTimer.running=false; AK.haptic(30); AK.toast('Rest complete — back to work!'); }
+      renderRestBanner();
+    },1000);
+    renderRestBanner();
+  }
+  function renderRestBanner(){
+    const b = document.getElementById('restBanner');
+    if (!b) return;
+    if (!restTimer.running) { b.innerHTML=''; return; }
+    const m = Math.floor(restTimer.seconds/60), s2 = restTimer.seconds%60;
+    b.innerHTML = `<div class="card mt-16" style="display:flex;align-items:center;justify-content:space-between;border-color:var(--accent)">
+      <span class="flex items-center gap-8"><svg class="icon" viewBox="0 0 24 24" style="color:var(--accent-2)"><use href="#i-clock"/></svg> Rest</span>
+      <b style="font-size:20px;font-variant-numeric:tabular-nums">${m}:${String(s2).padStart(2,'0')}</b>
+      <button class="btn btn-ghost btn-sm" id="skipRest">Skip</button></div>`;
+    document.getElementById('skipRest').onclick = () => { clearInterval(restTimer.iv); restTimer.running=false; renderRestBanner(); };
+  }
+  function tickTimer(){
+    const t = document.getElementById('sessionTimer');
+    if (!t || !activeSession) return;
+    const secs = Math.floor((Date.now()-activeSession.startedAt)/1000);
+    t.textContent = String(Math.floor(secs/60)).padStart(2,'0')+':'+String(secs%60).padStart(2,'0');
+    if (document.getElementById('screen-workout').classList.contains('active') && activeSession) requestAnimationFrame(()=>setTimeout(tickTimer,1000));
+  }
+  function openExercisePicker(swapIndex){
+    const cats = [...new Set(AK.EXLIB.map(e=>e.cat))];
+    AK.Sheet.open(`<div class="sheet-head"><h3>${swapIndex!=null?'Swap exercise':'Add exercise'}</h3><button class="btn-icon" id="shClose"><svg class="icon" viewBox="0 0 24 24"><use href="#i-x"/></svg></button></div>
+      <input class="input" id="exSearch" placeholder="Search exercises...">
+      <div class="chipset mt-16" id="exCats">${cats.map(c=>`<button class="chip" data-cat="${c}">${c}</button>`).join('')}</div>
+      <div id="exResults" style="display:flex;flex-direction:column;gap:8px;margin-top:14px;max-height:40vh;overflow-y:auto"></div>
+      <button class="btn btn-ghost btn-block mt-16" id="customExBtn">+ Add custom exercise</button>`);
+    document.getElementById('shClose').onclick = AK.Sheet.close;
+    let activeCat = null;
+    function draw(){
+      const q = document.getElementById('exSearch').value.toLowerCase();
+      const list = AK.EXLIB.filter(e => (!activeCat||e.cat===activeCat) && e.name.toLowerCase().includes(q));
+      document.getElementById('exResults').innerHTML = list.map(e=>`<button class="card tap" style="padding:12px 16px;text-align:left" data-pick="${AK.escapeHtml(e.name)}"><b>${AK.escapeHtml(e.name)}</b> <span class="text-2 text-sm">· ${e.cat}</span></button>`).join('') || emptyState('i-list','No matches — try custom exercise.');
+      document.getElementById('exResults').querySelectorAll('[data-pick]').forEach(b=>b.addEventListener('click',()=>pick(b.dataset.pick)));
+    }
+    function pick(name){
+      const cat = (AK.EXLIB.find(x=>x.name===name)||{}).cat || 'Custom';
+      if (swapIndex!=null) { activeSession.exercises[swapIndex] = {id:AK.uid(),name,category:cat,sets:[blankSet(name)]}; }
+      else activeSession.exercises.push({id:AK.uid(),name,category:cat,sets:[blankSet(name)]});
+      AK.Sheet.close(); render();
+    }
+    document.getElementById('exSearch').addEventListener('input', draw);
+    document.getElementById('exCats').querySelectorAll('[data-cat]').forEach(b=>b.addEventListener('click',()=>{
+      activeCat = activeCat===b.dataset.cat?null:b.dataset.cat;
+      document.querySelectorAll('#exCats .chip').forEach(c=>c.classList.toggle('active',c.dataset.cat===activeCat));
+      draw();
+    }));
+    document.getElementById('customExBtn').addEventListener('click', () => {
+      const name = prompt('Exercise name:'); if (name) pick(name.trim());
+    });
+    draw();
+  }
+  function finishSession(){
+    const totalSets = activeSession.exercises.reduce((a,e)=>a+e.sets.filter(s=>s.done).length,0);
+    if (totalSets===0){ if(!confirm('No sets marked complete. Save anyway?')) return; }
+    activeSession.durationSec = Math.floor((Date.now()-activeSession.startedAt)/1000);
+    activeSession.exercises = activeSession.exercises.filter(e=>e.sets.some(s=>s.done)||e.sets.length);
+    AK.state.workouts.push(activeSession);
+    const wasFirst = AK.state.workouts.length===1;
+    AK.save();
+    AK.Game.updateStreak();
+    AK.Game.addXp(30 + totalSets*4, 'Workout logged');
+    if (wasFirst) AK.Achievements.unlock('first_workout');
+    if (AK.state.workouts.length===10) AK.Achievements.unlock('workouts_10');
+    if (AK.state.workouts.length===100) AK.Achievements.unlock('workouts_100');
+    if (new Date().getHours() >= 0 && new Date().getHours() < 4) AK.Achievements.unlock('night_owl');
+    activeSession = null;
+    AK.Router.go('home');
+    AK.toast('Workout saved 💪','good');
+  }
+  function viewWorkout(id){
+    const w = AK.state.workouts.find(x=>x.id===id); if (!w) return;
+    AK.Sheet.open(`<div class="sheet-head"><h3>${AK.escapeHtml(w.name)}</h3><button class="btn-icon" id="shClose"><svg class="icon" viewBox="0 0 24 24"><use href="#i-x"/></svg></button></div>
+      <div class="text-2 text-sm mb-8">${AK.prettyDate(w.date)}</div>
+      ${w.exercises.map(e=>`<div class="card" style="margin-bottom:10px"><b>${AK.escapeHtml(e.name)}</b>
+        <div class="text-2 text-sm mt-8">${e.sets.filter(s=>s.done).map(s=>`${s.weight}kg × ${s.reps}`).join(' · ')||'No completed sets'}</div></div>`).join('')}
+      <button class="btn btn-danger btn-block mt-16" id="delWorkout">Delete Workout</button>`);
+    document.getElementById('shClose').onclick = AK.Sheet.close;
+    document.getElementById('delWorkout').onclick = () => {
+      if (confirm('Delete this workout permanently?')) { AK.state.workouts = AK.state.workouts.filter(x=>x.id!==id); AK.save(); AK.Sheet.close(); render(); }
+    };
+  }
+  function openTemplateBuilder(){
+    AK.toast('Tip: start any built-in routine, then save your own variations from history soon.','info');
+  }
+
+  return { render };
+})();
+</script>
+
+<script>
+/* ====================================================================
+   WATER MODULE
+   ==================================================================== */
+AK.Water = (() => {
+  const PRESETS = [
+    {label:'Glass', ml:250, icon:'🥛'}, {label:'Bottle', ml:500, icon:'🍶'},
+    {label:'Large Bottle', ml:1000, icon:'🧴'}, {label:'Cup', ml:200, icon:'☕'}
+  ];
+  function todayRec(){
+    const d = AK.today();
+    if (!AK.state.water[d]) AK.state.water[d] = {entries:[]};
+    return AK.state.water[d];
+  }
+  function totalFor(dateKey){ return (AK.state.water[dateKey]?.entries||[]).reduce((a,e)=>a+e.ml,0); }
+
+  function render(){
+    const el = document.getElementById('screen-water');
+    const rec = todayRec();
+    const total = totalFor(AK.today());
+    const goal = AK.state.waterGoalMl;
+    const pct = total/goal;
+    const last7 = last7Days();
+    el.innerHTML = `
+      <h1 class="page-title">Water</h1>
+      <p class="page-sub">Hydration you'll actually keep up with.</p>
+      <div class="card" style="display:flex;flex-direction:column;align-items:center;padding:28px 16px">
+        ${AK.Fx.ringSvg(pct, 160, 14, '--water')}
+        <div style="margin-top:-100px;text-align:center;pointer-events:none">
+          <div style="font-size:30px;font-weight:900">${total}<span style="font-size:14px;color:var(--text-2)">ml</span></div>
+          <div class="text-2 text-sm">of ${goal}ml goal</div>
+        </div>
+        <div class="chipset mt-16" style="justify-content:center">
+          ${PRESETS.map(p=>`<button class="chip" data-add="${p.ml}">${p.icon} +${p.ml}ml</button>`).join('')}
+          <button class="chip" id="customAdd">✏️ Custom</button>
+        </div>
+      </div>
+
+      <div class="section-title">Last 7 days</div>
+      <div class="card">
+        <div style="display:flex;align-items:flex-end;gap:8px;height:90px">
+          ${last7.map(d=>{
+            const h = AK.clamp(d.total/goal,0,1.2)*80;
+            const hit = d.total>=goal;
+            return `<div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%">
+              <div style="width:100%;max-width:22px;height:${Math.max(h,3)}px;background:${hit?'var(--good)':'var(--water)'};border-radius:6px 6px 2px 2px"></div>
+              <div class="text-2" style="font-size:9px;margin-top:6px">${d.label}</div>
+            </div>`;
+          }).join('')}
+        </div>
+      </div>
+
+      <div class="section-title">Today's log</div>
+      ${rec.entries.length===0 ? `<div class="empty-state"><svg class="icon" viewBox="0 0 24 24"><use href="#i-droplet"/></svg><div>Nothing logged yet today</div></div>` :
+        rec.entries.slice().reverse().map(e=>`<div class="card flex items-center justify-between" style="padding:12px 16px">
+          <span class="flex items-center gap-8"><svg class="icon" viewBox="0 0 24 24" style="color:var(--water)"><use href="#i-droplet"/></svg>${e.ml}ml <span class="text-2 text-sm">· ${new Date(e.ts).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'})}</span></span>
+          <button class="btn-icon" style="width:32px;height:32px" data-del="${e.id}"><svg class="icon" viewBox="0 0 24 24" style="width:14px;height:14px"><use href="#i-trash"/></svg></button>
+        </div>`).join('')}
+
+      <div class="section-title">Goal</div>
+      <div class="card flex items-center justify-between">
+        <span>Daily target</span>
+        <div class="stepper" style="width:160px">
+          <button data-goal="-100">−</button><input id="goalInput" value="${goal}"><button data-goal="100">+</button>
+        </div>
+      </div>
+    `;
+    el.querySelectorAll('[data-add]').forEach(b=>b.addEventListener('click',()=>addWater(parseInt(b.dataset.add))));
+    el.querySelector('#customAdd').addEventListener('click', () => {
+      const v = prompt('Amount in ml:'); if (v && !isNaN(v)) addWater(parseInt(v));
+    });
+    el.querySelectorAll('[data-del]').forEach(b=>b.addEventListener('click',()=>{
+      rec.entries = rec.entries.filter(e=>e.id!==b.dataset.del); AK.save(); render();
+    }));
+    const gi = el.querySelector('#goalInput');
+    el.querySelectorAll('[data-goal]').forEach(b=>b.addEventListener('click',()=>{
+      AK.state.waterGoalMl = AK.clamp(AK.state.waterGoalMl + parseInt(b.dataset.goal), 250, 10000);
+      AK.save(); render();
+    }));
+  }
+  function addWater(ml){
+    const rec = todayRec();
+    rec.entries.push({id:AK.uid(), ts:Date.now(), ml});
+    AK.save(); AK.haptic(10);
+    AK.Game.updateStreak();
+    AK.Game.addXp(2,'Hydration');
+    const total = totalFor(AK.today());
+    if (total>=AK.state.waterGoalMl && total-ml<AK.state.waterGoalMl) { AK.toast('Water goal hit! 💧','good'); AK.Fx.confettiBurst(); checkWaterStreak(); }
+    render();
+    AK.UI.refreshHome();
+  }
+  function checkWaterStreak(){
+    const days = last7Days();
+    if (days.filter(d=>d.total>=AK.state.waterGoalMl).length>=7) AK.Achievements.unlock('water7');
+  }
+  function last7Days(){
+    const out=[];
+    for (let i=6;i>=0;i--){
+      const d = new Date(); d.setDate(d.getDate()-i);
+      const key = AK.fmtDate(d);
+      out.push({label:d.toLocaleDateString(undefined,{weekday:'narrow'}), total: totalFor(key)});
+    }
+    return out;
+  }
+  function quickAddSheet(){
+    AK.Sheet.open(`<div class="sheet-head"><h3>Add Water</h3><button class="btn-icon" id="shClose"><svg class="icon" viewBox="0 0 24 24"><use href="#i-x"/></svg></button></div>
+      <div class="chipset">${PRESETS.map(p=>`<button class="chip" data-add="${p.ml}">${p.icon} +${p.ml}ml</button>`).join('')}</div>`);
+    document.getElementById('shClose').onclick = AK.Sheet.close;
+    AK.Sheet.body().querySelectorAll('[data-add]').forEach(b=>b.addEventListener('click',()=>{ addWater(parseInt(b.dataset.add)); AK.Sheet.close(); }));
+  }
+  return { render, quickAddSheet, totalFor, todayRec };
+})();
+</script>
+
+<script>
+/* ====================================================================
+   BODY MODULE — metrics + progress photos (photos stored in IndexedDB only)
+   ==================================================================== */
+AK.Body = (() => {
+  let tab = 'photos';
+  function render(){
+    const el = document.getElementById('screen-body');
+    el.innerHTML = `
+      <h1 class="page-title">Body</h1>
+      <p class="page-sub">Progress photos live only on this device. Never uploaded.</p>
+      <div class="chipset">
+        <button class="chip ${tab==='photos'?'active':''}" data-tab="photos">📸 Photos</button>
+        <button class="chip ${tab==='metrics'?'active':''}" data-tab="metrics">📏 Metrics</button>
+        <button class="chip ${tab==='sleep'?'active':''}" data-tab="sleep">🌙 Sleep</button>
+      </div>
+      <div id="bodyTabBody" class="mt-16"></div>
+    `;
+    el.querySelectorAll('[data-tab]').forEach(b=>b.addEventListener('click',()=>{ tab=b.dataset.tab; render(); }));
+    const body = document.getElementById('bodyTabBody');
+    if (tab==='photos') renderPhotos(body);
+    else if (tab==='metrics') renderMetrics(body);
+    else renderSleep(body);
+  }
+
+  /* ---------- Photos ---------- */
+  async function renderPhotos(body){
+    body.innerHTML = `<button class="btn btn-primary btn-block" id="addPhotoBtn"><svg class="icon" viewBox="0 0 24 24"><use href="#i-camera"/></svg> Add Progress Photo</button>
+      <div id="photoGrid" class="grid-3 mt-16"></div>`;
+    document.getElementById('addPhotoBtn').addEventListener('click', addPhotoFlow);
+    const grid = document.getElementById('photoGrid');
+    const metas = [...AK.state.photoMeta].sort((a,b)=>b.date.localeCompare(a.date));
+    if (!metas.length) { grid.className=''; grid.innerHTML = emptyState(); return; }
+    grid.innerHTML = metas.map(m=>`<div class="card tap" style="padding:0;overflow:hidden;aspect-ratio:3/4;position:relative" data-view-photo="${m.id}">
+      <img data-src="${m.id}" style="width:100%;height:100%;object-fit:cover;display:block;background:var(--surface-hi)">
+      <div style="position:absolute;bottom:0;left:0;right:0;background:linear-gradient(transparent,rgba(0,0,0,.7));padding:6px 8px;font-size:10px;color:#fff;font-weight:700">${AK.prettyDate(m.date)}</div>
+    </div>`).join('');
+    for (const m of metas) {
+      AK.PhotoDB.get(m.id).then(rec => {
+        if (!rec) return;
+        const url = URL.createObjectURL(rec.blob);
+        const img = grid.querySelector(`img[data-src="${m.id}"]`);
+        if (img) img.src = url;
+      });
+    }
+    grid.querySelectorAll('[data-view-photo]').forEach(c=>c.addEventListener('click',()=>viewPhoto(c.dataset.viewPhoto)));
+    if (metas.length>=2) {
+      body.insertAdjacentHTML('beforeend', `<button class="btn btn-ghost btn-block mt-16" id="compareBtn"><svg class="icon" viewBox="0 0 24 24"><use href="#i-swap"/></svg> Compare Before / After</button>`);
+      document.getElementById('compareBtn').addEventListener('click', () => openCompare(metas));
+    }
+  }
+  function emptyState(){ return `<div class="empty-state" style="grid-column:1/-1"><svg class="icon" viewBox="0 0 24 24"><use href="#i-camera"/></svg><div>No photos yet. Your future self will thank you.</div></div>`; }
+
+  function addPhotoFlow(){
+    AK.Sheet.open(`<div class="sheet-head"><h3>Add Progress Photo</h3><button class="btn-icon" id="shClose"><svg class="icon" viewBox="0 0 24 24"><use href="#i-x"/></svg></button></div>
+      <div class="field"><label>Angle</label><div class="chipset" id="tagChips">
+        <button class="chip active" data-tag="Front">Front</button><button class="chip" data-tag="Side">Side</button><button class="chip" data-tag="Back">Back</button><button class="chip" data-tag="Other">Other</button>
+      </div></div>
+      <input type="file" accept="image/*" capture="environment" id="photoInput" style="display:none">
+      <button class="btn btn-primary btn-block" id="takePhotoBtn"><svg class="icon" viewBox="0 0 24 24"><use href="#i-camera"/></svg> Take / Choose Photo</button>
+      <div class="field mt-16"><label>Note (optional)</label><input class="input" id="photoNote" placeholder="e.g. Week 4, morning, fasted"></div>
+      <div id="photoPreviewWrap"></div>`);
+    document.getElementById('shClose').onclick = AK.Sheet.close;
+    let tagVal = 'Front', fileBlob = null;
+    document.getElementById('tagChips').querySelectorAll('[data-tag]').forEach(b=>b.addEventListener('click',()=>{
+      tagVal=b.dataset.tag; document.querySelectorAll('#tagChips .chip').forEach(c=>c.classList.toggle('active',c===b));
+    }));
+    document.getElementById('takePhotoBtn').addEventListener('click', () => document.getElementById('photoInput').click());
+    document.getElementById('photoInput').addEventListener('change', (e) => {
+      const f = e.target.files[0]; if (!f) return;
+      fileBlob = f;
+      const url = URL.createObjectURL(f);
+      document.getElementById('photoPreviewWrap').innerHTML = `<img src="${url}" style="width:100%;border-radius:16px;margin-top:14px;max-height:280px;object-fit:cover">
+        <button class="btn btn-primary btn-block mt-16" id="savePhotoBtn">Save Photo</button>`;
+      document.getElementById('savePhotoBtn').addEventListener('click', async () => {
+        const id = AK.uid();
+        await AK.PhotoDB.put({ id, blob: fileBlob });
+        const wasFirst = AK.state.photoMeta.length===0;
+        AK.state.photoMeta.push({ id, date: AK.today(), tag: tagVal, note: document.getElementById('photoNote').value.trim() });
+        AK.save();
+        AK.Game.updateStreak();
+        AK.Game.addXp(15, 'Progress photo');
+        if (wasFirst) AK.Achievements.unlock('photo_first');
+        if (AK.state.photoMeta.length===30) AK.Achievements.unlock('photo_30');
+        AK.Sheet.close(); AK.toast('Photo saved to this device','good'); render();
+      });
+    });
+  }
+  async function viewPhoto(id){
+    const meta = AK.state.photoMeta.find(m=>m.id===id);
+    const rec = await AK.PhotoDB.get(id);
+    if (!rec) return;
+    const url = URL.createObjectURL(rec.blob);
+    AK.Sheet.open(`<div class="sheet-head"><h3>${meta.tag} · ${AK.prettyDate(meta.date)}</h3><button class="btn-icon" id="shClose"><svg class="icon" viewBox="0 0 24 24"><use href="#i-x"/></svg></button></div>
+      <img src="${url}" style="width:100%;border-radius:16px;max-height:50vh;object-fit:cover">
+      ${meta.note?`<p class="text-2 mt-16">${AK.escapeHtml(meta.note)}</p>`:''}
+      <button class="btn btn-danger btn-block mt-16" id="delPhoto">Delete Photo</button>`);
+    document.getElementById('shClose').onclick = AK.Sheet.close;
+    document.getElementById('delPhoto').onclick = async () => {
+      if (!confirm('Delete this photo permanently from your device?')) return;
+      await AK.PhotoDB.del(id);
+      AK.state.photoMeta = AK.state.photoMeta.filter(m=>m.id!==id);
+      AK.save(); AK.Sheet.close(); render();
+    };
+  }
+  async function openCompare(metas){
+    const first = metas[metas.length-1], last = metas[0];
+    const [r1,r2] = await Promise.all([AK.PhotoDB.get(first.id), AK.PhotoDB.get(last.id)]);
+    if (!r1||!r2) return;
+    const u1 = URL.createObjectURL(r1.blob), u2 = URL.createObjectURL(r2.blob);
+    AK.Sheet.open(`<div class="sheet-head"><h3>Before / After</h3><button class="btn-icon" id="shClose"><svg class="icon" viewBox="0 0 24 24"><use href="#i-x"/></svg></button></div>
+      <div style="position:relative;border-radius:16px;overflow:hidden;aspect-ratio:3/4">
+        <img src="${u2}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover">
+        <div id="beforeClip" style="position:absolute;inset:0;width:50%;overflow:hidden"><img src="${u1}" style="width:200%;height:100%;object-fit:cover;max-width:none"></div>
+        <div id="sliderHandle" style="position:absolute;top:0;bottom:0;left:50%;width:3px;background:#fff;box-shadow:0 0 8px rgba(0,0,0,.5)"></div>
+      </div>
+      <input type="range" min="0" max="100" value="50" id="compareRange" class="mt-16" style="width:100%">
+      <div class="flex justify-between text-2 text-sm mt-8"><span>${AK.prettyDate(first.date)}</span><span>${AK.prettyDate(last.date)}</span></div>`);
+    document.getElementById('shClose').onclick = AK.Sheet.close;
+    document.getElementById('compareRange').addEventListener('input', (e) => {
+      document.getElementById('beforeClip').style.width = e.target.value+'%';
+      document.getElementById('sliderHandle').style.left = e.target.value+'%';
+    });
+  }
+
+  /* ---------- Metrics ---------- */
+  function renderMetrics(body){
+    const list = [...AK.state.metrics].sort((a,b)=>b.date.localeCompare(a.date));
+    const unit = AK.state.settings.unit==='imperial' ? 'lb' : 'kg';
+    body.innerHTML = `<button class="btn btn-primary btn-block" id="addMetricBtn"><svg class="icon" viewBox="0 0 24 24"><use href="#i-scale"/></svg> Log Body Metrics</button>
+      ${list.length>1 ? `<div class="card mt-16">${sparkline(list)}</div>` : ''}
+      <div class="mt-16" style="display:flex;flex-direction:column;gap:10px">
+      ${list.length===0 ? `<div class="empty-state"><svg class="icon" viewBox="0 0 24 24"><use href="#i-ruler"/></svg><div>No metrics logged yet</div></div>` :
+        list.map(m=>`<div class="card flex items-center justify-between"><span>${AK.prettyDate(m.date)}</span><b>${m.weightKg?AK.round1(convertWeight(m.weightKg,unit))+' '+unit:'—'}</b></div>`).join('')}
+      </div>`;
+    document.getElementById('addMetricBtn').addEventListener('click', () => {
+      AK.Sheet.open(`<div class="sheet-head"><h3>Log Metrics</h3><button class="btn-icon" id="shClose"><svg class="icon" viewBox="0 0 24 24"><use href="#i-x"/></svg></button></div>
+        <div class="field"><label>Weight (${unit})</label><input class="input" id="mWeight" inputmode="decimal"></div>
+        <div class="field"><label>Body Fat % (optional)</label><input class="input" id="mBF" inputmode="decimal"></div>
+        <div class="grid-2">
+          <div class="field"><label>Waist (cm)</label><input class="input" id="mWaist" inputmode="decimal"></div>
+          <div class="field"><label>Chest (cm)</label><input class="input" id="mChest" inputmode="decimal"></div>
+          <div class="field"><label>Arms (cm)</label><input class="input" id="mArm" inputmode="decimal"></div>
+          <div class="field"><label>Thigh (cm)</label><input class="input" id="mThigh" inputmode="decimal"></div>
+        </div>
+        <button class="btn btn-primary btn-block" id="saveMetric">Save</button>`);
+      document.getElementById('shClose').onclick = AK.Sheet.close;
+      document.getElementById('saveMetric').onclick = () => {
+        const wRaw = parseFloat(document.getElementById('mWeight').value);
+        const weightKg = wRaw ? (unit==='lb' ? wRaw/2.2046 : wRaw) : null;
+        AK.state.metrics.push({ id:AK.uid(), date:AK.today(), weightKg,
+          bodyFatPct: parseFloat(document.getElementById('mBF').value)||null,
+          measurements:{ waist:parseFloat(document.getElementById('mWaist').value)||null, chest:parseFloat(document.getElementById('mChest').value)||null, arm:parseFloat(document.getElementById('mArm').value)||null, thigh:parseFloat(document.getElementById('mThigh').value)||null }
+        });
+        AK.save(); AK.Game.updateStreak(); AK.Game.addXp(10,'Metrics logged'); AK.Sheet.close(); render();
+      };
+    });
+  }
+  function convertWeight(kg, unit){ return unit==='lb' ? kg*2.2046 : kg; }
+  function sparkline(list){
+    const pts = [...list].reverse().filter(m=>m.weightKg).slice(-14);
+    if (pts.length<2) return '<div class="text-2 text-sm">Log more entries to see a trend line</div>';
+    const vals = pts.map(p=>p.weightKg);
+    const min = Math.min(...vals), max = Math.max(...vals) || min+1;
+    const w=280,h=60;
+    const path = pts.map((p,i)=>{
+      const x = (i/(pts.length-1))*w;
+      const y = h - ((p.weightKg-min)/((max-min)||1))*h;
+      return (i===0?'M':'L')+x.toFixed(1)+','+y.toFixed(1);
+    }).join(' ');
+    return `<svg viewBox="0 0 ${w} ${h}" style="width:100%;height:60px"><path d="${path}" fill="none" stroke="var(--accent-2)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+  }
+
+  /* ---------- Sleep ---------- */
+  function renderSleep(body){
+    const today = AK.state.sleep[AK.today()];
+    body.innerHTML = `<div class="card">
+      <div class="text-2 text-sm">Last night's sleep</div>
+      <div class="stepper mt-8" style="max-width:200px"><button data-s="-0.5">−</button><input id="sleepInput" value="${today||''}" placeholder="7.5"><button data-s="0.5">+</button></div>
+      <button class="btn btn-primary btn-block mt-16" id="saveSleep">Save</button>
+    </div>`;
+    const inp = document.getElementById('sleepInput');
+    document.querySelectorAll('[data-s]').forEach(b=>b.addEventListener('click',()=>{
+      inp.value = AK.round1(AK.clamp((parseFloat(inp.value)||7)+parseFloat(b.dataset.s),0,16));
+    }));
+    document.getElementById('saveSleep').onclick = () => {
+      AK.state.sleep[AK.today()] = parseFloat(inp.value)||0;
+      AK.save(); AK.Game.addXp(10,'Sleep logged'); AK.toast('Sleep logged','good'); render();
+    };
+  }
+
+  return { render, addPhotoFlow };
+})();
+</script>
+
+<script>
+/* ====================================================================
+   QUESTS / ACHIEVEMENTS UI
+   ==================================================================== */
+AK.QuestsUI = (() => {
+  function render(){
+    const el = document.getElementById('screen-quests');
+    const q = AK.Quests.get();
+    const g = AK.state.gamification;
+    const unlocked = AK.Achievements.DEFS.filter(a => g.unlockedAchievements.includes(a.id));
+    const locked = AK.Achievements.DEFS.filter(a => !g.unlockedAchievements.includes(a.id) && !a.secret);
+    const lockedSecret = AK.Achievements.DEFS.filter(a => !g.unlockedAchievements.includes(a.id) && a.secret);
+    el.innerHTML = `
+      <h1 class="page-title">Quests & Achievements</h1>
+      <p class="page-sub">Real actions. Real rewards. No hollow points.</p>
+      <div class="section-title">Today's Quests</div>
+      ${q.map(item=>`<div class="card flex items-center justify-between" style="opacity:${item.done?0.6:1}">
+        <span class="flex items-center gap-12">
+          <span class="btn-icon" style="width:34px;height:34px;background:${item.done?'var(--good)':'var(--surface-hi)'};color:${item.done?'#04231a':'var(--text-2)'}"><svg class="icon" viewBox="0 0 24 24" style="width:16px;height:16px"><use href="#${item.done?'i-check':'i-target'}"/></svg></span>
+          <span style="text-decoration:${item.done?'line-through':'none'}">${AK.escapeHtml(item.label)}</span>
+        </span>
+        <span class="pill">+${item.xp} XP</span>
+      </div>`).join('')}
+
+      <div class="section-title">Achievements (${unlocked.length}/${AK.Achievements.DEFS.length})</div>
+      <div class="grid-3">
+        ${unlocked.map(a=>achCard(a,true)).join('')}
+        ${locked.map(a=>achCard(a,false)).join('')}
+        ${lockedSecret.map(()=>secretCard()).join('')}
+      </div>
+      <div class="section-title">Hunter Stats</div>
+      <div class="card">
+        ${statRow('Level', g.level)} ${statRow('Rank', AK.Game.rankFor(g.level).label)}
+        ${statRow('Longest streak', g.streak)} ${statRow('Total XP earned', totalXpEarned())}
+      </div>
+    `;
+    el.querySelectorAll('[data-ach]').forEach(c=>c.addEventListener('click',()=>{
+      const a = AK.Achievements.DEFS.find(x=>x.id===c.dataset.ach);
+      AK.toast(a.name+': '+a.desc);
+    }));
+  }
+  function totalXpEarned(){
+    const g = AK.state.gamification;
+    let sum = g.xp;
+    for (let l=1;l<g.level;l++) sum += AK.Game.xpForLevel(l);
+    return sum;
+  }
+  function statRow(label,val){ return `<div class="flex items-center justify-between" style="padding:6px 0"><span class="text-2">${label}</span><b>${val}</b></div>`; }
+  function achCard(a, unlocked){
+    return `<div class="card tap" style="text-align:center;padding:14px 8px;${unlocked?'':'opacity:.35'}" data-ach="${a.id}">
+      <svg class="icon" viewBox="0 0 24 24" style="width:24px;height:24px;color:${unlocked?'var(--accent-2)':'var(--text-3)'}"><use href="#${a.icon}"/></svg>
+      <div class="text-sm mt-8" style="font-weight:700">${a.name}</div>
+    </div>`;
+  }
+  function secretCard(){
+    return `<div class="card" style="text-align:center;padding:14px 8px;opacity:.35">
+      <svg class="icon" viewBox="0 0 24 24" style="width:24px;height:24px;color:var(--text-3)"><use href="#i-lock"/></svg>
+      <div class="text-sm mt-8" style="font-weight:700">???</div>
+    </div>`;
+  }
+  return { render };
+})();
+
+/* ====================================================================
+   SHARE MODULE — canvas-generated shareable report card
+   ==================================================================== */
+AK.Share = (() => {
+  function open(){
+    const g = AK.state.gamification, p = AK.state.profile;
+    const stats = AK.Game.derivedStats();
+    const waterToday = AK.Water.totalFor(AK.today());
+    const consistency = weekConsistency();
+    AK.Sheet.open(`<div class="sheet-head"><h3>Share Report</h3><button class="btn-icon" id="shClose"><svg class="icon" viewBox="0 0 24 24"><use href="#i-x"/></svg></button></div>
+      <canvas id="shareCanvas" width="640" height="800" style="width:100%;border-radius:20px;box-shadow:var(--shadow-2)"></canvas>
+      <div class="grid-2 mt-16">
+        <button class="btn btn-ghost btn-block" id="downloadShare"><svg class="icon" viewBox="0 0 24 24"><use href="#i-download"/></svg> Download</button>
+        <button class="btn btn-primary btn-block" id="shareNative"><svg class="icon" viewBox="0 0 24 24"><use href="#i-share"/></svg> Share</button>
+      </div>`);
+    document.getElementById('shClose').onclick = AK.Sheet.close;
+    drawCard(document.getElementById('shareCanvas'), {name:p?.name||'Hunter', level:g.level, rank:AK.Game.rankFor(g.level), streak:g.streak, stats, waterToday, waterGoal:AK.state.waterGoalMl, consistency});
+    document.getElementById('downloadShare').addEventListener('click', () => {
+      const c = document.getElementById('shareCanvas');
+      const a = document.createElement('a'); a.download = 'arise-kage-report.png'; a.href = c.toDataURL('image/png'); a.click();
+    });
+    document.getElementById('shareNative').addEventListener('click', async () => {
+      const c = document.getElementById('shareCanvas');
+      c.toBlob(async (blob) => {
+        const file = new File([blob], 'arise-kage-report.png', {type:'image/png'});
+        if (navigator.share && navigator.canShare && navigator.canShare({files:[file]})) {
+          try { await navigator.share({ files:[file], title:'My Arise Kage Report', text:'Leveling up with Arise Kage 💪' }); } catch(e){}
+        } else { AK.toast('Sharing not supported here — downloaded instead'); const a=document.createElement('a'); a.download='arise-kage-report.png'; a.href=c.toDataURL('image/png'); a.click(); }
+      });
+    });
+  }
+  function weekConsistency(){
+    let daysActive = 0;
+    for (let i=0;i<7;i++){
+      const d = new Date(); d.setDate(d.getDate()-i);
+      const key = AK.fmtDate(d);
+      const worked = AK.state.workouts.some(w=>w.date===key);
+      const hydrated = AK.Water.totalFor(key) >= AK.state.waterGoalMl;
+      if (worked || hydrated) daysActive++;
+    }
+    return daysActive/7;
+  }
+  function drawCard(canvas, d){
+    const ctx = canvas.getContext('2d');
+    const W = canvas.width, H = canvas.height;
+    const grad = ctx.createLinearGradient(0,0,W,H);
+    grad.addColorStop(0,'#0a0a12'); grad.addColorStop(1,'#1c1030');
+    ctx.fillStyle = grad; ctx.fillRect(0,0,W,H);
+    // glow
+    const rg = ctx.createRadialGradient(W*0.8,H*0.15,10,W*0.8,H*0.15,300);
+    rg.addColorStop(0,'rgba(124,58,237,.5)'); rg.addColorStop(1,'rgba(124,58,237,0)');
+    ctx.fillStyle = rg; ctx.fillRect(0,0,W,H);
+
+    ctx.fillStyle = '#fff'; ctx.font = '900 30px sans-serif'; ctx.fillText('ARISE KAGE', 40, 70);
+    ctx.fillStyle = '#a78bfa'; ctx.font = '700 16px sans-serif'; ctx.fillText(d.name.toUpperCase()+"'S WEEKLY REPORT", 40, 98);
+
+    // level badge
+    const rankColor = resolveColor(d.rank.color);
+    ctx.fillStyle='rgba(255,255,255,.06)'; roundRect(ctx,40,130,W-80,120,20); ctx.fill();
+    ctx.fillStyle='#fff'; ctx.font='900 64px sans-serif'; ctx.fillText('LV '+d.level, 64, 210);
+    ctx.fillStyle=rankColor; ctx.font='800 20px sans-serif'; ctx.fillText(d.rank.label.toUpperCase(), 66, 232);
+    ctx.font='800 20px sans-serif'; ctx.fillStyle='#fbbf24'; ctx.fillText('🔥 '+d.streak+' day streak', W-260, 175);
+    ctx.fillStyle='#c7c6e6'; ctx.font='600 16px sans-serif'; ctx.fillText('Rank: '+d.rank.label, W-260, 205);
+
+    // speedometer gauge for weekly consistency
+    const cx=W/2, cy=340, r=110;
+    ctx.lineWidth=18; ctx.lineCap='round';
+    ctx.strokeStyle='rgba(255,255,255,.1)';
+    ctx.beginPath(); ctx.arc(cx,cy,r,Math.PI*0.75,Math.PI*2.25); ctx.stroke();
+    const pct = d.consistency;
+    const grad2 = ctx.createLinearGradient(cx-r,cy,cx+r,cy);
+    grad2.addColorStop(0,'#f43f5e'); grad2.addColorStop(.5,'#f59e0b'); grad2.addColorStop(1,'#22d3aa');
+    ctx.strokeStyle=grad2;
+    ctx.beginPath(); ctx.arc(cx,cy,r,Math.PI*0.75,Math.PI*0.75+Math.PI*1.5*pct); ctx.stroke();
+    // needle
+    const ang = Math.PI*0.75+Math.PI*1.5*pct;
+    ctx.save(); ctx.translate(cx,cy); ctx.rotate(ang);
+    ctx.strokeStyle='#fff'; ctx.lineWidth=4; ctx.beginPath(); ctx.moveTo(0,0); ctx.lineTo(r-24,0); ctx.stroke();
+    ctx.restore();
+    ctx.fillStyle='#fff'; ctx.beginPath(); ctx.arc(cx,cy,8,0,7); ctx.fill();
+    ctx.textAlign='center';
+    ctx.font='900 36px sans-serif'; ctx.fillStyle='#fff'; ctx.fillText(Math.round(pct*100)+'%', cx, cy+95);
+    ctx.font='700 15px sans-serif'; ctx.fillStyle='#8b89ad'; ctx.fillText('WEEKLY CONSISTENCY', cx, cy+119);
+    ctx.textAlign='left';
+
+    // stat row
+    const statsY = 520;
+    const items = [['STR',d.stats.STR],['END',d.stats.END],['VIT',d.stats.VIT],['AGI',d.stats.AGI]];
+    const colW = (W-80)/4;
+    items.forEach(([label,val],i)=>{
+      const x = 40+i*colW;
+      ctx.fillStyle='rgba(255,255,255,.05)'; roundRect(ctx,x,statsY,colW-10,90,16); ctx.fill();
+      ctx.textAlign='center';
+      ctx.fillStyle='#fff'; ctx.font='800 26px sans-serif'; ctx.fillText(val, x+(colW-10)/2, statsY+42);
+      ctx.fillStyle='#8b89ad'; ctx.font='700 13px sans-serif'; ctx.fillText(label, x+(colW-10)/2, statsY+68);
+    });
+    ctx.textAlign='left';
+
+    // water bar
+    const wy = 655;
+    ctx.fillStyle='#c7c6e6'; ctx.font='700 16px sans-serif'; ctx.fillText('💧 Hydration today', 40, wy);
+    ctx.fillStyle='rgba(255,255,255,.1)'; roundRect(ctx,40,wy+16,W-80,16,8); ctx.fill();
+    ctx.fillStyle='#38bdf8'; roundRect(ctx,40,wy+16,(W-80)*AK.clamp(d.waterToday/d.waterGoal,0,1),16,8); ctx.fill();
+    ctx.fillStyle='#8b89ad'; ctx.font='600 13px sans-serif'; ctx.fillText(d.waterToday+' / '+d.waterGoal+'ml', 40, wy+52);
+
+    ctx.fillStyle='#5c5a80'; ctx.font='600 13px sans-serif'; ctx.fillText('Made with Arise Kage — 100% free, forever.', 40, H-30);
+
+    function roundRect(c,x,y,w,h,r){ c.beginPath(); c.moveTo(x+r,y); c.arcTo(x+w,y,x+w,y+h,r); c.arcTo(x+w,y+h,x,y+h,r); c.arcTo(x,y+h,x,y,r); c.arcTo(x,y,x+w,y,r); c.closePath(); }
+    function resolveColor(cssVal){
+      if (!cssVal.startsWith('var(')) return cssVal;
+      const name = cssVal.slice(4,-1).trim();
+      const v = getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+      return v || '#fb923c';
+    }
+  }
+  return { open };
+})();
+</script>
+
+<script>
+/* ====================================================================
+   SETTINGS MODULE
+   ==================================================================== */
+AK.Settings = (() => {
+  function render(){
+    const el = document.getElementById('screen-settings');
+    const s = AK.state.settings;
+    const p = AK.state.profile;
+    el.innerHTML = `
+      <h1 class="page-title">More</h1>
+      <p class="page-sub">Customize everything. It's your app.</p>
+
+      <div class="section-title">Profile</div>
+      <div class="card flex items-center justify-between">
+        <span class="flex items-center gap-12">
+          <span class="btn-icon" style="background:var(--accent);color:#fff">${(p?.name||'H')[0].toUpperCase()}</span>
+          <span><b style="display:block">${AK.escapeHtml(p?.name||'Hunter')}</b><span class="text-2 text-sm">${AK.escapeHtml(p?.title||'Awakened Hunter')}</span></span>
+        </span>
+        <button class="btn-icon" id="editProfile"><svg class="icon" viewBox="0 0 24 24"><use href="#i-edit"/></svg></button>
+      </div>
+
+      <div class="section-title">Appearance</div>
+      <div class="card">
+        <div class="text-2 text-sm mb-8">Theme</div>
+        <div class="chipset">
+          ${AK.Onboard.THEMES.map(t=>`<button class="chip ${s.theme===t.key?'active':''}" data-theme="${t.key}">${t.label}</button>`).join('')}
+        </div>
+        <div class="text-2 text-sm mt-16 mb-8">Accent Color</div>
+        <div class="chipset" id="accentSwatches">
+          ${['#7c3aed','#ea580c','#38bdf8','#22d3aa','#f43f5e','#ffd54a'].map(c=>`<button data-accent="${c}" style="width:34px;height:34px;border-radius:10px;background:${c};border:2px solid ${s.accent===c?'#fff':'transparent'}"></button>`).join('')}
+          <input type="color" id="customAccent" value="${s.accent}" style="width:34px;height:34px;border:none;border-radius:10px;background:none;padding:0">
+        </div>
+        <div class="flex items-center justify-between mt-16">
+          <span>Reduced motion</span>
+          <label class="chip ${s.reducedMotion?'active':''}" id="toggleMotion" style="cursor:pointer">${s.reducedMotion?'On':'Off'}</label>
+        </div>
+      </div>
+
+      <div class="section-title">Units</div>
+      <div class="card">
+        <div class="chipset">
+          <button class="chip ${s.unit==='metric'?'active':''}" data-unit="metric">Metric (kg/cm)</button>
+          <button class="chip ${s.unit==='imperial'?'active':''}" data-unit="imperial">Imperial (lb/in)</button>
+        </div>
+      </div>
+
+      <div class="section-title">Notifications</div>
+      <div class="card">
+        <div class="flex items-center justify-between"><span class="flex items-center gap-8"><svg class="icon" viewBox="0 0 24 24"><use href="#i-droplet"/></svg>Water reminders</span><label class="chip ${s.notifWater?'active':''}" id="toggleNotifWater" style="cursor:pointer">${s.notifWater?'On':'Off'}</label></div>
+        <div class="flex items-center justify-between mt-16"><span class="flex items-center gap-8"><svg class="icon" viewBox="0 0 24 24"><use href="#i-dumbbell"/></svg>Workout reminders</span><label class="chip ${s.notifWorkout?'active':''}" id="toggleNotifWorkout" style="cursor:pointer">${s.notifWorkout?'On':'Off'}</label></div>
+      </div>
+
+      <div class="section-title">Cloud Sync (optional, free Firebase Spark plan)</div>
+      <div class="card">
+        <p class="text-2 text-sm">Photos always stay on this device. Firebase can back up your workouts, water, nutrition & metrics across devices — completely free, no card required.</p>
+        <button class="btn btn-ghost btn-block mt-16" id="firebaseBtn"><svg class="icon" viewBox="0 0 24 24"><use href="#i-cloud"/></svg> ${s.firebaseEnabled?'Manage Firebase Sync (Connected)':'Connect Firebase'}</button>
+      </div>
+
+      <div class="section-title">Data</div>
+      <div class="card" style="display:flex;flex-direction:column;gap:10px">
+        <button class="btn btn-ghost btn-block" id="exportBtn"><svg class="icon" viewBox="0 0 24 24"><use href="#i-download"/></svg> Export Backup (JSON)</button>
+        <button class="btn btn-ghost btn-block" id="importBtn"><svg class="icon" viewBox="0 0 24 24"><use href="#i-upload"/></svg> Import Backup</button>
+        <input type="file" accept="application/json" id="importFile" style="display:none">
+        <button class="btn btn-danger btn-block" id="resetBtn"><svg class="icon" viewBox="0 0 24 24"><use href="#i-trash"/></svg> Reset All Data</button>
+      </div>
+
+      <div class="section-title">About</div>
+      <div class="card">
+        <p class="text-sm">Arise Kage v1.0 — 100% free, forever. No ads, no subscriptions, no locked features. Built for hunters who show up.</p>
+        <p class="text-2 text-sm mt-8">Tip: try the Konami code, or whisper the word of power somewhere on the Home screen. 👀</p>
+      </div>
+    `;
+    bind(el);
+  }
+  function bind(el){
+    el.querySelector('#editProfile').addEventListener('click', () => {
+      const name = prompt('Your name:', AK.state.profile.name);
+      if (name) { AK.state.profile.name = name.trim(); AK.save(); render(); }
+    });
+    el.querySelectorAll('[data-theme]').forEach(b=>b.addEventListener('click',()=>{
+      AK.state.settings.theme = b.dataset.theme;
+      const t = AK.Onboard.THEMES.find(x=>x.key===b.dataset.theme);
+      if (t) AK.state.settings.accent = t.accent;
+      AK.save(); AK.applyTheme(); render();
+    }));
+    el.querySelectorAll('[data-accent]').forEach(b=>b.addEventListener('click',()=>{
+      AK.state.settings.accent = b.dataset.accent; AK.save(); AK.applyTheme(); render();
+    }));
+    el.querySelector('#customAccent').addEventListener('input', (e) => { AK.state.settings.accent = e.target.value; AK.save(); AK.applyTheme(); });
+    el.querySelector('#toggleMotion').addEventListener('click', () => { AK.state.settings.reducedMotion = !AK.state.settings.reducedMotion; AK.save(); AK.applyTheme(); render(); });
+    el.querySelectorAll('[data-unit]').forEach(b=>b.addEventListener('click',()=>{ AK.state.settings.unit = b.dataset.unit; AK.save(); render(); }));
+    el.querySelector('#toggleNotifWater').addEventListener('click', () => { AK.state.settings.notifWater = !AK.state.settings.notifWater; AK.save(); render(); });
+    el.querySelector('#toggleNotifWorkout').addEventListener('click', () => { AK.state.settings.notifWorkout = !AK.state.settings.notifWorkout; AK.save(); render(); });
+    el.querySelector('#firebaseBtn').addEventListener('click', AK.Sync.openConfigSheet);
+    el.querySelector('#exportBtn').addEventListener('click', exportBackup);
+    el.querySelector('#importBtn').addEventListener('click', () => el.querySelector('#importFile').click());
+    el.querySelector('#importFile').addEventListener('change', importBackup);
+    el.querySelector('#resetBtn').addEventListener('click', resetAll);
+  }
+  function exportBackup(){
+    const blob = new Blob([JSON.stringify(AK.state,null,2)], {type:'application/json'});
+    const a = document.createElement('a'); a.download = `arise-kage-backup-${AK.today()}.json`; a.href = URL.createObjectURL(blob); a.click();
+    AK.toast('Backup downloaded','good');
+  }
+  function importBackup(e){
+    const f = e.target.files[0]; if (!f) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      try {
+        const data = JSON.parse(reader.result);
+        if (!confirm('This will replace your current data with the backup. Continue?')) return;
+        AK.state = Object.assign(AK.defaultState(), data);
+        AK.save(); AK.applyTheme(); AK.toast('Backup restored','good'); AK.Router.go('home');
+      } catch(err) { AK.toast('Invalid backup file','bad'); }
+    };
+    reader.readAsText(f);
+  }
+  function resetAll(){
+    if (!confirm('This will permanently erase ALL data on this device, including photos. This cannot be undone. Continue?')) return;
+    if (!confirm('Are you absolutely sure? Consider exporting a backup first.')) return;
+    localStorage.removeItem(DB_KEY);
+    AK.PhotoDB.all().then(all => Promise.all(all.map(r=>AK.PhotoDB.del(r.id)))).finally(()=>location.reload());
+  }
+  return { render };
+})();
+
+/* ====================================================================
+   FIREBASE SYNC (optional, free-tier, config supplied by user)
+   ==================================================================== */
+AK.Sync = (() => {
+  let fbApp=null, fbAuth=null, fbDb=null, ready=false;
+  async function init(){
+    const s = AK.state.settings;
+    if (!s.firebaseEnabled || !s.firebaseConfig) return;
+    try {
+      const [{ initializeApp }, { getAuth, signInAnonymously }, { getFirestore, doc, setDoc, getDoc }] = await Promise.all([
+        import('https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js'),
+        import('https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js'),
+        import('https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js'),
+      ]);
+      fbApp = initializeApp(s.firebaseConfig);
+      fbAuth = getAuth(fbApp);
+      await signInAnonymously(fbAuth);
+      fbDb = getFirestore(fbApp);
+      AK._fbHelpers = { doc, setDoc, getDoc };
+      ready = true;
+      AK.toast('Cloud sync connected','good');
+    } catch(e) { console.error('Firebase init failed', e); AK.toast('Cloud sync failed to connect — check your config','bad'); }
+  }
+  async function queuePush(){
+    if (!ready || !fbAuth?.currentUser) return;
+    try {
+      const { doc, setDoc } = AK._fbHelpers;
+      const snapshot = Object.assign({}, AK.state, { profileOnly:false });
+      delete snapshot.photoMeta; // metadata only, blobs never leave device
+      await setDoc(doc(fbDb, 'arisekage_users', fbAuth.currentUser.uid), { data: JSON.stringify(snapshot), updatedAt: Date.now() });
+    } catch(e) { console.warn('sync push failed', e); }
+  }
+  function openConfigSheet(){
+    const s = AK.state.settings;
+    AK.Sheet.open(`<div class="sheet-head"><h3>Firebase Cloud Sync</h3><button class="btn-icon" id="shClose"><svg class="icon" viewBox="0 0 24 24"><use href="#i-x"/></svg></button></div>
+      <p class="text-2 text-sm mb-16">Create a free Firebase project at firebase.google.com (Spark plan, no card needed), enable Anonymous Auth + Firestore, then paste your config below. Sensitive — don't share this with anyone or commit it to a public repo.</p>
+      <textarea class="input" id="fbConfigInput" rows="6" placeholder='{"apiKey":"...","authDomain":"...","projectId":"...","storageBucket":"...","messagingSenderId":"...","appId":"..."}'>${s.firebaseConfig?JSON.stringify(s.firebaseConfig,null,2):''}</textarea>
+      <div class="grid-2 mt-16">
+        <button class="btn btn-ghost btn-block" id="fbDisconnect">Disconnect</button>
+        <button class="btn btn-primary btn-block" id="fbConnect">Connect</button>
+      </div>`);
+    document.getElementById('shClose').onclick = AK.Sheet.close;
+    document.getElementById('fbDisconnect').onclick = () => { AK.state.settings.firebaseEnabled=false; AK.state.settings.firebaseConfig=null; AK.save(); AK.Sheet.close(); AK.toast('Disconnected'); };
+    document.getElementById('fbConnect').onclick = () => {
+      try {
+        const cfg = JSON.parse(document.getElementById('fbConfigInput').value);
+        AK.state.settings.firebaseConfig = cfg; AK.state.settings.firebaseEnabled = true; AK.save();
+        AK.Sheet.close(); init();
+      } catch(e) { AK.toast('Invalid JSON config','bad'); }
+    };
+  }
+  return { init, queuePush, openConfigSheet };
+})();
+</script>
+
+<script>
+/* ====================================================================
+   THEME APPLICATION
+   ==================================================================== */
+AK.applyTheme = () => {
+  const s = AK.state.settings;
+  document.documentElement.setAttribute('data-theme', s.theme);
+  document.documentElement.style.setProperty('--accent', s.accent);
+  // derive a lighter accent-2 automatically
+  document.documentElement.style.setProperty('--accent-2', lighten(s.accent, 22));
+  document.documentElement.style.setProperty('--accent-glow', s.accent + 'aa');
+  document.querySelector('meta[name="theme-color"]').setAttribute('content', s.accent);
+  document.body.classList.toggle('reduced-motion', !!s.reducedMotion);
+  const label = document.getElementById('brandLabel');
+  if (label) label.textContent = s.theme==='kage' ? 'KAGE HUNTER' : 'ARISE KAGE';
+};
+function lighten(hex, pct){
+  try {
+    const n = parseInt(hex.replace('#',''),16);
+    let r=(n>>16)&255, g=(n>>8)&255, b=n&255;
+    r=Math.min(255,Math.round(r+(255-r)*pct/100)); g=Math.min(255,Math.round(g+(255-g)*pct/100)); b=Math.min(255,Math.round(b+(255-b)*pct/100));
+    return '#'+[r,g,b].map(v=>v.toString(16).padStart(2,'0')).join('');
+  } catch(e){ return hex; }
+}
+
+/* ====================================================================
+   PWA: manifest + service worker registered via Blob URLs (single-file friendly)
+   ==================================================================== */
+AK.setupPWA = () => {
+  const iconSvg = `<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='24' fill='%23${(AK.state.settings.accent||'#7c3aed').replace('#','')}'/><path d='M30 70 L50 25 L70 70 M38 55 L62 55' stroke='white' stroke-width='7' fill='none' stroke-linecap='round' stroke-linejoin='round'/></svg>`;
+  const iconUrl = 'data:image/svg+xml,' + encodeURIComponent(iconSvg.replace(/%23/g,'#'));
+  const manifest = {
+    name: "Arise Kage — Level Up. For Real.", short_name: "Arise Kage",
+    description: "Track workouts, water, nutrition, and progress photos. Free forever.",
+    start_url: ".", display: "standalone", background_color: "#0a0a12", theme_color: AK.state.settings.accent||'#7c3aed',
+    icons: [{ src: iconUrl, sizes: "100x100", type: "image/svg+xml", purpose:"any maskable" }]
+  };
+  const manifestBlob = new Blob([JSON.stringify(manifest)], {type:'application/json'});
+  let link = document.querySelector('link[rel="manifest"]');
+  if (!link) { link = document.createElement('link'); link.rel='manifest'; document.head.appendChild(link); }
+  link.href = URL.createObjectURL(manifestBlob);
+
+  // NOTE: browsers refuse to register a service worker from a blob:/data: URL
+  // (script must be same-origin http/https) — so full offline caching needs the
+  // tiny companion sw.js file shipped next to this index.html. If that file
+  // isn't present (e.g. this HTML was opened standalone), registration just
+  // fails silently and the app continues to work online-only.
+  if ('serviceWorker' in navigator && (location.protocol==='http:'||location.protocol==='https:')) {
+    navigator.serviceWorker.register('./sw.js').catch(()=>{ /* offline caching unavailable, app still works fine online */ });
+  }
+};
+
+/* ====================================================================
+   EASTER EGGS
+   ==================================================================== */
+AK.setupEasterEggs = () => {
+  // Konami code
+  const seq = ['ArrowUp','ArrowUp','ArrowDown','ArrowDown','ArrowLeft','ArrowRight','ArrowLeft','ArrowRight','b','a'];
+  let pos = 0;
+  window.addEventListener('keydown', (e) => {
+    pos = (e.key === seq[pos]) ? pos+1 : (e.key===seq[0] ? 1 : 0);
+    if (pos === seq.length) { pos=0; AK.Achievements.unlock('konami'); AK.toast('⚡ Secret Technique unlocked!','good'); }
+  });
+  // Typing "arise" anywhere unlocks an achievement (buffer of last 10 keys)
+  let buf = '';
+  window.addEventListener('keypress', (e) => {
+    buf = (buf + e.key).slice(-10).toLowerCase();
+    if (buf.includes('arise')) { AK.Achievements.unlock('arise_typed'); buf=''; }
+  });
+  // Tap logo 7 times fast
+  let taps=[];
+  document.addEventListener('click', (e) => {
+    if (e.target.closest && e.target.closest('.topbar .mark')) {
+      const now = Date.now(); taps.push(now); taps = taps.filter(t=>now-t<2500);
+      if (taps.length>=7) { taps=[]; AK.Achievements.unlock('konami'); AK.Fx.confettiBurst(); }
+    }
+  });
+};
+
+/* ====================================================================
+   BOOTSTRAP
+   ==================================================================== */
+AK.boot2 = () => {
+  AK.Sync.init();
+  AK.Quests.ensureToday();
+  AK.UI.render(location.hash.replace('#','')||'home');
+};
+
+document.addEventListener('DOMContentLoaded', () => {
+  // inject app shell
+  const tpl = document.getElementById('app-shell-tpl');
+  document.getElementById('app').innerHTML = tpl.innerHTML;
+
+  AK.load();
+  AK.applyTheme();
+  AK.setupPWA();
+  AK.setupEasterEggs();
+
+  document.getElementById('sheetOverlay').addEventListener('click', (e) => { if (e.target.id==='sheetOverlay') AK.Sheet.close(); });
+
+  if (AK.state.profile) {
+    document.getElementById('screen-onboard').classList.remove('active');
+    document.getElementById('appChrome').classList.remove('hidden');
+    AK.Router.init();
+    AK.boot2();
+  } else {
+    document.getElementById('screen-onboard').classList.add('active');
+    AK.Onboard.render();
+  }
+});
+
+window.addEventListener('beforeinstallprompt', (e) => { AK._deferredInstall = e; });
+</script>
+
+</body>
+</html>
