@@ -1,0 +1,2883 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1">
+<meta name="theme-color" content="#7c3aed">
+<meta name="description" content="Arise Kage — the fitness app that levels you up for real. Track workouts, water, nutrition, and progress photos. 100% free, forever.">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Arise Kage">
+<title>Arise Kage — Level Up. For Real.</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='24' fill='%237c3aed'/%3E%3Cpath d='M30 70 L50 25 L70 70 M38 55 L62 55' stroke='white' stroke-width='7' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700;800&family=Inter:wght@400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style id="app-styles">
+/* ====================================================================
+   ARISE KAGE — Core Stylesheet v2
+   ==================================================================== */
+:root{
+  --bg-0:#08080f; --bg-1:#0f0f1c; --bg-2:#171729; --bg-3:#1f1f38;
+  --surface:#12121f; --surface-hi:#1b1b30;
+  --border:#28283f; --border-hi:#38385a;
+  --text-0:#f6f5ff; --text-1:#c9c7e8; --text-2:#8c89ad; --text-3:#5b5980;
+  --accent:#7c3aed; --accent-2:#a78bfa; --accent-glow:#7c3aedaa;
+  --danger:#f43f5e; --warn:#f59e0b; --good:#22d3aa; --info:#38bdf8;
+  --water:#38bdf8; --xp:#a78bfa; --fire:#fb923c;
+  --rank-e:#8c89ad; --rank-d:#38bdf8; --rank-c:#22d3aa; --rank-b:#a78bfa; --rank-a:#fb923c; --rank-s:#f43f5e; --rank-ss:#ffd54a;
+  --radius-sm:10px; --radius-md:16px; --radius-lg:22px; --radius-xl:30px;
+  --shadow-1:0 2px 10px rgba(0,0,0,.28); --shadow-2:0 12px 34px rgba(0,0,0,.44); --shadow-glow:0 0 26px var(--accent-glow);
+  --font-display:'Space Grotesk',ui-sans-serif,system-ui,-apple-system,sans-serif;
+  --font-body:'Inter',ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --font-mono:'Space Mono',ui-monospace,'SF Mono',Menlo,Consolas,monospace;
+  --safe-top:env(safe-area-inset-top,0px); --safe-bottom:env(safe-area-inset-bottom,0px);
+  --dur-fast:.15s; --dur-med:.3s; --dur-slow:.6s; --ease-out:cubic-bezier(.16,1,.3,1); --ease-spring:cubic-bezier(.34,1.56,.64,1);
+  --nav-w:88px; --nav-w-lg:248px; --content-max:640px;
+}
+:root[data-theme="kage"]{
+  --bg-0:#0d0805; --bg-1:#160d07; --bg-2:#1f1309; --bg-3:#28190b;
+  --surface:#160e07; --surface-hi:#20140a;
+  --border:#33200f; --border-hi:#472c14;
+  --accent:#ea580c; --accent-2:#fb923c; --accent-glow:#ea580caa; --xp:#fbbf24;
+}
+:root[data-theme="light"]{
+  --bg-0:#f4f2fb; --bg-1:#ffffff; --bg-2:#ece9f8; --bg-3:#e1ddf3;
+  --surface:#ffffff; --surface-hi:#f6f4fd;
+  --border:#e0dcf1; --border-hi:#cdc6e8;
+  --text-0:#161227; --text-1:#38335a; --text-2:#6a6690; --text-3:#9894b8;
+  --accent:#7c3aed; --accent-2:#6d28d9; --accent-glow:#7c3aed4d;
+  --shadow-1:0 2px 10px rgba(40,30,80,.06); --shadow-2:0 12px 34px rgba(40,30,80,.12);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-text-size-adjust:100%;color-scheme:dark}
+:root[data-theme="light"] html{color-scheme:light}
+body{
+  font-family:var(--font-body);background:var(--bg-0);color:var(--text-0);
+  min-height:100vh;min-height:100dvh;overflow-x:hidden;
+  -webkit-font-smoothing:antialiased;line-height:1.45;
+  transition:background var(--dur-med) var(--ease-out),color var(--dur-med) var(--ease-out);
+}
+body::before{
+  content:"";position:fixed;inset:0;z-index:-2;pointer-events:none;
+  background:
+    radial-gradient(ellipse 80% 50% at 50% -10%, var(--accent-glow), transparent 60%),
+    radial-gradient(ellipse 60% 40% at 90% 100%, var(--accent-glow), transparent 50%);
+  opacity:.32;
+}
+/* subtle film-grain texture for a less "flat SaaS gradient" feel */
+body::after{
+  content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;opacity:.035;mix-blend-mode:overlay;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+button,input,select,textarea{font-family:inherit;color:inherit}
+button{background:none;border:none;cursor:pointer;-webkit-tap-highlight-color:transparent}
+a{color:inherit;text-decoration:none}
+::selection{background:var(--accent);color:#fff}
+.reduced-motion *{animation-duration:.001s !important;transition-duration:.001s !important}
+::-webkit-scrollbar{width:8px;height:8px}
+::-webkit-scrollbar-thumb{background:var(--border-hi);border-radius:8px}
+::-webkit-scrollbar-track{background:transparent}
+
+h1,h2,h3,.font-display{font-family:var(--font-display)}
+.icon{width:1em;height:1em;display:inline-block;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
+.icon.fill{fill:currentColor;stroke:none}
+
+/* ====================================================================
+   RESPONSIVE APP SHELL
+   Mobile: single column, bottom tab bar.
+   Tablet (>=760px): wider column, bottom bar stays but content breathes.
+   Desktop (>=1080px): persistent left rail nav, bottom bar hidden, content
+   gets a max reading width instead of stretching edge-to-edge.
+   ==================================================================== */
+#app{min-height:100vh;min-height:100dvh;position:relative;display:flex;flex-direction:column}
+#app>.screen{width:100%}
+#appChrome{display:flex;flex-direction:column;flex:1;min-width:0}
+#appChrome.hidden{display:none}
+@media (min-width:1080px){
+  #app{max-width:1280px;margin:0 auto}
+  #appChrome{flex-direction:row}
+}
+
+/* ---------- Top bar ---------- */
+.topbar{
+  position:sticky;top:0;z-index:40;display:flex;align-items:center;justify-content:space-between;gap:10px;
+  padding:calc(var(--safe-top) + 14px) 20px 12px;
+  background:linear-gradient(var(--bg-0) 65%, transparent);
+  backdrop-filter:blur(10px);
+  max-width:var(--content-max);margin:0 auto;width:100%;
+}
+.topbar .brand{display:flex;align-items:center;gap:10px;font-weight:800;letter-spacing:.01em;font-size:16px;min-width:0}
+.topbar .brand .mark{width:32px;height:32px;border-radius:10px;background:linear-gradient(135deg,var(--accent),var(--accent-2));display:flex;align-items:center;justify-content:center;box-shadow:var(--shadow-glow);flex-shrink:0}
+.topbar .brand .mark svg{width:18px;height:18px;stroke:#fff}
+.topbar .brand .label{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.topbar .right-cluster{display:flex;align-items:center;gap:8px;flex-shrink:0}
+.topbar .streak{display:flex;align-items:center;gap:5px;font-size:13px;font-weight:700;color:var(--fire);background:var(--surface);border:1px solid var(--border);padding:6px 10px;border-radius:999px;flex-shrink:0}
+.topbar .streak .icon{width:14px;height:14px}
+.topbar .icon-btn{width:34px;height:34px;border-radius:10px;background:var(--surface);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.topbar .icon-btn .icon{width:16px;height:16px}
+@media (min-width:1080px){ .topbar{display:none} }
+
+/* ---------- Main / screens ---------- */
+main{flex:1;padding:4px 20px calc(176px + var(--safe-bottom));position:relative;max-width:var(--content-max);margin:0 auto;width:100%;min-width:0}
+.screen{display:none}
+.screen.active{display:block;animation:screenIn var(--dur-med) var(--ease-out)}
+@keyframes screenIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+@media (min-width:1080px){
+  main{padding:32px 40px 60px;max-width:760px}
+}
+
+.section-title{font-size:12.5px;text-transform:uppercase;letter-spacing:.09em;color:var(--text-2);font-weight:700;margin:26px 0 10px;display:flex;align-items:center;justify-content:space-between;gap:8px}
+.section-title .link{color:var(--accent-2);text-transform:none;letter-spacing:0;font-size:13px;cursor:pointer;white-space:nowrap;display:flex;align-items:center;gap:4px}
+.section-title .link .icon{width:13px;height:13px}
+h1.page-title{font-family:var(--font-display);font-size:27px;font-weight:700;letter-spacing:-.015em;margin-bottom:4px}
+.page-sub{color:var(--text-2);font-size:14px;margin-bottom:18px;line-height:1.5}
+
+/* ---------- Cards ---------- */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:18px;box-shadow:var(--shadow-1);position:relative;overflow:hidden}
+.card + .card{margin-top:12px}
+.card.tap{cursor:pointer;transition:transform var(--dur-fast) var(--ease-out),border-color var(--dur-fast),box-shadow var(--dur-fast)}
+.card.tap:active{transform:scale(.98)}
+.card.tap:hover{border-color:var(--border-hi);box-shadow:var(--shadow-2)}
+.card.glow{border-color:var(--accent);box-shadow:var(--shadow-glow)}
+.card.accent-edge::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:linear-gradient(var(--accent),var(--accent-2))}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:12px;min-width:0}
+.grid-3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.grid-2>*,.grid-3>*{min-width:0}
+@media (min-width:640px){
+  .grid-3{grid-template-columns:repeat(4,minmax(0,1fr))}
+}
+
+/* stagger-in for lists of cards, applied via JS by setting --i on each item */
+.stagger{animation:staggerIn .5s var(--ease-out) both;animation-delay:calc(var(--i,0) * 45ms)}
+@keyframes staggerIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+
+/* ---------- Buttons ---------- */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;font-weight:700;font-size:15px;padding:13px 20px;border-radius:var(--radius-md);transition:transform var(--dur-fast) var(--ease-spring),filter var(--dur-fast),box-shadow var(--dur-fast);position:relative;overflow:hidden}
+.btn:active{transform:scale(.96)}
+.btn-primary{background:linear-gradient(135deg,var(--accent),var(--accent-2));color:#fff;box-shadow:0 4px 22px var(--accent-glow)}
+.btn-primary:hover{filter:brightness(1.08)}
+.btn-ghost{background:var(--surface-hi);border:1px solid var(--border);color:var(--text-0)}
+.btn-ghost:hover{border-color:var(--border-hi)}
+.btn-danger{background:color-mix(in srgb, var(--danger) 15%, transparent);color:var(--danger);border:1px solid color-mix(in srgb, var(--danger) 40%, transparent)}
+.btn-sm{padding:8px 14px;font-size:13px;border-radius:10px}
+.btn-block{width:100%}
+.btn-icon{width:44px;height:44px;border-radius:14px;background:var(--surface-hi);border:1px solid var(--border);display:inline-flex;align-items:center;justify-content:center;transition:transform var(--dur-fast) var(--ease-spring),border-color var(--dur-fast)}
+.btn-icon:active{transform:scale(.92)}
+/* ripple micro-interaction, triggered via JS adding .rippling + custom props --rx/--ry */
+.ripple{position:relative;overflow:hidden}
+.ripple::after{content:"";position:absolute;left:var(--rx,50%);top:var(--ry,50%);width:10px;height:10px;background:radial-gradient(circle,rgba(255,255,255,.55),transparent 70%);border-radius:50%;transform:translate(-50%,-50%) scale(0);opacity:0;pointer-events:none}
+.ripple.rippling::after{animation:rippleGrow .55s var(--ease-out)}
+@keyframes rippleGrow{0%{transform:translate(-50%,-50%) scale(0);opacity:.9}100%{transform:translate(-50%,-50%) scale(14);opacity:0}}
+
+.fab{position:fixed;z-index:35;right:calc(50% - (min(var(--content-max),100vw) / 2) + 20px);bottom:calc(100px + var(--safe-bottom));width:60px;height:60px;border-radius:20px;background:linear-gradient(135deg,var(--accent),var(--accent-2));box-shadow:0 8px 26px var(--accent-glow);display:flex;align-items:center;justify-content:center;color:#fff;transition:transform var(--dur-fast) var(--ease-spring)}
+.fab:active{transform:scale(.9) rotate(90deg)}
+@media (max-width:679px){.fab{right:22px}}
+@media (min-width:1080px){.fab{display:none}}
+
+/* ---------- Bottom nav (mobile / tablet) ---------- */
+.bottomnav{position:fixed;left:0;right:0;bottom:0;z-index:30;
+  background:color-mix(in srgb, var(--bg-1) 88%, transparent);backdrop-filter:blur(16px);
+  border-top:1px solid var(--border);padding:7px 4px calc(7px + var(--safe-bottom));
+  display:flex;justify-content:center;gap:2px}
+.bottomnav-inner{display:flex;justify-content:space-around;width:100%;max-width:var(--content-max)}
+@media (min-width:1080px){ .bottomnav{display:none} }
+.navbtn{display:flex;flex-direction:column;align-items:center;gap:3px;color:var(--text-2);font-size:9.5px;font-weight:700;padding:6px 8px;border-radius:12px;position:relative;transition:color var(--dur-fast);flex:1;max-width:76px}
+.navbtn .icon{width:21px;height:21px;transition:transform var(--dur-fast) var(--ease-spring)}
+.navbtn.active{color:var(--accent-2)}
+.navbtn.active .icon{transform:translateY(-2px) scale(1.08)}
+.navbtn:active .icon{transform:scale(.85)}
+.navbtn .dot{position:absolute;top:2px;right:14px;width:7px;height:7px;border-radius:50%;background:var(--danger);display:none}
+.navbtn .dot.show{display:block}
+
+/* ---------- Sidebar nav (desktop) ---------- */
+.sidebar{display:none}
+@media (min-width:1080px){
+  .sidebar{
+    display:flex;flex-direction:column;width:var(--nav-w-lg);flex-shrink:0;padding:28px 18px;
+    border-right:1px solid var(--border);position:sticky;top:0;height:100dvh;
+  }
+  .sidebar .brand{display:flex;align-items:center;gap:11px;font-weight:800;font-size:17px;padding:0 10px;margin-bottom:8px}
+  .sidebar .brand .mark{width:36px;height:36px;border-radius:11px;background:linear-gradient(135deg,var(--accent),var(--accent-2));display:flex;align-items:center;justify-content:center;box-shadow:var(--shadow-glow);flex-shrink:0}
+  .sidebar .brand .mark svg{width:20px;height:20px;stroke:#fff}
+  .sidebar .streak{display:flex;align-items:center;gap:6px;font-size:13px;font-weight:700;color:var(--fire);background:var(--surface);border:1px solid var(--border);padding:8px 12px;border-radius:14px;margin:14px 0 22px}
+  .sidebar nav{display:flex;flex-direction:column;gap:2px;flex:1}
+  .sidebar .navbtn{flex-direction:row;justify-content:flex-start;gap:13px;font-size:14px;padding:11px 12px;max-width:none;border-radius:12px}
+  .sidebar .navbtn .icon{width:19px;height:19px}
+  .sidebar .navbtn.active{background:var(--surface-hi);color:var(--text-0)}
+  .sidebar .navbtn.active .icon{color:var(--accent-2);transform:none}
+  .sidebar .navbtn .dot{top:10px;right:10px}
+  .sidebar .quickadd{margin-top:auto;display:flex;align-items:center;justify-content:center;gap:8px;padding:13px;border-radius:14px;background:linear-gradient(135deg,var(--accent),var(--accent-2));color:#fff;font-weight:700;font-size:14px;box-shadow:0 4px 20px var(--accent-glow)}
+}
+
+/* ---------- Progress / rings ---------- */
+.ring-wrap{position:relative;display:flex;align-items:center;justify-content:center;pointer-events:none}
+.ring-wrap svg{transform:rotate(-90deg)}
+.ring-track{fill:none;stroke:var(--border);stroke-width:10}
+.ring-fill{fill:none;stroke-width:10;stroke-linecap:round;transition:stroke-dashoffset .8s var(--ease-out)}
+
+.bar-track{height:10px;border-radius:99px;background:var(--border);overflow:hidden}
+.bar-fill{height:100%;border-radius:99px;background:linear-gradient(90deg,var(--accent),var(--accent-2));transition:width .8s var(--ease-out);position:relative}
+.bar-fill.xp{background:linear-gradient(90deg,var(--xp),#fff)}
+.bar-fill.water{background:linear-gradient(90deg,#0284c7,var(--water))}
+.bar-fill.shimmer::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,.5),transparent);animation:shimmer 1.8s infinite}
+@keyframes shimmer{from{transform:translateX(-100%)}to{transform:translateX(100%)}}
+
+/* ---------- Badges / pills / chips ---------- */
+.pill{display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:700;padding:4px 10px;border-radius:99px;background:var(--surface-hi);border:1px solid var(--border);color:var(--text-1)}
+.pill .icon{width:12px;height:12px}
+
+/* rank emblem: hexagonal shield instead of a plain circle */
+.rank-emblem{position:relative;width:44px;height:48px;flex-shrink:0}
+.rank-emblem svg{width:100%;height:100%}
+.rank-emblem .letter{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-weight:700;font-size:15px;font-style:normal}
+
+.chip{padding:9px 14px;border-radius:12px;background:var(--surface-hi);border:1px solid var(--border);font-size:13px;font-weight:700;color:var(--text-1);transition:all var(--dur-fast);display:inline-flex;align-items:center;gap:6px}
+.chip .icon{width:14px;height:14px}
+.chip.active{background:var(--accent);border-color:var(--accent);color:#fff}
+.chipset{display:flex;gap:8px;flex-wrap:wrap}
+
+/* ---------- Forms ---------- */
+.field{margin-bottom:14px}
+.field label{display:block;font-size:13px;font-weight:700;color:var(--text-2);margin-bottom:6px}
+.input,.select,textarea.input{width:100%;background:var(--surface-hi);border:1.5px solid var(--border);color:var(--text-0);padding:12px 14px;border-radius:12px;font-size:15px;transition:border-color var(--dur-fast)}
+.input:focus,.select:focus,textarea.input:focus{outline:none;border-color:var(--accent)}
+.stepper{display:flex;align-items:center;gap:12px;background:var(--surface-hi);border:1.5px solid var(--border);border-radius:14px;padding:6px}
+.stepper button{width:38px;height:38px;border-radius:10px;background:var(--surface);font-size:20px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.stepper input{flex:1;min-width:0;text-align:center;background:none;border:none;font-size:18px;font-weight:800}
+.switch{width:42px;height:26px;border-radius:99px;background:var(--surface-hi);border:1.5px solid var(--border);position:relative;flex-shrink:0;transition:background var(--dur-fast)}
+.switch::after{content:"";position:absolute;top:2px;left:2px;width:19px;height:19px;border-radius:50%;background:var(--text-2);transition:transform var(--dur-fast) var(--ease-spring),background var(--dur-fast)}
+.switch.on{background:var(--accent);border-color:var(--accent)}
+.switch.on::after{transform:translateX(16px);background:#fff}
+
+/* ---------- Modal / sheet ---------- */
+.overlay{position:fixed;inset:0;z-index:60;background:rgba(4,4,10,.62);backdrop-filter:blur(4px);display:none;align-items:flex-end;justify-content:center}
+.overlay.show{display:flex}
+:root[data-theme="light"] .overlay{background:rgba(20,15,40,.38)}
+.sheet{width:100%;max-width:560px;background:var(--bg-1);border-radius:28px 28px 0 0;padding:10px 20px calc(24px + var(--safe-bottom));max-height:88vh;overflow-y:auto;animation:sheetUp var(--dur-med) var(--ease-out);border:1px solid var(--border);border-bottom:none}
+@keyframes sheetUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+.sheet .handle{width:38px;height:5px;border-radius:99px;background:var(--border-hi);margin:6px auto 16px}
+.sheet-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;gap:12px}
+.sheet-head h3{font-family:var(--font-display);font-size:19px;font-weight:700;min-width:0}
+.overlay.center{align-items:center;padding:20px}
+.overlay.center .sheet{border-radius:28px;max-height:85vh}
+/* Tall variant: fixed-height sheet with ONE internal scroll region (.sheet-scroll)
+   instead of letting the whole sheet scroll — prevents the "nested scrollbars"
+   problem where a long result list gets squeezed into a small box and feels
+   like content is cut off / hard to reach. */
+.sheet.sheet-tall{display:flex;flex-direction:column;height:82vh;max-height:82vh;overflow:hidden}
+.sheet.sheet-tall .sheet-scroll{flex:1;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch}
+.sheet.sheet-tall .sheet-pinned{flex-shrink:0}
+@media (min-width:760px){
+  .overlay{align-items:center;padding:24px}
+  .sheet{border-radius:28px;max-height:85vh}
+  .sheet.sheet-tall{height:74vh;max-height:74vh}
+}
+
+/* quick-add grid (FAB sheet) */
+.quickgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.quickgrid button{display:flex;flex-direction:column;align-items:center;gap:10px;padding:20px 10px;border-radius:18px;background:var(--surface-hi);border:1px solid var(--border);font-weight:700;font-size:13.5px;transition:transform var(--dur-fast) var(--ease-spring),border-color var(--dur-fast)}
+.quickgrid button:active{transform:scale(.95)}
+.quickgrid button .icon-wrap{width:44px;height:44px;border-radius:14px;display:flex;align-items:center;justify-content:center}
+.quickgrid button .icon{width:22px;height:22px}
+
+/* ---------- Toast ---------- */
+#toastHost{position:fixed;top:calc(var(--safe-top) + 74px);left:0;right:0;z-index:90;display:flex;flex-direction:column;align-items:center;gap:8px;pointer-events:none}
+@media (min-width:1080px){ #toastHost{top:calc(var(--safe-top) + 20px)} }
+.toast{background:var(--surface-hi);border:1px solid var(--border-hi);color:var(--text-0);padding:11px 18px;border-radius:14px;font-size:13.5px;font-weight:600;box-shadow:var(--shadow-2);display:flex;align-items:center;gap:8px;animation:toastIn var(--dur-med) var(--ease-spring)}
+.toast .icon{width:16px;height:16px;flex-shrink:0}
+.toast.good{border-color:var(--good);color:var(--good)}
+.toast.bad{border-color:var(--danger);color:var(--danger)}
+@keyframes toastIn{from{opacity:0;transform:translateY(-14px) scale(.9)}to{opacity:1;transform:none}}
+
+/* ---------- Misc effects ---------- */
+.confetti-canvas{position:fixed;inset:0;z-index:100;pointer-events:none}
+.levelup-overlay{position:fixed;inset:0;z-index:99;display:none;align-items:center;justify-content:center;background:radial-gradient(circle at 50% 40%, color-mix(in srgb,var(--accent) 35%, transparent), rgba(4,4,10,.94))}
+.levelup-overlay.show{display:flex}
+.levelup-card{text-align:center;animation:levelPop .6s var(--ease-spring)}
+@keyframes levelPop{0%{opacity:0;transform:scale(.5) translateY(30px)}100%{opacity:1;transform:none}}
+.levelup-rank{font-family:var(--font-display);font-size:104px;font-weight:700;line-height:1;background:linear-gradient(180deg,#fff,var(--accent-2));-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 0 30px var(--accent-glow))}
+.shake{animation:shake .4s}
+@keyframes shake{10%,90%{transform:translateX(-1px)}20%,80%{transform:translateX(2px)}30%,50%,70%{transform:translateX(-4px)}40%,60%{transform:translateX(4px)}}
+.spin{animation:spin 1s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.pulse{animation:pulse 2s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
+.skeleton{background:linear-gradient(90deg,var(--surface-hi),var(--border),var(--surface-hi));background-size:200% 100%;animation:skel 1.4s infinite;border-radius:10px}
+@keyframes skel{from{background-position:200% 0}to{background-position:-200% 0}}
+.empty-state{text-align:center;padding:40px 20px;color:var(--text-2)}
+.empty-state .icon{width:44px;height:44px;margin-bottom:12px;opacity:.45}
+.hidden{display:none !important}
+.flex{display:flex}.items-center{align-items:center}.justify-between{justify-content:space-between}.gap-8{gap:8px}.gap-12{gap:12px}
+.text-2{color:var(--text-2)}.text-sm{font-size:13px}.mt-8{margin-top:8px}.mt-16{margin-top:16px}
+.truncate{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+/* Instrument-panel numerals — used on the numbers people actually watch
+   (level, XP, timers, weights) to give the app a more precise, "dialed-in"
+   feel instead of every digit looking like ordinary paragraph text. */
+.mono{font-family:var(--font-mono);font-variant-numeric:tabular-nums;letter-spacing:-.03em}
+
+/* ---------- Splash screen ---------- */
+#splash{position:fixed;inset:0;z-index:200;background:var(--bg-0);display:flex;flex-direction:column;align-items:center;justify-content:center;transition:opacity .5s var(--ease-out),visibility .5s}
+#splash.hide{opacity:0;visibility:hidden;pointer-events:none}
+#splash .glow-bg{position:absolute;inset:0;background:radial-gradient(circle at 50% 45%, var(--accent-glow), transparent 60%);opacity:.5}
+#splash .splash-mark{position:relative;width:120px;height:120px}
+#splash .impact-flash{position:absolute;inset:-10px;border-radius:50%;background:radial-gradient(circle, #fff, var(--accent-2) 45%, transparent 72%);opacity:0;transform:scale(.25);pointer-events:none;mix-blend-mode:screen}
+#splash.run .impact-flash{animation:splashFlash .6s .52s ease-out forwards}
+@keyframes splashFlash{0%{opacity:0;transform:scale(.25)}28%{opacity:.9;transform:scale(1)}100%{opacity:0;transform:scale(1.5)}}
+#splash .splash-word{position:relative;margin-top:26px;font-family:var(--font-display);font-weight:700;font-size:22px;letter-spacing:.5em;opacity:0;animation:splashWordIn .75s .82s var(--ease-out) forwards}
+@keyframes splashWordIn{to{opacity:1;transform:translateY(0);letter-spacing:.08em}from{opacity:0;transform:translateY(8px);letter-spacing:.5em}}
+#splash .splash-sub{position:relative;margin-top:8px;font-size:12.5px;color:var(--text-2);letter-spacing:.05em;opacity:0;animation:splashWordIn .6s 1.08s var(--ease-out) forwards}
+#splash .splash-track{position:relative;margin-top:28px;width:160px;height:3px;border-radius:99px;background:var(--border);overflow:hidden}
+#splash .splash-bar{height:100%;width:0%;background:linear-gradient(90deg,var(--accent),var(--accent-2));border-radius:99px;animation:splashFill 1.75s var(--ease-out) forwards}
+@keyframes splashFill{0%{width:0%}55%{width:65%}100%{width:100%}}
+#splashRingOuter{transition:stroke-dashoffset 1.15s cubic-bezier(.16,1,.3,1)}
+#splashRingInner{transition:opacity .6s ease .3s;transform-origin:60px 60px;animation:splashSpin 7s linear infinite}
+#splashTicks{transform-origin:60px 60px;animation:splashSpin 11s linear infinite reverse}
+#splashShock{transform-origin:60px 60px;opacity:0}
+#splash.run #splashShock{animation:splashShockwave .85s .52s cubic-bezier(.16,1,.3,1) forwards}
+@keyframes splashShockwave{0%{opacity:.85;r:16;stroke-width:5}100%{opacity:0;r:58;stroke-width:.5}}
+#splashBolt{transition:opacity .45s ease .52s,transform .65s cubic-bezier(.34,1.56,.64,1) .52s;transform:scale(.4);transform-box:fill-box;transform-origin:center}
+#splash.run #splashRingOuter{stroke-dashoffset:0}
+#splash.run #splashRingInner{opacity:.7}
+#splash.run #splashBolt{opacity:1;transform:scale(1)}
+@keyframes splashSpin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+.reduced-motion #splashRingInner,.reduced-motion #splashTicks{animation:none}
+
+/* ---------- Companion (AI insight) ---------- */
+.companion-orb{width:46px;height:46px;border-radius:14px;background:linear-gradient(135deg,var(--accent),var(--accent-2));display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:var(--shadow-glow);position:relative}
+.companion-orb .icon{width:22px;height:22px;stroke:#fff}
+.companion-orb::after{content:"";position:absolute;inset:-3px;border-radius:17px;border:1.5px solid var(--accent-2);opacity:.5;animation:orbPulse 2.4s ease-in-out infinite}
+@keyframes orbPulse{0%,100%{transform:scale(1);opacity:.5}50%{transform:scale(1.12);opacity:0}}
+.insight-row{display:flex;gap:12px;padding:13px 0;border-bottom:1px solid var(--border)}
+.insight-row:last-child{border-bottom:none}
+.insight-row .dot-icon{width:30px;height:30px;border-radius:9px;background:var(--surface-hi);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.insight-row .dot-icon .icon{width:15px;height:15px;color:var(--accent-2)}
+.ask-q{align-self:flex-end;max-width:82%;background:linear-gradient(135deg,var(--accent),var(--accent-2));color:#fff;font-size:13px;font-weight:600;padding:9px 14px;border-radius:14px 14px 4px 14px;margin:6px 0 2px;display:block;width:fit-content;margin-left:auto}
+
+/* ---------- Activity heatmap ---------- */
+.heatmap{display:grid;grid-template-columns:repeat(auto-fill,minmax(11px,1fr));gap:4px}
+.heatmap .cell{aspect-ratio:1;border-radius:3px;background:var(--border)}
+.heatmap .cell[data-level="1"]{background:color-mix(in srgb, var(--accent) 30%, var(--border))}
+.heatmap .cell[data-level="2"]{background:color-mix(in srgb, var(--accent) 60%, var(--border))}
+.heatmap .cell[data-level="3"]{background:var(--accent)}
+
+/* ---------- Plate calculator ---------- */
+.plate-bar{display:flex;align-items:center;gap:3px;overflow-x:auto;padding:14px 0}
+.plate{border-radius:4px;flex-shrink:0;display:flex;align-items:center;justify-content:center;color:#fff;font-size:10px;font-weight:800}
+
+</style>
+</head>
+<body>
+<div id="splash">
+  <div class="glow-bg"></div>
+  <div class="splash-mark">
+    <div class="impact-flash"></div>
+    <svg viewBox="0 0 120 120" width="120" height="120">
+      <circle cx="60" cy="60" r="52" fill="none" stroke="var(--border)" stroke-width="1.5"/>
+      <circle id="splashRingOuter" cx="60" cy="60" r="52" fill="none" stroke="url(#splashGrad)" stroke-width="2" stroke-linecap="round" stroke-dasharray="327" stroke-dashoffset="327"/>
+      <circle id="splashRingInner" cx="60" cy="60" r="38" fill="none" stroke="var(--accent-2)" stroke-width="1" stroke-dasharray="4 7" opacity="0" />
+      <g id="splashTicks"></g>
+      <circle id="splashShock" cx="60" cy="60" r="20" fill="none" stroke="var(--accent-2)" stroke-width="6" opacity="0"/>
+      <path id="splashBolt" d="M64 30 L40 68 L58 68 L52 92 L82 52 L62 52 Z" fill="var(--accent)" opacity="0" transform="translate(0,0) scale(1)" style="transform-origin:60px 60px"/>
+      <defs>
+        <linearGradient id="splashGrad" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" stop-color="var(--accent)"/>
+          <stop offset="1" stop-color="var(--accent-2)"/>
+        </linearGradient>
+      </defs>
+    </svg>
+  </div>
+  <div class="splash-word">ARISE KAGE</div>
+  <div class="splash-sub">LEVEL UP. FOR REAL.</div>
+  <div class="splash-track"><div class="splash-bar"></div></div>
+</div>
+<div id="app"></div>
+
+<script>
+/* Splash boot animation — deliberately self-contained and runs before any
+   AK module loads, so the app feels instant even though real work (state
+   load, shell injection) happens underneath it. */
+(function(){
+  var reduceOS = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var reduceSaved = false;
+  try { var raw = localStorage.getItem('arisekage_v1'); if (raw) reduceSaved = !!(JSON.parse(raw).settings||{}).reducedMotion; } catch(e){}
+  var reduce = reduceOS || reduceSaved;
+  var splash = document.getElementById('splash');
+  var ticksG = document.getElementById('splashTicks');
+  for (var i=0;i<12;i++){
+    var ang = i*30*Math.PI/180, r1=44, r2=50;
+    var line = document.createElementNS('http://www.w3.org/2000/svg','line');
+    line.setAttribute('x1', 60+r1*Math.cos(ang)); line.setAttribute('y1', 60+r1*Math.sin(ang));
+    line.setAttribute('x2', 60+r2*Math.cos(ang)); line.setAttribute('y2', 60+r2*Math.sin(ang));
+    line.setAttribute('stroke', 'var(--border-hi)'); line.setAttribute('stroke-width', '1.5'); line.setAttribute('stroke-linecap','round');
+    ticksG.appendChild(line);
+  }
+  requestAnimationFrame(function(){ requestAnimationFrame(function(){ splash.classList.add('run'); }); });
+  setTimeout(function(){
+    splash.classList.add('hide');
+    setTimeout(function(){ splash.remove(); }, reduce ? 60 : 550);
+  }, reduce ? 250 : 1900);
+})();
+</script>
+
+<script id="app-shell-tpl" type="text/html">
+<!-- ============ SVG ICON SPRITE ============ -->
+<svg style="display:none" id="iconSprite">
+<symbol id="i-home" viewBox="0 0 24 24"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/><path d="M9 20v-6h6v6"/></symbol>
+<symbol id="i-dumbbell" viewBox="0 0 24 24"><path d="M6.5 6.5l11 11"/><rect x="2" y="9" width="4" height="6" rx="1"/><rect x="18" y="9" width="4" height="6" rx="1"/><rect x="5" y="7" width="3" height="10" rx="1"/><rect x="16" y="7" width="3" height="10" rx="1"/></symbol>
+<symbol id="i-droplet" viewBox="0 0 24 24"><path d="M12 2s7 8.5 7 13a7 7 0 0 1-14 0c0-4.5 7-13 7-13z"/></symbol>
+<symbol id="i-apple" viewBox="0 0 24 24"><path d="M12 6c-1-2-3-3-5-2 0 2 1 4 3 5-2 0-4 2-4 6 0 4 3 7 5 7 1 0 2-.5 3-.5s2 .5 3 .5c2 0 5-3 5-7 0-3-1.5-5-3-5.5 1.5-1 2-3 2-5-2.5 0-4.5 1.5-5 3"/></symbol>
+<symbol id="i-camera" viewBox="0 0 24 24"><path d="M4 8h3l2-3h6l2 3h3v12H4z"/><circle cx="12" cy="14" r="4"/></symbol>
+<symbol id="i-trophy" viewBox="0 0 24 24"><path d="M8 4h8v6a4 4 0 0 1-8 0z"/><path d="M8 5H4v2a4 4 0 0 0 4 4M16 5h4v2a4 4 0 0 1-4 4"/><path d="M10 18h4M9 21h6M12 15v3"/></symbol>
+<symbol id="i-share" viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 13.5l6.8 4M15.4 6.5l-6.8 4"/></symbol>
+<symbol id="i-settings" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.6 1.6 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.6 1.6 0 0 0-1.8-.3 1.6 1.6 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.6 1.6 0 0 0-1-1.5 1.6 1.6 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.6 1.6 0 0 0 .3-1.8 1.6 1.6 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.6 1.6 0 0 0 1.5-1 1.6 1.6 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.6 1.6 0 0 0 1.8.3H9a1.6 1.6 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.6 1.6 0 0 0 1 1.5 1.6 1.6 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.6 1.6 0 0 0-.3 1.8V9a1.6 1.6 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.6 1.6 0 0 0-1.5 1z"/></symbol>
+<symbol id="i-flame" viewBox="0 0 24 24"><path d="M12 2s-2 4-2 7a2 2 0 0 0 4 0c0-1 1-1 1 0 0 3 2 4 2 7a5 5 0 0 1-10 0c0-5 3-7 3-9 0-2 1-3 2-5z"/></symbol>
+<symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+<symbol id="i-check" viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></symbol>
+<symbol id="i-x" viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></symbol>
+<symbol id="i-chevron-right" viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></symbol>
+<symbol id="i-chevron-left" viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></symbol>
+<symbol id="i-chevron-down" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></symbol>
+<symbol id="i-edit" viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></symbol>
+<symbol id="i-trash" viewBox="0 0 24 24"><path d="M3 6h18"/><path d="M8 6V4h8v2M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/></symbol>
+<symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></symbol>
+<symbol id="i-calendar" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 10h18"/></symbol>
+<symbol id="i-bolt" viewBox="0 0 24 24"><path d="M13 2L4 14h6l-1 8 9-12h-6z"/></symbol>
+<symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/><path d="M9 12l2 2 4-4"/></symbol>
+<symbol id="i-scale" viewBox="0 0 24 24"><circle cx="12" cy="16" r="5"/><path d="M9 3h6M12 3v8M6 8h12"/></symbol>
+<symbol id="i-ruler" viewBox="0 0 24 24"><path d="M3 16l5-5 12 12-5 5z"/><path d="M8 11l2 2M11 8l2 2M14 5l2 2"/></symbol>
+<symbol id="i-star" viewBox="0 0 24 24"><path d="M12 2l3 7h7l-5.5 4.5L18 21l-6-4-6 4 1.5-7.5L2 9h7z"/></symbol>
+<symbol id="i-gauge" viewBox="0 0 24 24"><path d="M12 21a9 9 0 1 1 9-9"/><path d="M12 12l5-3"/><path d="M3.5 8.5l1.5 1M20.5 8.5L19 9.5M12 2v2"/></symbol>
+<symbol id="i-users" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3"/><path d="M3 20c0-3.5 2.5-6 6-6s6 2.5 6 6"/><circle cx="17" cy="9" r="2.5"/><path d="M15 14c2.8.3 5 2.5 5 6"/></symbol>
+<symbol id="i-bell" viewBox="0 0 24 24"><path d="M6 10a6 6 0 0 1 12 0c0 5 2 6 2 6H4s2-1 2-6z"/><path d="M10 20a2 2 0 0 0 4 0"/></symbol>
+<symbol id="i-moon" viewBox="0 0 24 24"><path d="M21 12.5A8.5 8.5 0 1 1 11.5 3 7 7 0 0 0 21 12.5z"/></symbol>
+<symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.2 4.2l1.4 1.4M18.4 18.4l1.4 1.4M2 12h2M20 12h2M4.2 19.8l1.4-1.4M18.4 5.6l1.4-1.4"/></symbol>
+<symbol id="i-download" viewBox="0 0 24 24"><path d="M12 3v12M7 10l5 5 5-5"/><path d="M4 21h16"/></symbol>
+<symbol id="i-upload" viewBox="0 0 24 24"><path d="M12 21V9M7 14l5-5 5 5"/><path d="M4 3h16"/></symbol>
+<symbol id="i-cloud" viewBox="0 0 24 24"><path d="M7 18a4.5 4.5 0 0 1-1-8.9A5.5 5.5 0 0 1 17 8a4 4 0 0 1-1 8H7z"/></symbol>
+<symbol id="i-lock" viewBox="0 0 24 24"><rect x="4" y="11" width="16" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></symbol>
+<symbol id="i-sparkle" viewBox="0 0 24 24"><path d="M12 2l1.8 5.2L19 9l-5.2 1.8L12 16l-1.8-5.2L5 9l5.2-1.8z"/><path d="M19 15l.8 2.2L22 18l-2.2.8L19 21l-.8-2.2L16 18l2.2-.8z"/></symbol>
+<symbol id="i-target" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/></symbol>
+<symbol id="i-fire2" viewBox="0 0 24 24"><path d="M12 2s-2 4-2 7a2 2 0 0 0 4 0c0-1 1-1 1 0 0 3 2 4 2 7a5 5 0 0 1-10 0c0-5 3-7 3-9 0-2 1-3 2-5z"/></symbol>
+<symbol id="i-list" viewBox="0 0 24 24"><path d="M8 6h13M8 12h13M8 18h13"/><circle cx="3.5" cy="6" r="1"/><circle cx="3.5" cy="12" r="1"/><circle cx="3.5" cy="18" r="1"/></symbol>
+<symbol id="i-copy" viewBox="0 0 24 24"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15H4a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v1"/></symbol>
+<symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7v.01"/></symbol>
+<symbol id="i-heart" viewBox="0 0 24 24"><path d="M12 20s-7-4.5-9.5-9A5.5 5.5 0 0 1 12 6a5.5 5.5 0 0 1 9.5 5c-2.5 4.5-9.5 9-9.5 9z"/></symbol>
+<symbol id="i-refresh" viewBox="0 0 24 24"><path d="M3 12a9 9 0 0 1 15-6.7L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-15 6.7L3 16"/><path d="M3 21v-5h5"/></symbol>
+<symbol id="i-swap" viewBox="0 0 24 24"><path d="M7 4v13M7 4L3 8M7 4l4 4"/><path d="M17 20V7M17 20l4-4M17 20l-4-4"/></symbol>
+<symbol id="i-palette" viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 0 20c1.5 0 2-1 2-2s-.5-1.5-1-2 0-2 1-2h2a4 4 0 0 0 4-4c0-5.5-4-10-8-10z"/><circle cx="7.5" cy="11" r="1.2"/><circle cx="10.5" cy="7.5" r="1.2"/><circle cx="15" cy="8.5" r="1.2"/></symbol>
+<symbol id="i-glass" viewBox="0 0 24 24"><path d="M7 3h10l-1.2 16.2a2 2 0 0 1-2 1.8h-3.6a2 2 0 0 1-2-1.8z"/><path d="M7.6 8h8.8"/></symbol>
+<symbol id="i-bottle" viewBox="0 0 24 24"><path d="M10 2h4v3.2c1.2.7 2 2 2 3.5V20a2 2 0 0 1-2 2h-4a2 2 0 0 1-2-2V8.7c0-1.5.8-2.8 2-3.5z"/><path d="M9 13h6"/></symbol>
+<symbol id="i-jug" viewBox="0 0 24 24"><path d="M8 2h8l1 5-2 2v9a2 2 0 0 1-2 2h-2a2 2 0 0 1-2-2v-9L7 7z"/><path d="M8.5 13h7"/></symbol>
+<symbol id="i-mug" viewBox="0 0 24 24"><path d="M4 8h13v7a4 4 0 0 1-4 4H8a4 4 0 0 1-4-4z"/><path d="M17 10h1.5a2.5 2.5 0 0 1 0 5H17"/><path d="M7 4c0 1-1 1-1 2M11 4c0 1-1 1-1 2"/></symbol>
+<symbol id="i-companion" viewBox="0 0 24 24"><path d="M12 3l2.2 5.4L20 10l-5.8 1.6L12 17l-2.2-5.4L4 10l5.8-1.6z"/><circle cx="18.5" cy="18.5" r="2.3"/></symbol>
+<symbol id="i-barbell" viewBox="0 0 24 24"><path d="M2 10v4M5 8v8M8 11h8M5 12h14"/><path d="M19 8v8M22 10v4"/></symbol>
+<symbol id="i-volume" viewBox="0 0 24 24"><path d="M4 9v6h4l5 4V5L8 9z"/><path d="M17 8a5 5 0 0 1 0 8M19.5 5.5a9 9 0 0 1 0 13"/></symbol>
+<symbol id="i-volume-off" viewBox="0 0 24 24"><path d="M4 9v6h4l5 4V5L8 9z"/><path d="M16 9l5 6M21 9l-5 6"/></symbol>
+<symbol id="i-grid" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></symbol>
+<symbol id="i-trend" viewBox="0 0 24 24"><path d="M3 17l6-6 4 4 8-8"/><path d="M15 7h6v6"/></symbol>
+<symbol id="i-balance" viewBox="0 0 24 24"><path d="M12 3v18M7 21h10"/><path d="M12 6L5 8l3 6h8l3-6z"/><circle cx="5" cy="8" r="1.4" fill="currentColor" stroke="none"/><circle cx="19" cy="8" r="1.4" fill="currentColor" stroke="none"/></symbol>
+<symbol id="i-run" viewBox="0 0 24 24"><circle cx="14.5" cy="4.5" r="1.7" fill="currentColor" stroke="none"/><path d="M9 21l2.5-5 2-2.2-1-4.3-3.5 1.6M12.7 9.3l2.3 2.2 3.5 1M8 13.5L5.5 15M15 14l2 1.5 2.5-.8"/></symbol>
+</svg>
+
+<!-- ============ SCREEN: ONBOARDING ============ -->
+<div class="screen" id="screen-onboard">
+  <div id="onboardWizard"></div>
+</div>
+
+<!-- ============ APP CHROME (hidden until onboarded) ============ -->
+<div id="appChrome" class="hidden">
+  <aside class="sidebar">
+    <div class="brand"><span class="mark"><svg class="icon" viewBox="0 0 24 24"><use href="#i-bolt"/></svg></span><span id="brandLabelSide">ARISE KAGE</span></div>
+    <div class="streak" id="streakPillSide"><svg class="icon" viewBox="0 0 24 24"><use href="#i-flame"/></svg><span id="streakCountSide" class="mono">0</span>&nbsp;day streak</div>
+    <nav id="sidebarNavInner"></nav>
+    <button class="quickadd" id="fabBtnSide"><svg class="icon" viewBox="0 0 24 24"><use href="#i-plus"/></svg>Quick Add</button>
+  </aside>
+
+  <div class="main-col" style="flex:1;min-width:0;display:flex;flex-direction:column">
+    <div class="topbar">
+      <div class="brand"><span class="mark"><svg class="icon" viewBox="0 0 24 24"><use href="#i-bolt"/></svg></span><span class="label" id="brandLabel">ARISE KAGE</span></div>
+      <div class="right-cluster">
+        <div class="streak" id="streakPill"><svg class="icon" viewBox="0 0 24 24"><use href="#i-flame"/></svg><span id="streakCount" class="mono">0</span></div>
+      </div>
+    </div>
+
+    <main>
+      <div class="screen active" id="screen-home"></div>
+      <div class="screen" id="screen-workout"></div>
+      <div class="screen" id="screen-water"></div>
+      <div class="screen" id="screen-body"></div>
+      <div class="screen" id="screen-quests"></div>
+      <div class="screen" id="screen-coach"></div>
+      <div class="screen" id="screen-settings"></div>
+    </main>
+
+    <button class="fab" id="fabBtn" aria-label="Quick add"><svg class="icon" viewBox="0 0 24 24" style="width:26px;height:26px"><use href="#i-plus"/></svg></button>
+
+    <nav class="bottomnav">
+      <div class="bottomnav-inner" id="bottomNavInner"></div>
+    </nav>
+  </div>
+</div>
+
+<div class="overlay" id="sheetOverlay"><div class="sheet" id="sheetBody"></div></div>
+</script>
+
+<div id="toastHost"></div>
+<div class="levelup-overlay" id="levelupOverlay"></div>
+<canvas class="confetti-canvas hidden" id="confettiCanvas"></canvas>
+<script>
+"use strict";
+/* ====================================================================
+   ARISE KAGE — Application Core
+   Storage: localStorage (state) + IndexedDB (photos) + optional Firebase sync
+   ==================================================================== */
+
+const AK = {}; // namespace
+
+/* ---------------- Utilities ---------------- */
+AK.uid = () => 'x' + Math.random().toString(36).slice(2,10) + Math.random().toString(36).slice(2,6);
+AK.clamp = (n,min,max) => Math.max(min, Math.min(max, n));
+AK.fmtDate = (d=new Date()) => { const dt = (d instanceof Date)?d:new Date(d); return dt.getFullYear()+'-'+String(dt.getMonth()+1).padStart(2,'0')+'-'+String(dt.getDate()).padStart(2,'0'); };
+AK.today = () => AK.fmtDate(new Date());
+AK.prettyDate = (iso) => { const d = new Date(iso+'T00:00:00'); return d.toLocaleDateString(undefined,{weekday:'short',month:'short',day:'numeric'}); };
+AK.daysBetween = (a,b) => Math.round((new Date(b) - new Date(a)) / 86400000);
+AK.round1 = (n) => Math.round(n*10)/10;
+AK.escapeHtml = (s='') => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+AK.toast = (msg, type='') => {
+  const host = document.getElementById('toastHost');
+  // cap concurrent toasts so a burst of achievements/quests/XP never piles
+  // into an unreadable stack — dismiss the oldest first instead.
+  const MAX_TOASTS = 3;
+  while (host.children.length >= MAX_TOASTS) host.firstElementChild.remove();
+  const el = document.createElement('div');
+  el.className = 'toast ' + type;
+  const iconId = type==='good' ? 'i-check' : type==='bad' ? 'i-x' : 'i-info';
+  el.innerHTML = `<svg class="icon" viewBox="0 0 24 24"><use href="#${iconId}"/></svg><span></span>`;
+  el.querySelector('span').textContent = msg;
+  host.appendChild(el);
+  setTimeout(()=>{ if (!el.isConnected) return; el.style.transition='opacity .3s,transform .3s'; el.style.opacity='0'; el.style.transform='translateY(-10px)'; setTimeout(()=>el.remove(),300); }, 2600);
+};
+
+AK.haptic = (ms=8) => { try{ navigator.vibrate && navigator.vibrate(ms); }catch(e){} };
+
+/* ---------------- Storage layer ---------------- */
+const DB_KEY = 'arisekage_v1';
+AK.defaultState = () => ({
+  profile: null, // {name, unit:'metric'|'imperial', theme:'shadow', goal, createdAt, title}
+  gamification: { xp:0, level:1, rank:'E', streak:0, lastActiveDate:null, unlockedAchievements:[], seenEasterEggs:[], sleepXpDate:null },
+  workouts: [], // {id,date,name,startedAt,durationSec,exercises:[{id,name,category,sets:[{weight,reps,rpe,unit,done}]}],notes}
+  templates: [], // custom routine templates
+  water: {}, // {date: {goalMl, entries:[{id,ts,ml}]}}
+  waterGoalMl: 2600,
+  nutrition: {}, // {date: {entries:[{id,ts,name,cal,protein,carbs,fat}]}}
+  nutritionGoals: { cal:2200, protein:150, carbs:220, fat:70 },
+  metrics: [], // {id,date,weightKg,bodyFatPct,measurements:{chest,waist,hips,arm,thigh}}
+  sleep: {}, // {date: hours}
+  activities: [], // {id,date,ts,type,durationMin,intensity,distanceKm,note,xp} — cardio/sports cross-training log
+  photoMeta: [], // {id,date,tag,note} (blobs live in IndexedDB)
+  settings: {
+    theme: 'shadow', themeMode:'manual', accent: '#7c3aed', unit: 'metric', reducedMotion:false,
+    notifWater:true, notifWorkout:true, firebaseEnabled:false, firebaseConfig:null,
+    quoteAnime: 'both', sound:true
+  },
+  quests: { date:null, daily:[] },
+  version: 1
+});
+
+AK.state = null;
+
+AK.load = () => {
+  try {
+    const raw = localStorage.getItem(DB_KEY);
+    AK.state = raw ? Object.assign(AK.defaultState(), JSON.parse(raw)) : AK.defaultState();
+    // deep-merge nested defaults for safety across versions
+    const def = AK.defaultState();
+    for (const k of ['gamification','settings','nutritionGoals']) {
+      AK.state[k] = Object.assign({}, def[k], AK.state[k]||{});
+    }
+  } catch(e) { console.error('load failed', e); AK.state = AK.defaultState(); }
+  return AK.state;
+};
+
+AK.saveTimer = null;
+AK.save = () => {
+  clearTimeout(AK.saveTimer);
+  AK.saveTimer = setTimeout(()=>{
+    try {
+      localStorage.setItem(DB_KEY, JSON.stringify(AK.state));
+      AK.Sync && AK.Sync.queuePush && AK.Sync.queuePush();
+    } catch(e) { console.error('save failed', e); AK.toast('Storage full — export a backup in Settings','bad'); }
+  }, 120);
+};
+
+/* ---------------- IndexedDB (photos) ---------------- */
+AK.PhotoDB = (() => {
+  let dbp = null;
+  const open = () => {
+    if (dbp) return dbp;
+    dbp = new Promise((resolve,reject)=>{
+      const req = indexedDB.open('arisekage_photos', 1);
+      req.onupgradeneeded = () => { const db = req.result; if(!db.objectStoreNames.contains('photos')) db.createObjectStore('photos',{keyPath:'id'}); };
+      req.onsuccess = () => resolve(req.result);
+      req.onerror = () => reject(req.error);
+    });
+    return dbp;
+  };
+  return {
+    async put(rec){ const db = await open(); return new Promise((res,rej)=>{ const tx = db.transaction('photos','readwrite'); tx.objectStore('photos').put(rec); tx.oncomplete=()=>res(true); tx.onerror=()=>rej(tx.error); }); },
+    async get(id){ const db = await open(); return new Promise((res,rej)=>{ const tx = db.transaction('photos','readonly'); const r = tx.objectStore('photos').get(id); r.onsuccess=()=>res(r.result); r.onerror=()=>rej(r.error); }); },
+    async del(id){ const db = await open(); return new Promise((res,rej)=>{ const tx = db.transaction('photos','readwrite'); tx.objectStore('photos').delete(id); tx.oncomplete=()=>res(true); tx.onerror=()=>rej(tx.error); }); },
+    async all(){ const db = await open(); return new Promise((res,rej)=>{ const tx = db.transaction('photos','readonly'); const r = tx.objectStore('photos').getAll(); r.onsuccess=()=>res(r.result||[]); r.onerror=()=>rej(r.error); }); }
+  };
+})();
+</script>
+
+<script>
+/* ---------------- Gamification: XP, Levels, Ranks ---------------- */
+AK.Game = (() => {
+  const RANKS = [
+    {key:'E', label:'E-Rank', min:1, max:4, color:'var(--rank-e)'},
+    {key:'D', label:'D-Rank', min:5, max:9, color:'var(--rank-d)'},
+    {key:'C', label:'C-Rank', min:10, max:16, color:'var(--rank-c)'},
+    {key:'B', label:'B-Rank', min:17, max:24, color:'var(--rank-b)'},
+    {key:'A', label:'A-Rank', min:25, max:34, color:'var(--rank-a)'},
+    {key:'S', label:'S-Rank', min:35, max:49, color:'var(--rank-s)'},
+    {key:'SS', label:'Shadow Monarch', min:50, max:9999, color:'var(--rank-ss)'}
+  ];
+  const xpForLevel = (lvl) => Math.round(100 * Math.pow(lvl, 1.45));
+  const rankFor = (lvl) => RANKS.find(r => lvl>=r.min && lvl<=r.max) || RANKS[RANKS.length-1];
+  function addXp(amount, reason){
+    const g = AK.state.gamification;
+    const beforeLevel = g.level;
+    g.xp += amount;
+    let leveled = false;
+    while (g.xp >= xpForLevel(g.level)) {
+      g.xp -= xpForLevel(g.level);
+      g.level += 1; leveled = true;
+    }
+    g.rank = rankFor(g.level).key;
+    AK.save();
+    if (amount>0) AK.toast(`+${amount} XP${reason?' · '+reason:''}`, 'good');
+    if (leveled) AK.Game.showLevelUp(g.level, beforeLevel);
+    AK.UI && AK.UI.refreshHome && AK.UI.refreshHome();
+    return leveled;
+  }
+  /* Symmetric undo for addXp — used when a logged entry that granted XP is
+     deleted/edited away, so the numbers stay honest instead of drifting up
+     forever as people fix mistakes. Walks back down through level thresholds
+     (never below level 1 / 0xp) and never shows a level-up toast for it. */
+  function removeXp(amount, reason){
+    if (!amount) return;
+    const g = AK.state.gamification;
+    g.xp -= amount;
+    while (g.xp < 0 && g.level > 1) {
+      g.level -= 1;
+      g.xp += xpForLevel(g.level);
+    }
+    if (g.xp < 0) g.xp = 0;
+    g.rank = rankFor(g.level).key;
+    AK.save();
+    AK.toast(`−${amount} XP${reason?' · '+reason:''}`, '');
+    AK.UI && AK.UI.refreshHome && AK.UI.refreshHome();
+  }
+  function showLevelUp(newLevel, prevLevel){
+    const rank = rankFor(newLevel);
+    const overlay = document.getElementById('levelupOverlay');
+    overlay.innerHTML = `<div class="levelup-card">
+      <div style="font-size:13px;letter-spacing:.2em;color:var(--text-2);font-weight:800;margin-bottom:6px">LEVEL UP</div>
+      <div class="levelup-rank">${newLevel}</div>
+      <div class="pill" style="margin:14px auto 18px;background:${rank.color}22;border-color:${rank.color};color:${rank.color}">${AK.escapeHtml(rank.label)}</div>
+      <div style="color:var(--text-1);font-size:14px;max-width:280px;margin:0 auto 22px">${AK.escapeHtml(AK.Quotes.random())}</div>
+      <button class="btn btn-primary" id="levelupClose">Continue</button>
+    </div>`;
+    overlay.classList.add('show');
+    AK.Fx.confettiBurst();
+    AK.haptic(20);
+    document.getElementById('levelupClose').onclick = () => overlay.classList.remove('show');
+  }
+  function updateStreak(){
+    const g = AK.state.gamification;
+    const today = AK.today();
+    if (g.lastActiveDate === today) return;
+    if (g.lastActiveDate) {
+      const gap = AK.daysBetween(g.lastActiveDate, today);
+      g.streak = gap === 1 ? g.streak + 1 : 1;
+    } else { g.streak = 1; }
+    g.lastActiveDate = today;
+    AK.save();
+    if ([7,30,50,100,365].includes(g.streak)) AK.Achievements.unlock('streak'+g.streak);
+  }
+  function derivedStats(){
+    // Fun "hunter stat" numbers derived from real logged data — not arbitrary.
+    const workouts = AK.state.workouts;
+    let maxVolumeSet = 0, totalSets=0, totalVolume=0;
+    workouts.forEach(w => w.exercises.forEach(e => e.sets.forEach(s => {
+      if (s.done) { totalSets++; const vol=(s.weight||0)*(s.reps||0); totalVolume+=vol; if ((s.weight||0)>maxVolumeSet) maxVolumeSet=s.weight; }
+    })));
+    const STR = AK.clamp(Math.round(maxVolumeSet/2), 1, 999);
+    const END = AK.clamp(Math.round(totalSets/3), 1, 999);
+    const VIT = AK.clamp(Math.round(AK.state.gamification.streak*2.2), 1, 999);
+    const AGI = AK.clamp(Math.round(workouts.length*1.3), 1, 999);
+    return {STR,END,VIT,AGI,totalVolume:Math.round(totalVolume)};
+  }
+  return { RANKS, xpForLevel, rankFor, addXp, removeXp, showLevelUp, updateStreak, derivedStats };
+})();
+
+/* ---------------- Quote packs (Naruto & Solo Leveling inspired, original phrasing) ---------------- */
+AK.Quotes = (() => {
+  const pool = [
+    "A rank is earned in silence, one rep no one saw.",
+    "Arise. The version of you that quit yesterday doesn't get a vote today.",
+    "Hard work betrays no one who refuses to stop.",
+    "The weak stay home. The Hunter shows up anyway.",
+    "Your ninja way isn't a slogan — it's whatever you do when it's hard.",
+    "Every S-Rank was once too tired to show up. They came anyway.",
+    "Pain is temporary. Quitting keeps the score forever.",
+    "The Monarch of Shadows didn't wait to feel ready.",
+    "Believe it — consistency beats talent that skips leg day.",
+    "Level up isn't a moment. It's today's set, logged.",
+    "A single step, repeated, becomes a path no one else will walk.",
+    "The dungeon doesn't care about your excuses. Neither should you.",
+    "You don't rise to your goals, you fall to your systems — build better ones.",
+    "Even the strongest shadow started as a whisper of effort."
+  ];
+  let idx = Math.floor(Math.random()*pool.length);
+  return { random: () => pool[Math.floor(Math.random()*pool.length)], daily: () => pool[(new Date().getDate()) % pool.length] };
+})();
+
+/* ---------------- Achievements & Easter Eggs ---------------- */
+AK.Achievements = (() => {
+  const DEFS = [
+    {id:'first_workout', name:'First Blood', desc:'Log your first workout', icon:'i-dumbbell'},
+    {id:'streak7', name:'Week Warrior', desc:'7-day streak', icon:'i-flame'},
+    {id:'streak30', name:'Monthly Monarch', desc:'30-day streak', icon:'i-flame'},
+    {id:'streak50', name:'Iron Will', desc:'50-day streak', icon:'i-flame'},
+    {id:'streak100', name:'Shadow Monarch', desc:'100-day streak', icon:'i-shield'},
+    {id:'streak365', name:'One With The Grind', desc:'365-day streak', icon:'i-star'},
+    {id:'water7', name:'Hydro Hunter', desc:'Hit water goal 7 days', icon:'i-droplet'},
+    {id:'photo_first', name:'Snapshot', desc:'Log your first progress photo', icon:'i-camera'},
+    {id:'photo_30', name:'Time Lapse', desc:'30 progress photos logged', icon:'i-camera'},
+    {id:'workouts_10', name:'Getting Serious', desc:'10 workouts logged', icon:'i-dumbbell'},
+    {id:'workouts_100', name:'Triple Digits', desc:'100 workouts logged', icon:'i-trophy'},
+    {id:'pr_first', name:'New Ceiling', desc:'Log a personal record', icon:'i-bolt'},
+    {id:'konami', name:'Secret Technique', desc:'Found a hidden technique', icon:'i-sparkle', secret:true},
+    {id:'night_owl', name:'Sage Mode', desc:'Logged a workout after midnight', icon:'i-moon', secret:true},
+    {id:'arise_typed', name:'Awakening', desc:'Whispered the word of power', icon:'i-sparkle', secret:true},
+    {id:'perfect_week', name:'Flawless Week', desc:'Hit every daily quest for 7 days straight', icon:'i-shield'},
+    {id:'cross_train', name:'Multi-Class Hunter', desc:'Log 5 non-lifting activities (run, sport, cycle...)', icon:'i-run'},
+  ];
+  function unlock(id){
+    const g = AK.state.gamification;
+    if (g.unlockedAchievements.includes(id)) return;
+    g.unlockedAchievements.push(id);
+    AK.save();
+    const def = DEFS.find(d=>d.id===id);
+    AK.Fx.confettiBurst();
+    // one combined toast (name + XP) instead of two separate ones stacking up
+    AK.Game.addXp(25, `Unlocked: ${def?def.name:id}`);
+  }
+  return { DEFS, unlock };
+})();
+</script>
+
+<script>
+/* ---------------- FX: confetti & small visual flourishes ---------------- */
+AK.Fx = (() => {
+  let audioCtx = null;
+  function beep(freq=880, durMs=140){
+    if (AK.state.settings.sound===false) return;
+    try {
+      audioCtx = audioCtx || new (window.AudioContext||window.webkitAudioContext)();
+      if (audioCtx.state==='suspended') audioCtx.resume();
+      const osc = audioCtx.createOscillator(), gain = audioCtx.createGain();
+      osc.type='sine'; osc.frequency.value=freq;
+      gain.gain.setValueAtTime(0.001, audioCtx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.18, audioCtx.currentTime+0.02);
+      gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime+durMs/1000);
+      osc.connect(gain); gain.connect(audioCtx.destination);
+      osc.start(); osc.stop(audioCtx.currentTime+durMs/1000+0.02);
+    } catch(e){ /* Web Audio unavailable — silently skip, haptics still fire */ }
+  }
+  function confettiBurst(){
+    if (AK.state.settings.reducedMotion) return;
+    const canvas = document.getElementById('confettiCanvas');
+    canvas.classList.remove('hidden');
+    canvas.width = innerWidth; canvas.height = innerHeight;
+    const ctx = canvas.getContext('2d');
+    const colors = ['#7c3aed','#a78bfa','#38bdf8','#22d3aa','#fb923c','#f43f5e','#ffd54a'];
+    const N = 90;
+    const parts = Array.from({length:N}, () => ({
+      x: innerWidth/2 + (Math.random()-.5)*120, y: innerHeight*0.35 + (Math.random()-.5)*60,
+      vx:(Math.random()-.5)*13, vy:(Math.random()*-13)-4, g:.35+Math.random()*.15,
+      size:4+Math.random()*5, rot:Math.random()*360, vr:(Math.random()-.5)*14,
+      color: colors[Math.floor(Math.random()*colors.length)], life:1
+    }));
+    let frame=0;
+    function tick(){
+      frame++;
+      ctx.clearRect(0,0,canvas.width,canvas.height);
+      let alive=false;
+      parts.forEach(p=>{
+        p.vy += p.g; p.x+=p.vx; p.y+=p.vy; p.rot+=p.vr; p.life -= 0.008;
+        if (p.life>0 && p.y < canvas.height+20) { alive=true;
+          ctx.save(); ctx.translate(p.x,p.y); ctx.rotate(p.rot*Math.PI/180);
+          ctx.globalAlpha = Math.max(p.life,0); ctx.fillStyle=p.color;
+          ctx.fillRect(-p.size/2,-p.size/2,p.size,p.size*.6); ctx.restore();
+        }
+      });
+      if (alive && frame<260) requestAnimationFrame(tick); else { canvas.classList.add('hidden'); ctx.clearRect(0,0,canvas.width,canvas.height); }
+    }
+    tick();
+  }
+  function ringSvg(pct, size=120, stroke=10, colorVar='--accent', centerHtml=''){
+    // `centerHtml` renders inside the ring via an absolutely-positioned overlay
+    // sized to the ring itself — NOT a negative-margin hack — so callers can
+    // never accidentally have a following sibling get pulled up into the ring.
+    const r = (size-stroke)/2, c = 2*Math.PI*r, off = c*(1-AK.clamp(pct,0,1));
+    return `<div class="ring-wrap" style="width:${size}px;height:${size}px;margin:0 auto">
+      <svg width="${size}" height="${size}">
+        <circle class="ring-track" cx="${size/2}" cy="${size/2}" r="${r}" stroke-width="${stroke}"/>
+        <circle class="ring-fill" cx="${size/2}" cy="${size/2}" r="${r}" stroke-width="${stroke}" stroke="var(${colorVar})" stroke-dasharray="${c}" stroke-dashoffset="${off}"/>
+      </svg>
+      ${centerHtml ? `<div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center">${centerHtml}</div>` : ''}
+      </div>`;
+  }
+  return { confettiBurst, ringSvg, beep };
+})();
+
+/* ---------------- Exercise Library ---------------- */
+AK.EXLIB = [
+  {name:'Barbell Back Squat', cat:'Legs'}, {name:'Barbell Bench Press', cat:'Push'}, {name:'Deadlift', cat:'Pull'},
+  {name:'Overhead Press', cat:'Push'}, {name:'Barbell Row', cat:'Pull'}, {name:'Pull-Up', cat:'Pull'},
+  {name:'Chin-Up', cat:'Pull'}, {name:'Dip', cat:'Push'}, {name:'Incline Dumbbell Press', cat:'Push'},
+  {name:'Dumbbell Shoulder Press', cat:'Push'}, {name:'Lat Pulldown', cat:'Pull'}, {name:'Seated Cable Row', cat:'Pull'},
+  {name:'Leg Press', cat:'Legs'}, {name:'Romanian Deadlift', cat:'Legs'}, {name:'Bulgarian Split Squat', cat:'Legs'},
+  {name:'Walking Lunge', cat:'Legs'}, {name:'Leg Curl', cat:'Legs'}, {name:'Leg Extension', cat:'Legs'},
+  {name:'Calf Raise', cat:'Legs'}, {name:'Barbell Curl', cat:'Arms'}, {name:'Hammer Curl', cat:'Arms'},
+  {name:'Tricep Pushdown', cat:'Arms'}, {name:'Skull Crusher', cat:'Arms'}, {name:'Lateral Raise', cat:'Push'},
+  {name:'Face Pull', cat:'Pull'}, {name:'Plank', cat:'Core'}, {name:'Hanging Leg Raise', cat:'Core'},
+  {name:'Cable Crunch', cat:'Core'}, {name:'Russian Twist', cat:'Core'}, {name:'Push-Up', cat:'Push'},
+  {name:'Front Squat', cat:'Legs'}, {name:'Hip Thrust', cat:'Legs'}, {name:'Farmer Carry', cat:'Pull'},
+  {name:'Running', cat:'Cardio'}, {name:'Cycling', cat:'Cardio'}, {name:'Rowing Machine', cat:'Cardio'},
+  {name:'Jump Rope', cat:'Cardio'}, {name:'Burpee', cat:'Cardio'}, {name:'Mountain Climber', cat:'Cardio'},
+  {name:'Yoga Flow', cat:'Mobility'}, {name:'Stretch Routine', cat:'Mobility'}
+];
+AK.TEMPLATES_BUILTIN = [
+  {name:'Push / Pull / Legs', tags:['PPL'], days:[
+    {label:'Push', exercises:['Barbell Bench Press','Overhead Press','Incline Dumbbell Press','Lateral Raise','Tricep Pushdown']},
+    {label:'Pull', exercises:['Deadlift','Barbell Row','Pull-Up','Face Pull','Barbell Curl']},
+    {label:'Legs', exercises:['Barbell Back Squat','Romanian Deadlift','Leg Press','Leg Curl','Calf Raise']}
+  ]},
+  {name:'Upper / Lower Split', tags:['UL'], days:[
+    {label:'Upper', exercises:['Barbell Bench Press','Barbell Row','Overhead Press','Lat Pulldown','Barbell Curl','Tricep Pushdown']},
+    {label:'Lower', exercises:['Barbell Back Squat','Romanian Deadlift','Leg Press','Calf Raise','Hanging Leg Raise']}
+  ]},
+  {name:'GZCLP (Beginner Strength)', tags:['GZCLP'], days:[
+    {label:'Day 1 — Squat/Bench', exercises:['Barbell Back Squat','Barbell Bench Press','Lat Pulldown','Plank']},
+    {label:'Day 2 — OHP/Deadlift', exercises:['Overhead Press','Deadlift','Barbell Row','Hanging Leg Raise']},
+    {label:'Day 3 — Bench/Squat', exercises:['Barbell Bench Press','Barbell Back Squat','Lat Pulldown','Cable Crunch']},
+    {label:'Day 4 — Deadlift/OHP', exercises:['Deadlift','Overhead Press','Barbell Row','Plank']}
+  ]},
+  {name:'Full Body (3x/week)', tags:['FullBody'], days:[
+    {label:'Full Body A', exercises:['Barbell Back Squat','Barbell Bench Press','Barbell Row','Plank']},
+    {label:'Full Body B', exercises:['Deadlift','Overhead Press','Pull-Up','Hanging Leg Raise']},
+    {label:'Full Body C', exercises:['Front Squat','Incline Dumbbell Press','Seated Cable Row','Cable Crunch']}
+  ]}
+];
+
+/* ---------------- Daily Quests ---------------- */
+AK.Quests = (() => {
+  const POOL = [
+    {id:'log_water3', label:'Log water 3 times today', xp:15, check: s => (waterEntriesToday()>=3)},
+    {id:'hit_water_goal', label:'Reach your water goal', xp:20, check: s => waterTotalToday() >= AK.state.waterGoalMl},
+    {id:'log_workout', label:'Log a training session', xp:30, check: s => workoutLoggedToday()},
+    {id:'log_sleep', label:'Log last night\'s sleep', xp:10, check: s => !!AK.state.sleep[AK.today()]},
+    {id:'complete_5sets', label:'Complete 5 working sets', xp:20, check: s => setsDoneToday()>=5},
+    {id:'open_app', label:'Check in on your progress', xp:5, check: () => true},
+  ];
+  function waterEntriesToday(){ const w = AK.state.water[AK.today()]; return w? w.entries.length : 0; }
+  function waterTotalToday(){ const w = AK.state.water[AK.today()]; return w? w.entries.reduce((a,e)=>a+e.ml,0) : 0; }
+  function workoutLoggedToday(){ return AK.state.workouts.some(w=>w.date===AK.today()); }
+  function setsDoneToday(){ let n=0; AK.state.workouts.filter(w=>w.date===AK.today()).forEach(w=>w.exercises.forEach(e=>e.sets.forEach(s=>{if(s.done)n++;}))); return n; }
+  function ensureToday(){
+    const q = AK.state.quests;
+    if (q.date === AK.today() && q.daily.length) return;
+    const shuffled = [...POOL].sort(()=>Math.random()-.5).slice(0,4);
+    q.date = AK.today();
+    q.daily = shuffled.map(p => ({id:p.id, label:p.label, xp:p.xp, done:false}));
+    AK.save();
+  }
+  function evaluate(){
+    ensureToday();
+    const q = AK.state.quests;
+    let changed=false;
+    q.daily.forEach(item => {
+      if (item.done) return;
+      const def = POOL.find(p=>p.id===item.id);
+      if (def && def.check()) { item.done = true; changed=true; AK.Game.addXp(item.xp,'Quest'); }
+    });
+    if (changed) AK.save();
+    return q.daily;
+  }
+  return { ensureToday, evaluate, get:()=>AK.state.quests.daily };
+})();
+</script>
+
+<script>
+/* ---------------- Sheet (bottom modal) helper ---------------- */
+AK.Sheet = (() => {
+  const overlay = () => document.getElementById('sheetOverlay');
+  const body = () => document.getElementById('sheetBody');
+  function open(html, opts={}){
+    body().innerHTML = `<div class="handle"></div>` + html;
+    body().classList.toggle('sheet-tall', !!opts.tall);
+    overlay().classList.add('show');
+  }
+  function close(){ overlay().classList.remove('show'); }
+  return { open, close, body };
+})();
+
+/* ---------------- Router ---------------- */
+AK.NAV_ITEMS = [
+  { id:'home',     label:'Home',     icon:'i-home' },
+  { id:'workout',  label:'Train',    icon:'i-dumbbell' },
+  { id:'water',    label:'Water',    icon:'i-droplet' },
+  { id:'body',     label:'Body',     icon:'i-camera' },
+  { id:'quests',   label:'Quests',   icon:'i-trophy', dot:true },
+  { id:'coach',    label:'Coach',    icon:'i-companion' },
+  { id:'settings', label:'More',     icon:'i-settings' },
+];
+AK.Router = (() => {
+  const screens = AK.NAV_ITEMS.map(n => n.id);
+  function navButtonHtml(item){
+    return `<button class="navbtn" data-screen="${item.id}">
+      <svg class="icon" viewBox="0 0 24 24"><use href="#${item.icon}"/></svg>
+      <span>${item.label}</span>
+      ${item.dot ? `<span class="dot" data-quest-dot></span>` : ''}
+    </button>`;
+  }
+  function renderNav(){
+    const bottomHtml = AK.NAV_ITEMS.map(navButtonHtml).join('');
+    document.getElementById('bottomNavInner').innerHTML = bottomHtml;
+    document.getElementById('sidebarNavInner').innerHTML = bottomHtml;
+  }
+  function go(name){
+    if (!screens.includes(name)) return;
+    screens.forEach(s => document.getElementById('screen-'+s).classList.toggle('active', s===name));
+    document.querySelectorAll('.navbtn').forEach(b => b.classList.toggle('active', b.dataset.screen===name));
+    window.scrollTo(0,0);
+    AK.UI.render(name);
+    location.hash = name;
+    // Home already has inline Quick Action cards that duplicate the FAB's
+    // job — showing both caused the floating button to sit on top of the
+    // dashboard's stat cards on shorter screens. Hide it only there.
+    const workoutInSession = name==='workout' && AK.Workout.hasActiveSession && AK.Workout.hasActiveSession();
+    // Home (has its own Quick Action cards) and Coach (has its own Ask input
+    // pinned near the bottom of the card) both already offer the same
+    // shortcuts the FAB provides — showing it there just risks it sitting on
+    // top of their own controls instead of adding anything new.
+    document.getElementById('fabBtn').classList.toggle('hidden', name==='home' || name==='coach' || workoutInSession);
+  }
+  function init(){
+    renderNav();
+    document.querySelectorAll('.navbtn').forEach(b => b.addEventListener('click', () => { AK.haptic(); go(b.dataset.screen); }));
+    document.getElementById('fabBtn').addEventListener('click', () => { AK.haptic(); AK.QuickAdd.open(); });
+    document.getElementById('fabBtnSide').addEventListener('click', () => { AK.haptic(); AK.QuickAdd.open(); });
+    const startScreen = (location.hash||'').replace('#','') || 'home';
+    go(screens.includes(startScreen)?startScreen:'home');
+  }
+  return { go, init };
+})();
+</script>
+
+<script>
+/* ====================================================================
+   QUICK ADD — powers the FAB (fixes: FAB previously had no handler at all)
+   ==================================================================== */
+AK.QuickAdd = (() => {
+  function open(){
+    AK.Sheet.open(`<div class="sheet-head"><h3>Quick Add</h3><button class="btn-icon" id="shClose"><svg class="icon" viewBox="0 0 24 24"><use href="#i-x"/></svg></button></div>
+      <div class="quickgrid">
+        <button data-act="workout"><span class="icon-wrap" style="background:color-mix(in srgb, var(--accent) 18%, transparent);color:var(--accent-2)"><svg class="icon" viewBox="0 0 24 24"><use href="#i-dumbbell"/></svg></span>Start Workout</button>
+        <button data-act="water"><span class="icon-wrap" style="background:color-mix(in srgb, var(--water) 18%, transparent);color:var(--water)"><svg class="icon" viewBox="0 0 24 24"><use href="#i-droplet"/></svg></span>Add Water</button>
+        <button data-act="photo"><span class="icon-wrap" style="background:color-mix(in srgb, var(--fire) 18%, transparent);color:var(--fire)"><svg class="icon" viewBox="0 0 24 24"><use href="#i-camera"/></svg></span>Progress Photo</button>
+        <button data-act="metrics"><span class="icon-wrap" style="background:color-mix(in srgb, var(--good) 18%, transparent);color:var(--good)"><svg class="icon" viewBox="0 0 24 24"><use href="#i-scale"/></svg></span>Body Metrics</button>
+        <button data-act="sleep"><span class="icon-wrap" style="background:color-mix(in srgb, var(--xp) 18%, transparent);color:var(--xp)"><svg class="icon" viewBox="0 0 24 24"><use href="#i-moon"/></svg></span>Log Sleep</button>
+        <button data-act="activity"><span class="icon-wrap" style="background:color-mix(in srgb, var(--rank-a) 18%, transparent);color:var(--rank-a)"><svg class="icon" viewBox="0 0 24 24"><use href="#i-run"/></svg></span>Log Activity</button>
+        <button data-act="coach"><span class="icon-wrap" style="background:color-mix(in srgb, var(--accent) 18%, transparent);color:var(--accent-2)"><svg class="icon" viewBox="0 0 24 24"><use href="#i-companion"/></svg></span>Ask Coach</button>
+      </div>`);
+    document.getElementById('shClose').onclick = AK.Sheet.close;
+    AK.Sheet.body().querySelectorAll('[data-act]').forEach(b => b.addEventListener('click', () => handle(b.dataset.act)));
+  }
+  function handle(act){
+    AK.Sheet.close();
+    switch(act){
+      case 'workout': AK.Router.go('workout'); break;
+      case 'water': AK.Water.quickAddSheet(); break;
+      case 'photo': AK.Router.go('body'); setTimeout(()=>AK.Body.addPhotoFlow(), 260); break;
+      case 'metrics': AK.Router.go('body'); setTimeout(()=>AK.Body.openMetricSheet(), 260); break;
+      case 'sleep': AK.Router.go('body'); setTimeout(()=>AK.Body.openSleepTab(), 260); break;
+      case 'activity': AK.Router.go('workout'); setTimeout(()=>AK.Activity.logSheet(), 260); break;
+      case 'coach': AK.Router.go('coach'); break;
+    }
+  }
+  return { open };
+})();
+</script>
+
+<script>
+/* ---------------- Onboarding Wizard ---------------- */
+AK.Onboard = (() => {
+  let step = 0;
+  const data = { name:'', unit:'metric', theme:'shadow', goal:'strength', waterGoal:2600 };
+  const THEMES = [
+    {key:'shadow', label:'Shadow Monarch', accent:'#7c3aed', desc:'Deep violet · Solo Leveling inspired'},
+    {key:'kage', label:'Hidden Village', accent:'#ea580c', desc:'Ember orange · Naruto inspired'},
+    {key:'light', label:'Daybreak', accent:'#7c3aed', desc:'Clean light mode'}
+  ];
+  function render(){
+    const root = document.getElementById('onboardWizard');
+    const steps = [stepWelcome, stepName, stepGoal, stepTheme, stepWater, stepReady];
+    root.innerHTML = steps[step]();
+    bind();
+  }
+  function stepWelcome(){
+    return `<div style="min-height:88vh;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:40px 24px">
+      <div style="width:96px;height:96px;border-radius:28px;background:linear-gradient(135deg,#7c3aed,#a78bfa);display:flex;align-items:center;justify-content:center;box-shadow:0 0 50px #7c3aedaa;margin-bottom:26px">
+        <svg class="icon" viewBox="0 0 24 24" style="width:52px;height:52px;stroke:#fff"><use href="#i-bolt"/></svg>
+      </div>
+      <h1 style="font-size:32px;font-weight:900;letter-spacing:-.02em;margin-bottom:10px">ARISE KAGE</h1>
+      <p style="color:var(--text-2);max-width:300px;margin-bottom:36px">Level up. For real. Track training, water, nutrition and progress photos — no subscriptions, no ads, no locked features. Ever.</p>
+      <button class="btn btn-primary btn-block" data-next>Begin your journey</button>
+    </div>`;
+  }
+  function stepName(){
+    return `<div style="padding:60px 4px 20px">
+      <div class="section-title">Step 1 of 5</div>
+      <h1 class="page-title">Who's leveling up?</h1>
+      <p class="page-sub">This stays on your device.</p>
+      <div class="field"><input class="input" id="obName" placeholder="Your name" value="${AK.escapeHtml(data.name)}" autofocus></div>
+      <button class="btn btn-primary btn-block" data-next>Continue</button>
+    </div>`;
+  }
+  function stepGoal(){
+    const goals = [{k:'strength',l:'Get Stronger',i:'i-dumbbell'},{k:'endurance',l:'Build Endurance',i:'i-flame'},{k:'weight',l:'Manage Weight',i:'i-scale'},{k:'consistency',l:'Just Show Up Daily',i:'i-target'}];
+    return `<div style="padding:60px 4px 20px">
+      <div class="section-title">Step 2 of 5</div>
+      <h1 class="page-title">What's your main quest?</h1>
+      <p class="page-sub">We'll tune quests & suggestions around this.</p>
+      <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:24px">
+      ${goals.map(g=>`<button class="card tap flex items-center gap-12" data-goal="${g.k}" style="text-align:left;${data.goal===g.k?'border-color:var(--accent);box-shadow:var(--shadow-glow)':''}">
+        <svg class="icon" viewBox="0 0 24 24" style="width:22px;height:22px;color:var(--accent-2)"><use href="#${g.i}"/></svg>
+        <b>${g.l}</b></button>`).join('')}
+      </div>
+      <button class="btn btn-primary btn-block" data-next>Continue</button>
+    </div>`;
+  }
+  function stepTheme(){
+    return `<div style="padding:60px 4px 20px">
+      <div class="section-title">Step 3 of 5</div>
+      <h1 class="page-title">Choose your aesthetic</h1>
+      <p class="page-sub">Fully customizable later in Settings.</p>
+      <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:24px">
+      ${THEMES.map(t=>`<button class="card tap flex items-center gap-12" data-theme="${t.key}" style="text-align:left;${data.theme===t.key?'border-color:'+t.accent+';box-shadow:0 0 20px '+t.accent+'55':''}">
+        <span style="width:34px;height:34px;border-radius:10px;background:${t.accent};flex-shrink:0"></span>
+        <span><b style="display:block">${t.label}</b><span class="text-2 text-sm">${t.desc}</span></span></button>`).join('')}
+      </div>
+      <button class="btn btn-primary btn-block" data-next>Continue</button>
+    </div>`;
+  }
+  function stepWater(){
+    return `<div style="padding:60px 4px 20px">
+      <div class="section-title">Step 4 of 5</div>
+      <h1 class="page-title">Daily water goal</h1>
+      <p class="page-sub">A good default is 30–35ml per kg of bodyweight.</p>
+      <div class="stepper mt-16" style="max-width:220px">
+        <button data-w="-250">−</button><input id="obWater" value="${data.waterGoal}" inputmode="numeric"><button data-w="250">+</button>
+      </div>
+      <p class="text-2 text-sm mt-8">milliliters / day</p>
+      <button class="btn btn-primary btn-block mt-16" data-next>Continue</button>
+    </div>`;
+  }
+  function stepReady(){
+    return `<div style="min-height:88vh;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:40px 24px">
+      <svg class="icon" viewBox="0 0 24 24" style="width:64px;height:64px;color:var(--accent-2);margin-bottom:20px"><use href="#i-shield"/></svg>
+      <h1 style="font-size:26px;font-weight:800;margin-bottom:10px">You're E-Rank. For now.</h1>
+      <p style="color:var(--text-2);max-width:280px;margin-bottom:30px">${AK.escapeHtml(AK.Quotes.random())}</p>
+      <button class="btn btn-primary btn-block" data-finish>Arise</button>
+    </div>`;
+  }
+  function bind(){
+    const root = document.getElementById('onboardWizard');
+    root.querySelectorAll('[data-goal]').forEach(b=>b.addEventListener('click',()=>{data.goal=b.dataset.goal; render();}));
+    root.querySelectorAll('[data-theme]').forEach(b=>b.addEventListener('click',()=>{data.theme=b.dataset.theme; render();}));
+    const w = root.querySelector('#obWater');
+    if (w) root.querySelectorAll('[data-w]').forEach(b=>b.addEventListener('click',()=>{ data.waterGoal = AK.clamp(parseInt(w.value||0)+parseInt(b.dataset.w),500,8000); w.value=data.waterGoal; }));
+    const nameInput = root.querySelector('#obName');
+    const next = root.querySelector('[data-next]');
+    if (next) next.addEventListener('click', () => {
+      if (nameInput) data.name = nameInput.value.trim() || 'Hunter';
+      if (w) data.waterGoal = AK.clamp(parseInt(w.value)||2600,500,8000);
+      step++; render();
+    });
+    const finish = root.querySelector('[data-finish]');
+    if (finish) finish.addEventListener('click', complete);
+  }
+  function complete(){
+    AK.state.profile = { name:data.name, unit:data.unit, goal:data.goal, createdAt:Date.now(), title:'Awakened Hunter' };
+    AK.state.settings.theme = data.theme;
+    const chosenTheme = THEMES.find(t=>t.key===data.theme);
+    if (chosenTheme) AK.state.settings.accent = chosenTheme.accent;
+    AK.state.waterGoalMl = data.waterGoal;
+    AK.Game.updateStreak();
+    AK.save();
+    AK.applyTheme();
+    document.getElementById('screen-onboard').classList.remove('active');
+    document.getElementById('appChrome').classList.remove('hidden');
+    AK.Router.init();
+    AK.boot2();
+  }
+  return { render, THEMES };
+})();
+</script>
+
+<script>
+/* ---------------- UI: main render dispatcher ---------------- */
+AK.UI = (() => {
+  function render(screen){
+    AK.Quests.evaluate();
+    const map = {
+      home: renderHome,
+      workout: () => AK.Workout.render(),
+      water: () => AK.Water.render(),
+      body: () => AK.Body.render(),
+      quests: () => AK.QuestsUI.render(),
+      coach: () => AK.Companion.render(),
+      settings: () => AK.Settings.render()
+    };
+    (map[screen]||renderHome)();
+    updateChrome();
+  }
+  function refreshHome(){ if (document.getElementById('screen-home').classList.contains('active')) renderHome(); updateChrome(); }
+  function updateChrome(){
+    const streakEl = document.getElementById('streakCount'), streakElSide = document.getElementById('streakCountSide');
+    if (streakEl) streakEl.textContent = AK.state.gamification.streak;
+    if (streakElSide) streakElSide.textContent = AK.state.gamification.streak;
+    const anyUndone = AK.Quests.get().some(q=>!q.done);
+    document.querySelectorAll('[data-quest-dot]').forEach(el => el.classList.toggle('show', anyUndone));
+  }
+
+  /* ===================== HOME ===================== */
+  function renderHome(){
+    const el = document.getElementById('screen-home');
+    const p = AK.state.profile, g = AK.state.gamification;
+    const xpNeed = AK.Game.xpForLevel(g.level);
+    const rank = AK.Game.rankFor(g.level);
+    const stats = AK.Game.derivedStats();
+    const waterToday = (AK.state.water[AK.today()]?.entries||[]).reduce((a,e)=>a+e.ml,0);
+    const waterPct = waterToday / AK.state.waterGoalMl;
+    const quests = AK.Quests.get();
+    const questsDone = quests.filter(q=>q.done).length;
+    const lastWorkout = [...AK.state.workouts].sort((a,b)=>b.date.localeCompare(a.date))[0];
+
+    el.innerHTML = `
+      <h1 class="page-title">Hey, ${AK.escapeHtml(p?.name||'Hunter')}</h1>
+      <p class="page-sub">${AK.escapeHtml(AK.Quotes.daily())}</p>
+
+      <div class="card glow">
+        <div class="flex items-center justify-between">
+          <div>
+            <div class="text-2 text-sm">Hunter Level</div>
+            <div class="mono" style="font-size:34px;font-weight:900;line-height:1.1">${g.level}</div>
+          </div>
+          <div class="rank-badge" style="background:${rank.color}22;color:${rank.color};border:1.5px solid ${rank.color}">${rank.key}</div>
+        </div>
+        <div class="bar-track mt-16"><div class="bar-fill xp" style="width:${AK.clamp(g.xp/xpNeed*100,2,100)}%"></div></div>
+        <div class="flex justify-between mt-8 text-sm text-2"><span class="mono">${g.xp} XP</span><span class="mono">${xpNeed} XP to Level ${g.level+1}</span></div>
+      </div>
+
+      <div class="grid-3 mt-16">
+        ${statChip('STR', stats.STR, 'i-dumbbell')}
+        ${statChip('END', stats.END, 'i-flame')}
+        ${statChip('VIT', stats.VIT, 'i-shield')}
+      </div>
+
+      <div class="section-title">Today<span class="link" data-nav="quests">Quests ${questsDone}/${quests.length} →</span></div>
+      <div class="grid-2">
+        <div class="card tap" data-nav="water">
+          ${AK.Fx.ringSvg(waterPct, 96, 9, '--water', `<div class="mono" style="font-size:16px;font-weight:700">${Math.round(waterToday)}</div><div class="text-2" style="font-size:10px">of ${AK.state.waterGoalMl}ml</div>`)}
+          <div class="flex items-center gap-8" style="justify-content:center;font-weight:700;margin-top:10px;font-size:13px"><svg class="icon" viewBox="0 0 24 24" style="width:14px;height:14px;color:var(--water)"><use href="#i-droplet"/></svg>Water</div>
+        </div>
+        <div class="card tap" data-nav="workout">
+          <div class="flex items-center justify-between mb-4">
+            <svg class="icon" viewBox="0 0 24 24" style="width:26px;height:26px;color:var(--accent-2)"><use href="#i-dumbbell"/></svg>
+            <span class="pill"><svg class="icon" viewBox="0 0 24 24" style="color:var(--fire)"><use href="#i-flame"/></svg>${AK.state.gamification.streak}</span>
+          </div>
+          <div style="font-weight:800;margin-top:10px">${lastWorkout ? 'Last: '+AK.escapeHtml(lastWorkout.name) : 'No workouts yet'}</div>
+          <div class="text-2 text-sm">${lastWorkout ? AK.prettyDate(lastWorkout.date) : 'Tap to start one'}</div>
+        </div>
+      </div>
+
+      <div class="section-title">Quick Actions</div>
+      <div class="grid-3">
+        <button class="card tap" style="text-align:center;padding:14px" data-quick="water"><svg class="icon" viewBox="0 0 24 24" style="width:22px;height:22px;color:var(--water)"><use href="#i-droplet"/></svg><div class="text-sm mt-8" style="font-weight:700">Add Water</div></button>
+        <button class="card tap" style="text-align:center;padding:14px" data-quick="workout"><svg class="icon" viewBox="0 0 24 24" style="width:22px;height:22px;color:var(--accent-2)"><use href="#i-dumbbell"/></svg><div class="text-sm mt-8" style="font-weight:700">Start Workout</div></button>
+        <button class="card tap" style="text-align:center;padding:14px" data-quick="photo"><svg class="icon" viewBox="0 0 24 24" style="width:22px;height:22px;color:var(--fire)"><use href="#i-camera"/></svg><div class="text-sm mt-8" style="font-weight:700">Progress Pic</div></button>
+      </div>
+
+      <div class="section-title">Share your progress</div>
+      <button class="card tap flex items-center justify-between" data-nav="sharecard">
+        <span class="flex items-center gap-12"><svg class="icon" viewBox="0 0 24 24" style="width:22px;height:22px;color:var(--accent-2)"><use href="#i-share"/></svg><b>Generate Share Report</b></span>
+        <svg class="icon" viewBox="0 0 24 24"><use href="#i-chevron-right"/></svg>
+      </button>
+    `;
+    el.querySelectorAll('[data-nav]').forEach(b=>b.addEventListener('click',()=>{
+      if (b.dataset.nav==='sharecard') AK.Share.open(); else AK.Router.go(b.dataset.nav);
+    }));
+    el.querySelectorAll('[data-quick]').forEach(b=>b.addEventListener('click',()=>{
+      const k=b.dataset.quick;
+      if (k==='water') AK.Water.quickAddSheet();
+      else if (k==='workout') AK.Router.go('workout');
+      else if (k==='photo') AK.Body.addPhotoFlow();
+    }));
+  }
+  function statChip(label,val,icon){
+    return `<div class="card" style="text-align:center;padding:16px 8px">
+      <svg class="icon" viewBox="0 0 24 24" style="width:19px;height:19px;color:var(--accent-2)"><use href="#${icon}"/></svg>
+      <div class="mono" style="font-size:22px;font-weight:700;margin-top:8px">${val}</div>
+      <div class="text-2" style="font-size:10px;letter-spacing:.1em;margin-top:2px">${label}</div>
+    </div>`;
+  }
+
+  return { render, refreshHome, renderHome:()=>renderHome(), _internal:{renderHome} };
+})();
+</script>
+
+<script>
+/* ====================================================================
+   WORKOUT MODULE
+   ==================================================================== */
+AK.Workout = (() => {
+  let activeSession = null; // {id,date,name,startedAt,exercises:[...],notes}
+  let restTimer = { seconds:0, running:false, iv:null };
+
+  function render(){
+    const el = document.getElementById('screen-workout');
+    document.getElementById('fabBtn').classList.toggle('hidden', !!activeSession);
+    if (activeSession) return renderActive(el);
+    renderHub(el);
+  }
+
+  function renderHub(el){
+    const history = [...AK.state.workouts].sort((a,b)=>b.date.localeCompare(a.date));
+    el.innerHTML = `
+      <h1 class="page-title">Train</h1>
+      <p class="page-sub">Fast logging. Zero friction. Every set counts.</p>
+      <div class="grid-2">
+        <button class="btn btn-primary btn-block" id="startBlankBtn" style="grid-column:${history.length?'auto':'1/-1'}">
+          <svg class="icon" viewBox="0 0 24 24"><use href="#i-plus"/></svg> Empty Workout
+        </button>
+        ${history.length ? `<button class="btn btn-ghost btn-block" id="repeatLastBtn">
+          <svg class="icon" viewBox="0 0 24 24"><use href="#i-refresh"/></svg> Repeat Last
+        </button>` : ''}
+      </div>
+      <div class="section-title">Routines<span class="link" id="newTemplateLink">+ New</span></div>
+      <div style="display:flex;flex-direction:column;gap:10px">
+        ${AK.TEMPLATES_BUILTIN.map((t,ti)=>templateCard(t,'b:'+ti,false)).join('')}
+        ${AK.state.templates.map((t,ti)=>templateCard(t,'u:'+ti,true)).join('')}
+      </div>
+      <div class="section-title">History</div>
+      ${history.length===0 ? emptyState('i-dumbbell','No workouts logged yet — start one above.') :
+        history.slice(0,20).map(w=>historyCard(w)).join('')}
+      ${AK.Activity.historyList()}
+      <button class="btn btn-ghost btn-block mt-16" id="logActivityBtn"><svg class="icon" viewBox="0 0 24 24"><use href="#i-run"/></svg> Log Running / Sport / Other Activity</button>
+    `;
+    el.querySelector('#startBlankBtn').addEventListener('click', () => startSession('Freestyle Workout', []));
+    el.querySelector('#logActivityBtn').addEventListener('click', () => AK.Activity.logSheet());
+    AK.Activity.bindHistory(el);
+    const repeatBtn = el.querySelector('#repeatLastBtn');
+    if (repeatBtn) repeatBtn.addEventListener('click', () => {
+      const last = history[0];
+      startSession(last.name, last.exercises.map(e=>e.name));
+    });
+    el.querySelector('#newTemplateLink').addEventListener('click', openTemplateBuilder);
+    el.querySelectorAll('[data-start-tpl]').forEach(b=>b.addEventListener('click',()=>{
+      const [kind,idx] = b.dataset.startTpl.split(':');
+      const tpl = kind==='b' ? AK.TEMPLATES_BUILTIN[idx] : AK.state.templates[idx];
+      openDayPicker(tpl);
+    }));
+    el.querySelectorAll('[data-del-tpl]').forEach(b=>b.addEventListener('click',(ev)=>{
+      ev.stopPropagation();
+      if (!confirm('Delete this custom routine?')) return;
+      AK.state.templates.splice(parseInt(b.dataset.delTpl),1);
+      AK.save(); renderHub(el);
+    }));
+    el.querySelectorAll('[data-view-w]').forEach(b=>b.addEventListener('click',()=>viewWorkout(b.dataset.viewW)));
+  }
+
+  function templateCard(t, key, isCustom){
+    const idx = key.split(':')[1];
+    return `<div class="card tap" data-start-tpl="${key}">
+      <div class="flex items-center justify-between">
+        <b>${AK.escapeHtml(t.name)}</b>
+        <span class="flex items-center gap-8">
+          ${isCustom ? `<button class="btn-icon" style="width:28px;height:28px" data-del-tpl="${idx}"><svg class="icon" viewBox="0 0 24 24" style="width:13px;height:13px"><use href="#i-trash"/></svg></button>` : ''}
+          <svg class="icon" viewBox="0 0 24 24"><use href="#i-chevron-right"/></svg>
+        </span>
+      </div>
+      <div class="text-2 text-sm mt-8">${t.days.map(d=>d.label).join(' · ')}</div>
+    </div>`;
+  }
+  function historyCard(w){
+    const totalSets = w.exercises.reduce((a,e)=>a+e.sets.filter(s=>s.done).length,0);
+    const vol = Math.round(w.exercises.reduce((a,e)=>a+e.sets.reduce((a2,s)=>a2+(s.done?(s.weight||0)*(s.reps||0):0),0),0));
+    return `<div class="card tap" data-view-w="${w.id}">
+      <div class="flex items-center justify-between"><b>${AK.escapeHtml(w.name)}</b><span class="text-2 text-sm">${AK.prettyDate(w.date)}</span></div>
+      <div class="text-2 text-sm mt-8">${w.exercises.length} exercises · ${totalSets} sets · ${vol}kg volume</div>
+    </div>`;
+  }
+  function emptyState(icon,msg){
+    return `<div class="empty-state"><svg class="icon" viewBox="0 0 24 24"><use href="#${icon}"/></svg><div>${msg}</div></div>`;
+  }
+
+  function openDayPicker(tpl){
+    AK.Sheet.open(`<div class="sheet-head"><h3>${AK.escapeHtml(tpl.name)}</h3><button class="btn-icon" id="shClose"><svg class="icon" viewBox="0 0 24 24"><use href="#i-x"/></svg></button></div>
+      <div style="display:flex;flex-direction:column;gap:10px">
+      ${tpl.days.map((d,i)=>`<button class="card tap" data-day="${i}" style="text-align:left"><b>${AK.escapeHtml(d.label)}</b><div class="text-2 text-sm mt-8">${d.exercises.join(', ')}</div></button>`).join('')}
+      </div>`);
+    document.getElementById('shClose').onclick = AK.Sheet.close;
+    AK.Sheet.body().querySelectorAll('[data-day]').forEach(b=>b.addEventListener('click',()=>{
+      const day = tpl.days[b.dataset.day];
+      AK.Sheet.close();
+      startSession(tpl.name+' — '+day.label, day.exercises);
+    }));
+  }
+
+  function startSession(name, exerciseNames){
+    activeSession = {
+      id: AK.uid(), date: AK.today(), name, startedAt: Date.now(),
+      exercises: exerciseNames.map(n => ({id:AK.uid(), name:n, category: (AK.EXLIB.find(x=>x.name===n)||{}).cat || 'Custom', sets:[ blankSet(n) ]})),
+      notes:''
+    };
+    AK.Router.go('workout');
+  }
+  function lastUsed(name){
+    for (let i=AK.state.workouts.length-1;i>=0;i--){
+      const w = AK.state.workouts[i];
+      const ex = w.exercises.find(e=>e.name===name);
+      if (ex) { const s = [...ex.sets].reverse().find(s=>s.done); if (s) return s; }
+    }
+    return null;
+  }
+  function blankSet(name){
+    const lu = lastUsed(name);
+    return { weight: lu?lu.weight:0, reps: lu?lu.reps:8, rpe:null, done:false };
+  }
+
+  function renderActive(el){
+    const s = activeSession;
+    el.innerHTML = `
+      <div class="flex items-center justify-between mt-8">
+        <button class="btn-icon" id="cancelSession"><svg class="icon" viewBox="0 0 24 24"><use href="#i-x"/></svg></button>
+        <div style="text-align:center"><div style="font-weight:800">${AK.escapeHtml(s.name)}</div><div class="text-2 text-sm mono" id="sessionTimer">00:00</div></div>
+        <button class="btn-icon" id="finishSession" style="background:var(--good);color:#04231a"><svg class="icon" viewBox="0 0 24 24"><use href="#i-check"/></svg></button>
+      </div>
+      <div id="restBanner"></div>
+      <div id="exerciseList" class="mt-16" style="display:flex;flex-direction:column;gap:14px">
+        ${s.exercises.map((e,ei)=>exerciseBlock(e,ei)).join('')}
+      </div>
+      <button class="btn btn-ghost btn-block mt-16" id="addExerciseBtn"><svg class="icon" viewBox="0 0 24 24"><use href="#i-plus"/></svg> Add Exercise</button>
+    `;
+    bindActive(el);
+    tickTimer();
+    renderRestBanner();
+  }
+  function exerciseBlock(e, ei){
+    return `<div class="card" data-ex="${ei}">
+      <div class="flex items-center justify-between">
+        <b>${AK.escapeHtml(e.name)}</b>
+        <button class="btn-icon" style="width:34px;height:34px" data-swap="${ei}"><svg class="icon" viewBox="0 0 24 24" style="width:16px;height:16px"><use href="#i-swap"/></svg></button>
+      </div>
+      <div style="display:grid;grid-template-columns:26px 1fr 1fr 1fr 34px;gap:8px;align-items:center;margin-top:12px" class="text-2 text-sm">
+        <div>#</div><div>kg</div><div>reps</div><div>RPE</div><div></div>
+      </div>
+      <div class="set-rows" data-rows="${ei}">
+      ${e.sets.map((set,si)=>setRow(e,ei,set,si)).join('')}
+      </div>
+      <button class="btn btn-ghost btn-sm mt-8" data-add-set="${ei}">+ Add Set</button>
+    </div>`;
+  }
+  function setRow(e,ei,set,si){
+    return `<div style="display:grid;grid-template-columns:26px 1fr 1fr 1fr 34px;gap:8px;align-items:center;margin-top:8px" data-row="${si}">
+      <div class="text-sm" style="font-weight:700">${si+1}</div>
+      <input class="input" style="padding:8px" inputmode="decimal" data-field="weight" data-ex="${ei}" data-set="${si}" value="${set.weight||''}">
+      <input class="input" style="padding:8px" inputmode="numeric" data-field="reps" data-ex="${ei}" data-set="${si}" value="${set.reps||''}">
+      <input class="input" style="padding:8px" inputmode="numeric" placeholder="-" data-field="rpe" data-ex="${ei}" data-set="${si}" value="${set.rpe||''}">
+      <button class="btn-icon" style="width:34px;height:34px;background:${set.done?'var(--good)':'var(--surface-hi)'};color:${set.done?'#04231a':'var(--text-2)'}" data-done="${ei}:${si}"><svg class="icon" viewBox="0 0 24 24" style="width:16px;height:16px"><use href="#i-check"/></svg></button>
+    </div>`;
+  }
+  function bindActive(el){
+    el.querySelector('#cancelSession').addEventListener('click', () => {
+      if (confirm('Discard this workout session?')) { activeSession=null; AK.Router.go('workout'); }
+    });
+    el.querySelector('#finishSession').addEventListener('click', finishSession);
+    el.querySelector('#addExerciseBtn').addEventListener('click', () => openExercisePicker());
+    el.querySelectorAll('[data-add-set]').forEach(b=>b.addEventListener('click',()=>{
+      const ei=b.dataset.addSet; const ex=activeSession.exercises[ei];
+      ex.sets.push(blankSet(ex.name)); render();
+    }));
+    el.querySelectorAll('[data-swap]').forEach(b=>b.addEventListener('click',()=>openExercisePicker(parseInt(b.dataset.swap))));
+    el.querySelectorAll('[data-field]').forEach(inp=>inp.addEventListener('change',()=>{
+      const {ex,set,field} = inp.dataset;
+      const s = activeSession.exercises[ex].sets[set];
+      s[field] = field==='rpe' ? (inp.value?parseFloat(inp.value):null) : parseFloat(inp.value)||0;
+    }));
+    el.querySelectorAll('[data-done]').forEach(b=>b.addEventListener('click',()=>{
+      const [ei,si] = b.dataset.done.split(':');
+      const s = activeSession.exercises[ei].sets[si];
+      s.done = !s.done;
+      AK.haptic(12);
+      if (s.done) { checkPR(activeSession.exercises[ei], s); startRest(90); }
+      render();
+    }));
+  }
+  function checkPR(exercise, set){
+    let best = 0;
+    AK.state.workouts.forEach(w => w.exercises.forEach(e => { if (e.name===exercise.name) e.sets.forEach(s=>{ if(s.done && s.weight>best) best=s.weight; }); }));
+    if (set.weight > best) { AK.Achievements.unlock('pr_first'); AK.toast(`New PR on ${exercise.name}`,'good'); }
+  }
+  function startRest(sec){
+    restTimer.seconds = sec; restTimer.running = true;
+    clearInterval(restTimer.iv);
+    restTimer.iv = setInterval(()=>{
+      restTimer.seconds--;
+      if (restTimer.seconds<=0){ clearInterval(restTimer.iv); restTimer.running=false; AK.haptic(30); AK.Fx.beep(660,220); AK.toast('Rest complete — back to work!'); }
+      renderRestBanner();
+    },1000);
+    renderRestBanner();
+  }
+  function renderRestBanner(){
+    const b = document.getElementById('restBanner');
+    if (!b) return;
+    if (!restTimer.running) { b.innerHTML=''; return; }
+    const m = Math.floor(restTimer.seconds/60), s2 = restTimer.seconds%60;
+    b.innerHTML = `<div class="card mt-16" style="display:flex;align-items:center;justify-content:space-between;border-color:var(--accent)">
+      <span class="flex items-center gap-8"><svg class="icon" viewBox="0 0 24 24" style="color:var(--accent-2)"><use href="#i-clock"/></svg> Rest</span>
+      <b style="font-size:20px;font-variant-numeric:tabular-nums">${m}:${String(s2).padStart(2,'0')}</b>
+      <button class="btn btn-ghost btn-sm" id="skipRest">Skip</button></div>`;
+    document.getElementById('skipRest').onclick = () => { clearInterval(restTimer.iv); restTimer.running=false; renderRestBanner(); };
+  }
+  function tickTimer(){
+    const t = document.getElementById('sessionTimer');
+    if (!t || !activeSession) return;
+    const secs = Math.floor((Date.now()-activeSession.startedAt)/1000);
+    t.textContent = String(Math.floor(secs/60)).padStart(2,'0')+':'+String(secs%60).padStart(2,'0');
+    if (document.getElementById('screen-workout').classList.contains('active') && activeSession) requestAnimationFrame(()=>setTimeout(tickTimer,1000));
+  }
+  function openExercisePicker(swapIndex){
+    const cats = [...new Set(AK.EXLIB.map(e=>e.cat))];
+    AK.Sheet.open(`<div class="sheet-pinned">
+      <div class="sheet-head"><h3>${swapIndex!=null?'Swap exercise':'Add exercise'}</h3><button class="btn-icon" id="shClose"><svg class="icon" viewBox="0 0 24 24"><use href="#i-x"/></svg></button></div>
+      <input class="input" id="exSearch" placeholder="Search exercises...">
+      <div class="chipset mt-16" id="exCats">${cats.map(c=>`<button class="chip" data-cat="${c}">${c}</button>`).join('')}</div>
+      </div>
+      <div id="exResults" class="sheet-scroll" style="display:flex;flex-direction:column;gap:8px;margin-top:14px;padding-bottom:4px"></div>
+      <div class="sheet-pinned">
+      <button class="btn btn-ghost btn-block mt-16" id="customExBtn"><svg class="icon" viewBox="0 0 24 24"><use href="#i-plus"/></svg> Add custom exercise</button>
+      </div>`, {tall:true});
+    document.getElementById('shClose').onclick = AK.Sheet.close;
+    let activeCat = null;
+    function draw(){
+      const q = document.getElementById('exSearch').value.toLowerCase();
+      const list = AK.EXLIB.filter(e => (!activeCat||e.cat===activeCat) && e.name.toLowerCase().includes(q));
+      document.getElementById('exResults').innerHTML = list.map(e=>`<button class="card tap" style="padding:13px 16px;text-align:left;display:flex;align-items:center;justify-content:space-between;gap:10px" data-pick="${AK.escapeHtml(e.name)}"><span><b>${AK.escapeHtml(e.name)}</b><br><span class="text-2 text-sm">${e.cat}</span></span><svg class="icon" viewBox="0 0 24 24" style="width:18px;height:18px;color:var(--text-3);flex-shrink:0"><use href="#i-chevron-right"/></svg></button>`).join('') || emptyState('i-list','No matches — try custom exercise.');
+      document.getElementById('exResults').querySelectorAll('[data-pick]').forEach(b=>b.addEventListener('click',()=>pick(b.dataset.pick)));
+    }
+    function pick(name){
+      const cat = (AK.EXLIB.find(x=>x.name===name)||{}).cat || 'Custom';
+      if (swapIndex!=null) { activeSession.exercises[swapIndex] = {id:AK.uid(),name,category:cat,sets:[blankSet(name)]}; }
+      else activeSession.exercises.push({id:AK.uid(),name,category:cat,sets:[blankSet(name)]});
+      AK.Sheet.close(); render();
+    }
+    document.getElementById('exSearch').addEventListener('input', draw);
+    document.getElementById('exCats').querySelectorAll('[data-cat]').forEach(b=>b.addEventListener('click',()=>{
+      activeCat = activeCat===b.dataset.cat?null:b.dataset.cat;
+      document.querySelectorAll('#exCats .chip').forEach(c=>c.classList.toggle('active',c.dataset.cat===activeCat));
+      draw();
+    }));
+    document.getElementById('customExBtn').addEventListener('click', () => {
+      const name = prompt('Exercise name:'); if (name) pick(name.trim());
+    });
+    draw();
+  }
+  function finishSession(){
+    const totalSets = activeSession.exercises.reduce((a,e)=>a+e.sets.filter(s=>s.done).length,0);
+    if (totalSets===0){ if(!confirm('No sets marked complete. Save anyway?')) return; }
+    activeSession.durationSec = Math.floor((Date.now()-activeSession.startedAt)/1000);
+    activeSession.exercises = activeSession.exercises.filter(e=>e.sets.some(s=>s.done)||e.sets.length);
+    const xpEarned = 30 + totalSets*4;
+    activeSession.xpEarned = xpEarned;
+    AK.state.workouts.push(activeSession);
+    const wasFirst = AK.state.workouts.length===1;
+    AK.save();
+    AK.Game.updateStreak();
+    AK.Game.addXp(xpEarned, 'Workout logged');
+    if (wasFirst) AK.Achievements.unlock('first_workout');
+    if (AK.state.workouts.length===10) AK.Achievements.unlock('workouts_10');
+    if (AK.state.workouts.length===100) AK.Achievements.unlock('workouts_100');
+    if (new Date().getHours() >= 0 && new Date().getHours() < 4) AK.Achievements.unlock('night_owl');
+    activeSession = null;
+    AK.Router.go('home');
+  }
+  function viewWorkout(id){
+    const w = AK.state.workouts.find(x=>x.id===id); if (!w) return;
+    AK.Sheet.open(`<div class="sheet-head"><h3>${AK.escapeHtml(w.name)}</h3><button class="btn-icon" id="shClose"><svg class="icon" viewBox="0 0 24 24"><use href="#i-x"/></svg></button></div>
+      <div class="text-2 text-sm mb-8">${AK.prettyDate(w.date)}</div>
+      ${w.exercises.map(e=>`<div class="card" style="margin-bottom:10px"><b>${AK.escapeHtml(e.name)}</b>
+        <div class="text-2 text-sm mt-8">${e.sets.filter(s=>s.done).map(s=>`${s.weight}kg × ${s.reps}`).join(' · ')||'No completed sets'}</div></div>`).join('')}
+      <button class="btn btn-danger btn-block mt-16" id="delWorkout">Delete Workout</button>`);
+    document.getElementById('shClose').onclick = AK.Sheet.close;
+    document.getElementById('delWorkout').onclick = () => {
+      if (confirm('Delete this workout permanently?')) {
+        AK.state.workouts = AK.state.workouts.filter(x=>x.id!==id);
+        AK.save();
+        if (w.xpEarned) AK.Game.removeXp(w.xpEarned, 'Workout removed');
+        AK.Sheet.close(); render(); AK.UI.refreshHome();
+      }
+    };
+  }
+  function openTemplateBuilder(){
+    let days = [{label:'Day 1', exercisesText:''}];
+    function draw(nameVal){
+      AK.Sheet.open(`<div class="sheet-head"><h3>New Routine</h3><button class="btn-icon" id="shClose"><svg class="icon" viewBox="0 0 24 24"><use href="#i-x"/></svg></button></div>
+        <div class="field"><label>Routine name</label><input class="input" id="tplName" placeholder="e.g. My Push Pull Legs" value="${AK.escapeHtml(nameVal||'')}"></div>
+        <div id="tplDaysWrap" style="display:flex;flex-direction:column;gap:12px;margin-top:6px">
+          ${days.map((d,i)=>`<div class="card" style="padding:14px 16px">
+            <div class="flex items-center justify-between gap-8">
+              <input class="input" data-day-label="${i}" value="${AK.escapeHtml(d.label)}" style="font-weight:700;flex:1">
+              ${days.length>1?`<button class="btn-icon" style="width:32px;height:32px;flex-shrink:0" data-day-del="${i}"><svg class="icon" viewBox="0 0 24 24" style="width:14px;height:14px"><use href="#i-x"/></svg></button>`:''}
+            </div>
+            <div class="field mt-8" style="margin-bottom:0"><label>Exercises (comma-separated)</label><input class="input" data-day-ex="${i}" placeholder="e.g. Barbell Back Squat, Leg Press, Calf Raise" value="${AK.escapeHtml(d.exercisesText)}"></div>
+          </div>`).join('')}
+        </div>
+        <button class="btn btn-ghost btn-block mt-16" id="addDayBtn"><svg class="icon" viewBox="0 0 24 24"><use href="#i-plus"/></svg> Add day</button>
+        <button class="btn btn-primary btn-block mt-16" id="saveTplBtn">Save Routine</button>`);
+      document.getElementById('shClose').onclick = AK.Sheet.close;
+      const sync = () => {
+        AK.Sheet.body().querySelectorAll('[data-day-label]').forEach(inp=>{ days[inp.dataset.dayLabel].label = inp.value; });
+        AK.Sheet.body().querySelectorAll('[data-day-ex]').forEach(inp=>{ days[inp.dataset.dayEx].exercisesText = inp.value; });
+      };
+      document.getElementById('addDayBtn').onclick = () => { sync(); days.push({label:'Day '+(days.length+1), exercisesText:''}); draw(document.getElementById('tplName').value); };
+      AK.Sheet.body().querySelectorAll('[data-day-del]').forEach(b=>b.addEventListener('click',()=>{
+        sync(); days.splice(parseInt(b.dataset.dayDel),1); draw(document.getElementById('tplName').value);
+      }));
+      document.getElementById('saveTplBtn').onclick = () => {
+        sync();
+        const name = document.getElementById('tplName').value.trim();
+        if (!name) { AK.toast('Give your routine a name','bad'); return; }
+        const cleanDays = days.map(d=>({ label:(d.label||'Day').trim()||'Day', exercises: d.exercisesText.split(',').map(s=>s.trim()).filter(Boolean) })).filter(d=>d.exercises.length);
+        if (!cleanDays.length) { AK.toast('Add at least one exercise','bad'); return; }
+        AK.state.templates.push({ name, tags:['Custom'], days: cleanDays });
+        AK.save();
+        AK.Sheet.close();
+        AK.toast('Routine saved','good');
+        render();
+      };
+    }
+    draw('');
+  }
+
+  return { render, hasActiveSession: () => !!activeSession };
+})();
+</script>
+
+<script>
+/* ====================================================================
+   WATER MODULE
+   ==================================================================== */
+AK.Water = (() => {
+  const PRESETS = [
+    {label:'Glass', ml:250, icon:'i-glass'}, {label:'Bottle', ml:500, icon:'i-bottle'},
+    {label:'Large Bottle', ml:1000, icon:'i-jug'}, {label:'Mug', ml:200, icon:'i-mug'}
+  ];
+  function todayRec(){
+    const d = AK.today();
+    if (!AK.state.water[d]) AK.state.water[d] = {entries:[]};
+    return AK.state.water[d];
+  }
+  function totalFor(dateKey){ return (AK.state.water[dateKey]?.entries||[]).reduce((a,e)=>a+e.ml,0); }
+
+  function render(){
+    const el = document.getElementById('screen-water');
+    const rec = todayRec();
+    const total = totalFor(AK.today());
+    const goal = AK.state.waterGoalMl;
+    const pct = total/goal;
+    const last7 = last7Days();
+    el.innerHTML = `
+      <h1 class="page-title">Water</h1>
+      <p class="page-sub">Hydration you'll actually keep up with.</p>
+      <div class="card" style="display:flex;flex-direction:column;align-items:center;padding:28px 16px">
+        ${AK.Fx.ringSvg(pct, 160, 14, '--water', `<div class="mono" style="font-size:28px;font-weight:700">${total}<span style="font-size:14px;color:var(--text-2)">ml</span></div><div class="text-2 text-sm">of ${goal}ml goal</div>`)}
+        <div class="chipset mt-16" style="justify-content:center">
+          ${PRESETS.map(p=>`<button class="chip" data-add="${p.ml}"><svg class="icon" viewBox="0 0 24 24"><use href="#${p.icon}"/></svg>+${p.ml}ml</button>`).join('')}
+          <button class="chip" id="customAdd"><svg class="icon" viewBox="0 0 24 24"><use href="#i-edit"/></svg>Custom</button>
+        </div>
+      </div>
+
+      <div class="section-title">Last 7 days</div>
+      <div class="card">
+        <div style="display:flex;align-items:flex-end;gap:8px;height:90px">
+          ${last7.map(d=>{
+            const h = AK.clamp(d.total/goal,0,1.2)*80;
+            const hit = d.total>=goal;
+            return `<div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%">
+              <div style="width:100%;max-width:22px;height:${Math.max(h,3)}px;background:${hit?'var(--good)':'var(--water)'};border-radius:6px 6px 2px 2px"></div>
+              <div class="text-2" style="font-size:9px;margin-top:6px">${d.label}</div>
+            </div>`;
+          }).join('')}
+        </div>
+      </div>
+
+      <div class="section-title">Today's log</div>
+      ${rec.entries.length===0 ? `<div class="empty-state"><svg class="icon" viewBox="0 0 24 24"><use href="#i-droplet"/></svg><div>Nothing logged yet today</div></div>` :
+        rec.entries.slice().reverse().map(e=>`<div class="card flex items-center justify-between" style="padding:12px 16px">
+          <span class="flex items-center gap-8"><svg class="icon" viewBox="0 0 24 24" style="color:var(--water)"><use href="#i-droplet"/></svg>${e.ml}ml <span class="text-2 text-sm">· ${new Date(e.ts).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'})}</span></span>
+          <button class="btn-icon" style="width:32px;height:32px" data-del="${e.id}"><svg class="icon" viewBox="0 0 24 24" style="width:14px;height:14px"><use href="#i-trash"/></svg></button>
+        </div>`).join('')}
+
+      <div class="section-title">Goal</div>
+      <div class="card flex items-center justify-between">
+        <span>Daily target</span>
+        <div class="stepper" style="width:160px">
+          <button data-goal="-100">−</button><input id="goalInput" value="${goal}"><button data-goal="100">+</button>
+        </div>
+      </div>
+    `;
+    el.querySelectorAll('[data-add]').forEach(b=>b.addEventListener('click',()=>addWater(parseInt(b.dataset.add))));
+    el.querySelector('#customAdd').addEventListener('click', () => {
+      const v = prompt('Amount in ml:'); if (v && !isNaN(v)) addWater(parseInt(v));
+    });
+    el.querySelectorAll('[data-del]').forEach(b=>b.addEventListener('click',()=>{
+      const entry = rec.entries.find(e=>e.id===b.dataset.del);
+      rec.entries = rec.entries.filter(e=>e.id!==b.dataset.del);
+      AK.save();
+      if (entry) AK.Game.removeXp(entry.xp||2, 'Entry removed');
+      render(); AK.UI.refreshHome();
+    }));
+    const gi = el.querySelector('#goalInput');
+    el.querySelectorAll('[data-goal]').forEach(b=>b.addEventListener('click',()=>{
+      AK.state.waterGoalMl = AK.clamp(AK.state.waterGoalMl + parseInt(b.dataset.goal), 250, 10000);
+      AK.save(); render();
+    }));
+  }
+  function addWater(ml){
+    const rec = todayRec();
+    rec.entries.push({id:AK.uid(), ts:Date.now(), ml, xp:2});
+    AK.save(); AK.haptic(10);
+    AK.Game.updateStreak();
+    AK.Game.addXp(2,'Hydration');
+    const total = totalFor(AK.today());
+    if (total>=AK.state.waterGoalMl && total-ml<AK.state.waterGoalMl) { AK.toast('Water goal hit!','good'); AK.Fx.confettiBurst(); checkWaterStreak(); }
+    render();
+    AK.UI.refreshHome();
+  }
+  function checkWaterStreak(){
+    const days = last7Days();
+    if (days.filter(d=>d.total>=AK.state.waterGoalMl).length>=7) AK.Achievements.unlock('water7');
+  }
+  function last7Days(){
+    const out=[];
+    for (let i=6;i>=0;i--){
+      const d = new Date(); d.setDate(d.getDate()-i);
+      const key = AK.fmtDate(d);
+      out.push({label:d.toLocaleDateString(undefined,{weekday:'narrow'}), total: totalFor(key)});
+    }
+    return out;
+  }
+  function quickAddSheet(){
+    AK.Sheet.open(`<div class="sheet-head"><h3>Add Water</h3><button class="btn-icon" id="shClose"><svg class="icon" viewBox="0 0 24 24"><use href="#i-x"/></svg></button></div>
+      <div class="chipset">${PRESETS.map(p=>`<button class="chip" data-add="${p.ml}"><svg class="icon" viewBox="0 0 24 24"><use href="#${p.icon}"/></svg>+${p.ml}ml</button>`).join('')}</div>`);
+    document.getElementById('shClose').onclick = AK.Sheet.close;
+    AK.Sheet.body().querySelectorAll('[data-add]').forEach(b=>b.addEventListener('click',()=>{ addWater(parseInt(b.dataset.add)); AK.Sheet.close(); }));
+  }
+  return { render, quickAddSheet, totalFor, todayRec };
+})();
+</script>
+
+<script>
+/* ====================================================================
+   ACTIVITY — lightweight cross-training log for anything that isn't
+   barbell/gym work (running, cycling, football, cricket, swimming, yoga,
+   etc). Deliberately NOT trying to be a full sport-specific tracker for
+   every sport — this app's depth stays with strength training, where the
+   XP/rank system and exercise library actually add value. This just makes
+   sure "leg day, then five-a-side on Saturday" both count toward the same
+   streak/XP instead of one being invisible to the app.
+   ==================================================================== */
+AK.Activity = (() => {
+  const TYPES = [
+    {key:'run', label:'Running'}, {key:'cycle', label:'Cycling'},
+    {key:'football', label:'Football'}, {key:'cricket', label:'Cricket'},
+    {key:'swim', label:'Swimming'}, {key:'basketball', label:'Basketball'},
+    {key:'yoga', label:'Yoga / Mobility'}, {key:'other', label:'Other Sport'},
+  ];
+  const INTENSITY = [ {key:'easy', label:'Easy'}, {key:'moderate', label:'Moderate'}, {key:'hard', label:'Hard'} ];
+
+  function xpFor(durationMin, intensity){
+    const mult = intensity==='hard' ? 1.3 : intensity==='easy' ? 0.7 : 1;
+    return Math.max(5, Math.round(durationMin * 0.6 * mult));
+  }
+  function typeLabel(key){ return (TYPES.find(t=>t.key===key)||{}).label || 'Activity'; }
+  function recent(limit=5){ return [...AK.state.activities].sort((a,b)=>b.ts-a.ts).slice(0,limit); }
+
+  function logSheet(){
+    let typeKey = TYPES[0].key, intensityKey = 'moderate';
+    AK.Sheet.open(`<div class="sheet-head"><h3>Log Activity</h3><button class="btn-icon" id="shClose"><svg class="icon" viewBox="0 0 24 24"><use href="#i-x"/></svg></button></div>
+      <div class="field"><label>Activity</label>
+        <div class="chipset" id="actTypeChips">${TYPES.map(t=>`<button class="chip ${t.key===typeKey?'active':''}" data-type="${t.key}"><svg class="icon" viewBox="0 0 24 24"><use href="#i-run"/></svg>${t.label}</button>`).join('')}</div>
+      </div>
+      <div class="grid-2">
+        <div class="field"><label>Duration (min)</label><input class="input" id="actDuration" inputmode="numeric" placeholder="30"></div>
+        <div class="field"><label>Distance (km, optional)</label><input class="input" id="actDistance" inputmode="decimal" placeholder="—"></div>
+      </div>
+      <div class="field"><label>Intensity</label>
+        <div class="chipset" id="actIntensityChips">${INTENSITY.map(i=>`<button class="chip ${i.key===intensityKey?'active':''}" data-intensity="${i.key}">${i.label}</button>`).join('')}</div>
+      </div>
+      <div class="field"><label>Note (optional)</label><input class="input" id="actNote" placeholder="e.g. 5-a-side with friends"></div>
+      <button class="btn btn-primary btn-block" id="saveActBtn">Save Activity</button>`);
+    document.getElementById('shClose').onclick = AK.Sheet.close;
+    document.getElementById('actTypeChips').querySelectorAll('[data-type]').forEach(b=>b.addEventListener('click',()=>{
+      typeKey=b.dataset.type; document.querySelectorAll('#actTypeChips .chip').forEach(c=>c.classList.toggle('active',c.dataset.type===typeKey));
+    }));
+    document.getElementById('actIntensityChips').querySelectorAll('[data-intensity]').forEach(b=>b.addEventListener('click',()=>{
+      intensityKey=b.dataset.intensity; document.querySelectorAll('#actIntensityChips .chip').forEach(c=>c.classList.toggle('active',c.dataset.intensity===intensityKey));
+    }));
+    document.getElementById('saveActBtn').onclick = () => {
+      const duration = parseInt(document.getElementById('actDuration').value)||0;
+      if (duration<=0){ AK.toast('Add a duration first','bad'); return; }
+      const distance = parseFloat(document.getElementById('actDistance').value)||null;
+      const note = document.getElementById('actNote').value.trim();
+      const xp = xpFor(duration, intensityKey);
+      AK.state.activities.push({ id:AK.uid(), date:AK.today(), ts:Date.now(), type:typeKey, durationMin:duration, intensity:intensityKey, distanceKm:distance, note, xp });
+      AK.save();
+      AK.Game.updateStreak();
+      AK.Game.addXp(xp, typeLabel(typeKey));
+      if (AK.state.activities.length===5) AK.Achievements.unlock('cross_train');
+      AK.Sheet.close();
+      AK.toast(typeLabel(typeKey)+' logged','good');
+      AK.UI.refreshHome();
+      if (document.getElementById('screen-workout').classList.contains('active') && !AK.Workout.hasActiveSession()) AK.Workout.render();
+    };
+  }
+
+  function historyList(limit=5){
+    const list = recent(limit);
+    if (!list.length) return '';
+    return `<div class="section-title">Other Activity</div>
+      <div style="display:flex;flex-direction:column;gap:10px">
+        ${list.map(a=>`<div class="card flex items-center justify-between" style="padding:12px 16px">
+          <span class="flex items-center gap-8"><svg class="icon" viewBox="0 0 24 24" style="color:var(--rank-a)"><use href="#i-run"/></svg><b>${AK.escapeHtml(typeLabel(a.type))}</b> <span class="text-2 text-sm">· ${a.durationMin} min${a.distanceKm?' · '+AK.round1(a.distanceKm)+'km':''}</span></span>
+          <button class="btn-icon" style="width:30px;height:30px" data-del-act="${a.id}"><svg class="icon" viewBox="0 0 24 24" style="width:13px;height:13px"><use href="#i-trash"/></svg></button>
+        </div>`).join('')}
+      </div>`;
+  }
+  function bindHistory(el){
+    el.querySelectorAll('[data-del-act]').forEach(b=>b.addEventListener('click',()=>{
+      if (!confirm('Delete this activity entry?')) return;
+      const a = AK.state.activities.find(x=>x.id===b.dataset.delAct);
+      AK.state.activities = AK.state.activities.filter(x=>x.id!==b.dataset.delAct);
+      AK.save();
+      if (a && a.xp) AK.Game.removeXp(a.xp, 'Activity removed');
+      AK.UI.refreshHome();
+      AK.Workout.render();
+    }));
+  }
+  return { TYPES, logSheet, recent, historyList, bindHistory, typeLabel };
+})();
+</script>
+
+<script>
+/* ====================================================================
+   BODY MODULE — metrics + progress photos (photos stored in IndexedDB only)
+   ==================================================================== */
+AK.Body = (() => {
+  let tab = 'photos';
+  function render(){
+    const el = document.getElementById('screen-body');
+    el.innerHTML = `
+      <h1 class="page-title">Body</h1>
+      <p class="page-sub">Progress photos live only on this device. Never uploaded.</p>
+      <div class="chipset">
+        <button class="chip ${tab==='photos'?'active':''}" data-tab="photos"><svg class="icon" viewBox="0 0 24 24"><use href="#i-camera"/></svg>Photos</button>
+        <button class="chip ${tab==='metrics'?'active':''}" data-tab="metrics"><svg class="icon" viewBox="0 0 24 24"><use href="#i-ruler"/></svg>Metrics</button>
+        <button class="chip ${tab==='sleep'?'active':''}" data-tab="sleep"><svg class="icon" viewBox="0 0 24 24"><use href="#i-moon"/></svg>Sleep</button>
+      </div>
+      <div id="bodyTabBody" class="mt-16"></div>
+    `;
+    el.querySelectorAll('[data-tab]').forEach(b=>b.addEventListener('click',()=>{ tab=b.dataset.tab; render(); }));
+    const body = document.getElementById('bodyTabBody');
+    if (tab==='photos') renderPhotos(body);
+    else if (tab==='metrics') renderMetrics(body);
+    else renderSleep(body);
+  }
+
+  /* ---------- Photos ---------- */
+  async function renderPhotos(body){
+    body.innerHTML = `<button class="btn btn-primary btn-block" id="addPhotoBtn"><svg class="icon" viewBox="0 0 24 24"><use href="#i-camera"/></svg> Add Progress Photo</button>
+      <div id="photoGrid" class="grid-3 mt-16"></div>`;
+    document.getElementById('addPhotoBtn').addEventListener('click', addPhotoFlow);
+    const grid = document.getElementById('photoGrid');
+    const metas = [...AK.state.photoMeta].sort((a,b)=>b.date.localeCompare(a.date));
+    if (!metas.length) { grid.className=''; grid.innerHTML = emptyState(); return; }
+    grid.innerHTML = metas.map(m=>`<div class="card tap" style="padding:0;overflow:hidden;aspect-ratio:3/4;position:relative" data-view-photo="${m.id}">
+      <img data-src="${m.id}" style="width:100%;height:100%;object-fit:cover;display:block;background:var(--surface-hi)">
+      <div style="position:absolute;bottom:0;left:0;right:0;background:linear-gradient(transparent,rgba(0,0,0,.7));padding:6px 8px;font-size:10px;color:#fff;font-weight:700">${AK.prettyDate(m.date)}</div>
+    </div>`).join('');
+    for (const m of metas) {
+      AK.PhotoDB.get(m.id).then(rec => {
+        if (!rec) return;
+        const url = URL.createObjectURL(rec.blob);
+        const img = grid.querySelector(`img[data-src="${m.id}"]`);
+        if (img) img.src = url;
+      });
+    }
+    grid.querySelectorAll('[data-view-photo]').forEach(c=>c.addEventListener('click',()=>viewPhoto(c.dataset.viewPhoto)));
+    if (metas.length>=2) {
+      body.insertAdjacentHTML('beforeend', `<button class="btn btn-ghost btn-block mt-16" id="compareBtn"><svg class="icon" viewBox="0 0 24 24"><use href="#i-swap"/></svg> Compare Before / After</button>`);
+      document.getElementById('compareBtn').addEventListener('click', () => openCompare(metas));
+    }
+  }
+  function emptyState(){ return `<div class="empty-state" style="grid-column:1/-1"><svg class="icon" viewBox="0 0 24 24"><use href="#i-camera"/></svg><div>No photos yet. Your future self will thank you.</div></div>`; }
+
+  function addPhotoFlow(){
+    AK.Sheet.open(`<div class="sheet-head"><h3>Add Progress Photo</h3><button class="btn-icon" id="shClose"><svg class="icon" viewBox="0 0 24 24"><use href="#i-x"/></svg></button></div>
+      <div class="field"><label>Angle</label><div class="chipset" id="tagChips">
+        <button class="chip active" data-tag="Front">Front</button><button class="chip" data-tag="Side">Side</button><button class="chip" data-tag="Back">Back</button><button class="chip" data-tag="Other">Other</button>
+      </div></div>
+      <input type="file" accept="image/*" capture="environment" id="photoInput" style="display:none">
+      <button class="btn btn-primary btn-block" id="takePhotoBtn"><svg class="icon" viewBox="0 0 24 24"><use href="#i-camera"/></svg> Take / Choose Photo</button>
+      <div class="field mt-16"><label>Note (optional)</label><input class="input" id="photoNote" placeholder="e.g. Week 4, morning, fasted"></div>
+      <div id="photoPreviewWrap"></div>`);
+    document.getElementById('shClose').onclick = AK.Sheet.close;
+    let tagVal = 'Front', fileBlob = null;
+    document.getElementById('tagChips').querySelectorAll('[data-tag]').forEach(b=>b.addEventListener('click',()=>{
+      tagVal=b.dataset.tag; document.querySelectorAll('#tagChips .chip').forEach(c=>c.classList.toggle('active',c===b));
+    }));
+    document.getElementById('takePhotoBtn').addEventListener('click', () => document.getElementById('photoInput').click());
+    document.getElementById('photoInput').addEventListener('change', (e) => {
+      const f = e.target.files[0]; if (!f) return;
+      fileBlob = f;
+      const url = URL.createObjectURL(f);
+      document.getElementById('photoPreviewWrap').innerHTML = `<img src="${url}" style="width:100%;border-radius:16px;margin-top:14px;max-height:280px;object-fit:cover">
+        <button class="btn btn-primary btn-block mt-16" id="savePhotoBtn">Save Photo</button>`;
+      document.getElementById('savePhotoBtn').addEventListener('click', async () => {
+        const id = AK.uid();
+        await AK.PhotoDB.put({ id, blob: fileBlob });
+        const wasFirst = AK.state.photoMeta.length===0;
+        AK.state.photoMeta.push({ id, date: AK.today(), tag: tagVal, note: document.getElementById('photoNote').value.trim(), xp:15 });
+        AK.save();
+        AK.Game.updateStreak();
+        AK.Game.addXp(15, 'Progress photo');
+        if (wasFirst) AK.Achievements.unlock('photo_first');
+        if (AK.state.photoMeta.length===30) AK.Achievements.unlock('photo_30');
+        AK.Sheet.close(); AK.toast('Photo saved to this device','good'); render();
+      });
+    });
+  }
+  async function viewPhoto(id){
+    const meta = AK.state.photoMeta.find(m=>m.id===id);
+    const rec = await AK.PhotoDB.get(id);
+    if (!rec) return;
+    const url = URL.createObjectURL(rec.blob);
+    AK.Sheet.open(`<div class="sheet-head"><h3>${meta.tag} · ${AK.prettyDate(meta.date)}</h3><button class="btn-icon" id="shClose"><svg class="icon" viewBox="0 0 24 24"><use href="#i-x"/></svg></button></div>
+      <img src="${url}" style="width:100%;border-radius:16px;max-height:50vh;object-fit:cover">
+      ${meta.note?`<p class="text-2 mt-16">${AK.escapeHtml(meta.note)}</p>`:''}
+      <button class="btn btn-danger btn-block mt-16" id="delPhoto">Delete Photo</button>`);
+    document.getElementById('shClose').onclick = AK.Sheet.close;
+    document.getElementById('delPhoto').onclick = async () => {
+      if (!confirm('Delete this photo permanently from your device?')) return;
+      await AK.PhotoDB.del(id);
+      AK.state.photoMeta = AK.state.photoMeta.filter(m=>m.id!==id);
+      AK.save();
+      if (meta && meta.xp) AK.Game.removeXp(meta.xp, 'Photo removed');
+      AK.Sheet.close(); render(); AK.UI.refreshHome();
+    };
+  }
+  async function openCompare(metas){
+    const first = metas[metas.length-1], last = metas[0];
+    const [r1,r2] = await Promise.all([AK.PhotoDB.get(first.id), AK.PhotoDB.get(last.id)]);
+    if (!r1||!r2) return;
+    const u1 = URL.createObjectURL(r1.blob), u2 = URL.createObjectURL(r2.blob);
+    AK.Sheet.open(`<div class="sheet-head"><h3>Before / After</h3><button class="btn-icon" id="shClose"><svg class="icon" viewBox="0 0 24 24"><use href="#i-x"/></svg></button></div>
+      <div style="position:relative;border-radius:16px;overflow:hidden;aspect-ratio:3/4">
+        <img src="${u2}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover">
+        <div id="beforeClip" style="position:absolute;inset:0;width:50%;overflow:hidden"><img src="${u1}" style="width:200%;height:100%;object-fit:cover;max-width:none"></div>
+        <div id="sliderHandle" style="position:absolute;top:0;bottom:0;left:50%;width:3px;background:#fff;box-shadow:0 0 8px rgba(0,0,0,.5)"></div>
+      </div>
+      <input type="range" min="0" max="100" value="50" id="compareRange" class="mt-16" style="width:100%">
+      <div class="flex justify-between text-2 text-sm mt-8"><span>${AK.prettyDate(first.date)}</span><span>${AK.prettyDate(last.date)}</span></div>`);
+    document.getElementById('shClose').onclick = AK.Sheet.close;
+    document.getElementById('compareRange').addEventListener('input', (e) => {
+      document.getElementById('beforeClip').style.width = e.target.value+'%';
+      document.getElementById('sliderHandle').style.left = e.target.value+'%';
+    });
+  }
+
+  /* ---------- Metrics ---------- */
+  function renderMetrics(body){
+    const list = [...AK.state.metrics].sort((a,b)=>b.date.localeCompare(a.date));
+    const unit = AK.state.settings.unit==='imperial' ? 'lb' : 'kg';
+    body.innerHTML = `<button class="btn btn-primary btn-block" id="addMetricBtn"><svg class="icon" viewBox="0 0 24 24"><use href="#i-scale"/></svg> Log Body Metrics</button>
+      ${list.length>1 ? `<div class="card mt-16">${sparkline(list)}</div>` : ''}
+      <div class="mt-16" style="display:flex;flex-direction:column;gap:10px">
+      ${list.length===0 ? `<div class="empty-state"><svg class="icon" viewBox="0 0 24 24"><use href="#i-ruler"/></svg><div>No metrics logged yet</div></div>` :
+        list.map(m=>`<div class="card flex items-center justify-between" style="padding:12px 16px">
+          <span>${AK.prettyDate(m.date)}</span>
+          <span class="flex items-center gap-8"><b>${m.weightKg?AK.round1(convertWeight(m.weightKg,unit))+' '+unit:'—'}</b>
+          <button class="btn-icon" style="width:30px;height:30px" data-del-metric="${m.id}"><svg class="icon" viewBox="0 0 24 24" style="width:13px;height:13px"><use href="#i-trash"/></svg></button></span>
+        </div>`).join('')}
+      </div>`;
+    document.getElementById('addMetricBtn').addEventListener('click', openMetricSheet);
+    body.querySelectorAll('[data-del-metric]').forEach(b=>b.addEventListener('click',()=>{
+      if (!confirm('Delete this metrics entry?')) return;
+      const m = AK.state.metrics.find(x=>x.id===b.dataset.delMetric);
+      AK.state.metrics = AK.state.metrics.filter(x=>x.id!==b.dataset.delMetric);
+      AK.save();
+      if (m && m.xp) AK.Game.removeXp(m.xp, 'Metrics removed');
+      renderMetrics(body); AK.UI.refreshHome();
+    }));
+  }
+  function openMetricSheet(){
+    const unit = AK.state.settings.unit==='imperial' ? 'lb' : 'kg';
+    AK.Sheet.open(`<div class="sheet-head"><h3>Log Metrics</h3><button class="btn-icon" id="shClose"><svg class="icon" viewBox="0 0 24 24"><use href="#i-x"/></svg></button></div>
+      <div class="field"><label>Weight (${unit})</label><input class="input" id="mWeight" inputmode="decimal"></div>
+      <div class="field"><label>Body Fat % (optional)</label><input class="input" id="mBF" inputmode="decimal"></div>
+      <div class="grid-2">
+        <div class="field"><label>Waist (cm)</label><input class="input" id="mWaist" inputmode="decimal"></div>
+        <div class="field"><label>Chest (cm)</label><input class="input" id="mChest" inputmode="decimal"></div>
+        <div class="field"><label>Arms (cm)</label><input class="input" id="mArm" inputmode="decimal"></div>
+        <div class="field"><label>Thigh (cm)</label><input class="input" id="mThigh" inputmode="decimal"></div>
+      </div>
+      <button class="btn btn-primary btn-block" id="saveMetric">Save</button>`);
+    document.getElementById('shClose').onclick = AK.Sheet.close;
+    document.getElementById('saveMetric').onclick = () => {
+      const wRaw = parseFloat(document.getElementById('mWeight').value);
+      const weightKg = wRaw ? (unit==='lb' ? wRaw/2.2046 : wRaw) : null;
+      AK.state.metrics.push({ id:AK.uid(), date:AK.today(), weightKg,
+        bodyFatPct: parseFloat(document.getElementById('mBF').value)||null,
+        measurements:{ waist:parseFloat(document.getElementById('mWaist').value)||null, chest:parseFloat(document.getElementById('mChest').value)||null, arm:parseFloat(document.getElementById('mArm').value)||null, thigh:parseFloat(document.getElementById('mThigh').value)||null },
+        xp:10
+      });
+      AK.save(); AK.Game.updateStreak(); AK.Game.addXp(10,'Metrics logged'); AK.Sheet.close();
+      if (document.getElementById('screen-body').classList.contains('active')) render();
+    };
+  }
+  function convertWeight(kg, unit){ return unit==='lb' ? kg*2.2046 : kg; }
+  function sparkline(list){
+    const pts = [...list].reverse().filter(m=>m.weightKg).slice(-14);
+    if (pts.length<2) return '<div class="text-2 text-sm">Log more entries to see a trend line</div>';
+    const vals = pts.map(p=>p.weightKg);
+    const min = Math.min(...vals), max = Math.max(...vals) || min+1;
+    const w=280,h=60;
+    const path = pts.map((p,i)=>{
+      const x = (i/(pts.length-1))*w;
+      const y = h - ((p.weightKg-min)/((max-min)||1))*h;
+      return (i===0?'M':'L')+x.toFixed(1)+','+y.toFixed(1);
+    }).join(' ');
+    return `<svg viewBox="0 0 ${w} ${h}" style="width:100%;height:60px"><path d="${path}" fill="none" stroke="var(--accent-2)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+  }
+
+  /* ---------- Sleep ---------- */
+  function renderSleep(body){
+    const today = AK.state.sleep[AK.today()];
+    const grantedToday = AK.state.gamification.sleepXpDate === AK.today();
+    body.innerHTML = `<div class="card">
+      <div class="text-2 text-sm">Last night's sleep</div>
+      <div class="stepper mt-8" style="max-width:200px"><button data-s="-0.5">−</button><input id="sleepInput" value="${today||''}" placeholder="7.5"><button data-s="0.5">+</button></div>
+      <div class="flex gap-8 mt-16">
+        <button class="btn btn-primary btn-block" id="saveSleep">Save</button>
+        ${(today!=null&&today>0) ? `<button class="btn btn-ghost" id="clearSleep" style="flex-shrink:0"><svg class="icon" viewBox="0 0 24 24"><use href="#i-x"/></svg></button>` : ''}
+      </div>
+    </div>`;
+    const inp = document.getElementById('sleepInput');
+    document.querySelectorAll('[data-s]').forEach(b=>b.addEventListener('click',()=>{
+      inp.value = AK.round1(AK.clamp((parseFloat(inp.value)||7)+parseFloat(b.dataset.s),0,16));
+    }));
+    document.getElementById('saveSleep').onclick = () => {
+      AK.state.sleep[AK.today()] = parseFloat(inp.value)||0;
+      AK.save();
+      // Only award XP once per day — resaving/editing today's number shouldn't
+      // farm XP by hitting Save repeatedly.
+      if (!grantedToday) {
+        AK.state.gamification.sleepXpDate = AK.today();
+        AK.save();
+        AK.Game.addXp(10,'Sleep logged');
+      } else {
+        AK.toast('Sleep updated','good');
+      }
+      render();
+    };
+    const clearBtn = document.getElementById('clearSleep');
+    if (clearBtn) clearBtn.onclick = () => {
+      delete AK.state.sleep[AK.today()];
+      const wasGrantedToday = AK.state.gamification.sleepXpDate === AK.today();
+      if (wasGrantedToday) AK.state.gamification.sleepXpDate = null;
+      AK.save();
+      if (wasGrantedToday) AK.Game.removeXp(10, 'Sleep entry cleared');
+      render();
+    };
+  }
+
+  function openSleepTab(){ tab = 'sleep'; render(); }
+  return { render, addPhotoFlow, openMetricSheet, openSleepTab };
+})();
+</script>
+
+<script>
+/* ====================================================================
+   QUESTS / ACHIEVEMENTS UI
+   ==================================================================== */
+AK.QuestsUI = (() => {
+  function render(){
+    const el = document.getElementById('screen-quests');
+    const q = AK.Quests.get();
+    const g = AK.state.gamification;
+    const unlocked = AK.Achievements.DEFS.filter(a => g.unlockedAchievements.includes(a.id));
+    const locked = AK.Achievements.DEFS.filter(a => !g.unlockedAchievements.includes(a.id) && !a.secret);
+    const lockedSecret = AK.Achievements.DEFS.filter(a => !g.unlockedAchievements.includes(a.id) && a.secret);
+    el.innerHTML = `
+      <h1 class="page-title">Quests & Achievements</h1>
+      <p class="page-sub">Real actions. Real rewards. No hollow points.</p>
+      <div class="section-title">Today's Quests</div>
+      ${q.map(item=>`<div class="card flex items-center justify-between gap-12" style="opacity:${item.done?0.6:1}">
+        <span class="flex items-center gap-12" style="min-width:0;flex:1">
+          <span class="btn-icon" style="width:34px;height:34px;flex-shrink:0;background:${item.done?'var(--good)':'var(--surface-hi)'};color:${item.done?'#04231a':'var(--text-2)'}"><svg class="icon" viewBox="0 0 24 24" style="width:16px;height:16px"><use href="#${item.done?'i-check':'i-target'}"/></svg></span>
+          <span style="text-decoration:${item.done?'line-through':'none'};min-width:0">${AK.escapeHtml(item.label)}</span>
+        </span>
+        <span class="pill" style="flex-shrink:0;white-space:nowrap">+${item.xp} XP</span>
+      </div>`).join('')}
+
+      <div class="section-title">Achievements (${unlocked.length}/${AK.Achievements.DEFS.length})</div>
+      <div class="grid-3">
+        ${unlocked.map(a=>achCard(a,true)).join('')}
+        ${locked.map(a=>achCard(a,false)).join('')}
+        ${lockedSecret.map(()=>secretCard()).join('')}
+      </div>
+      <div class="section-title">Hunter Stats</div>
+      <div class="card">
+        ${statRow('Level', g.level)} ${statRow('Rank', AK.Game.rankFor(g.level).label)}
+        ${statRow('Longest streak', g.streak)} ${statRow('Total XP earned', totalXpEarned())}
+      </div>
+    `;
+    el.querySelectorAll('[data-ach]').forEach(c=>c.addEventListener('click',()=>{
+      const a = AK.Achievements.DEFS.find(x=>x.id===c.dataset.ach);
+      AK.toast(a.name+': '+a.desc);
+    }));
+  }
+  function totalXpEarned(){
+    const g = AK.state.gamification;
+    let sum = g.xp;
+    for (let l=1;l<g.level;l++) sum += AK.Game.xpForLevel(l);
+    return sum;
+  }
+  function statRow(label,val){ return `<div class="flex items-center justify-between" style="padding:6px 0"><span class="text-2">${label}</span><b>${val}</b></div>`; }
+  function achCard(a, unlocked){
+    return `<div class="card tap" style="text-align:center;padding:14px 8px;${unlocked?'':'opacity:.35'}" data-ach="${a.id}">
+      <svg class="icon" viewBox="0 0 24 24" style="width:24px;height:24px;color:${unlocked?'var(--accent-2)':'var(--text-3)'}"><use href="#${a.icon}"/></svg>
+      <div class="text-sm mt-8" style="font-weight:700">${a.name}</div>
+    </div>`;
+  }
+  function secretCard(){
+    return `<div class="card" style="text-align:center;padding:14px 8px;opacity:.35">
+      <svg class="icon" viewBox="0 0 24 24" style="width:24px;height:24px;color:var(--text-3)"><use href="#i-lock"/></svg>
+      <div class="text-sm mt-8" style="font-weight:700">???</div>
+    </div>`;
+  }
+  return { render };
+})();
+
+/* ====================================================================
+   SHARE MODULE — canvas-generated shareable report card
+   ==================================================================== */
+AK.Share = (() => {
+  function open(){
+    const g = AK.state.gamification, p = AK.state.profile;
+    const stats = AK.Game.derivedStats();
+    const waterToday = AK.Water.totalFor(AK.today());
+    const consistency = weekConsistency();
+    AK.Sheet.open(`<div class="sheet-head"><h3>Share Report</h3><button class="btn-icon" id="shClose"><svg class="icon" viewBox="0 0 24 24"><use href="#i-x"/></svg></button></div>
+      <canvas id="shareCanvas" width="640" height="800" style="width:100%;border-radius:20px;box-shadow:var(--shadow-2)"></canvas>
+      <div class="grid-2 mt-16">
+        <button class="btn btn-ghost btn-block" id="downloadShare"><svg class="icon" viewBox="0 0 24 24"><use href="#i-download"/></svg> Download</button>
+        <button class="btn btn-primary btn-block" id="shareNative"><svg class="icon" viewBox="0 0 24 24"><use href="#i-share"/></svg> Share</button>
+      </div>`);
+    document.getElementById('shClose').onclick = AK.Sheet.close;
+    drawCard(document.getElementById('shareCanvas'), {name:p?.name||'Hunter', level:g.level, rank:AK.Game.rankFor(g.level), streak:g.streak, stats, waterToday, waterGoal:AK.state.waterGoalMl, consistency});
+    document.getElementById('downloadShare').addEventListener('click', () => {
+      const c = document.getElementById('shareCanvas');
+      const a = document.createElement('a'); a.download = 'arise-kage-report.png'; a.href = c.toDataURL('image/png'); a.click();
+    });
+    document.getElementById('shareNative').addEventListener('click', async () => {
+      const c = document.getElementById('shareCanvas');
+      c.toBlob(async (blob) => {
+        const file = new File([blob], 'arise-kage-report.png', {type:'image/png'});
+        if (navigator.share && navigator.canShare && navigator.canShare({files:[file]})) {
+          try { await navigator.share({ files:[file], title:'My Arise Kage Report', text:'Leveling up with Arise Kage' }); } catch(e){}
+        } else { AK.toast('Sharing not supported here — downloaded instead'); const a=document.createElement('a'); a.download='arise-kage-report.png'; a.href=c.toDataURL('image/png'); a.click(); }
+      });
+    });
+  }
+  function weekConsistency(){
+    let daysActive = 0;
+    for (let i=0;i<7;i++){
+      const d = new Date(); d.setDate(d.getDate()-i);
+      const key = AK.fmtDate(d);
+      const worked = AK.state.workouts.some(w=>w.date===key);
+      const hydrated = AK.Water.totalFor(key) >= AK.state.waterGoalMl;
+      if (worked || hydrated) daysActive++;
+    }
+    return daysActive/7;
+  }
+  function drawCard(canvas, d){
+    const ctx = canvas.getContext('2d');
+    const W = canvas.width, H = canvas.height;
+    const grad = ctx.createLinearGradient(0,0,W,H);
+    grad.addColorStop(0,'#0a0a12'); grad.addColorStop(1,'#1c1030');
+    ctx.fillStyle = grad; ctx.fillRect(0,0,W,H);
+    // glow
+    const rg = ctx.createRadialGradient(W*0.8,H*0.15,10,W*0.8,H*0.15,300);
+    rg.addColorStop(0,'rgba(124,58,237,.5)'); rg.addColorStop(1,'rgba(124,58,237,0)');
+    ctx.fillStyle = rg; ctx.fillRect(0,0,W,H);
+
+    ctx.fillStyle = '#fff'; ctx.font = '900 30px sans-serif'; ctx.fillText('ARISE KAGE', 40, 70);
+    ctx.fillStyle = '#a78bfa'; ctx.font = '700 16px sans-serif'; ctx.fillText(d.name.toUpperCase()+"'S WEEKLY REPORT", 40, 98);
+
+    // level badge
+    const rankColor = resolveColor(d.rank.color);
+    ctx.fillStyle='rgba(255,255,255,.06)'; roundRect(ctx,40,130,W-80,120,20); ctx.fill();
+    ctx.fillStyle='#fff'; ctx.font='900 64px sans-serif'; ctx.fillText('LV '+d.level, 64, 210);
+    ctx.fillStyle=rankColor; ctx.font='800 20px sans-serif'; ctx.fillText(d.rank.label.toUpperCase(), 66, 232);
+    drawIcon('M12 2s-2 4-2 7a2 2 0 0 0 4 0c0-1 1-1 1 0 0 3 2 4 2 7a5 5 0 0 1-10 0c0-5 3-7 3-9 0-2 1-3 2-5z', W-260, 156, 20, '#fbbf24');
+    ctx.font='800 20px sans-serif'; ctx.fillStyle='#fbbf24'; ctx.fillText(d.streak+' day streak', W-234, 175);
+    ctx.fillStyle='#c7c6e6'; ctx.font='600 16px sans-serif'; ctx.fillText('Rank: '+d.rank.label, W-260, 205);
+
+    // speedometer gauge for weekly consistency
+    const cx=W/2, cy=340, r=110;
+    ctx.lineWidth=18; ctx.lineCap='round';
+    ctx.strokeStyle='rgba(255,255,255,.1)';
+    ctx.beginPath(); ctx.arc(cx,cy,r,Math.PI*0.75,Math.PI*2.25); ctx.stroke();
+    const pct = d.consistency;
+    const grad2 = ctx.createLinearGradient(cx-r,cy,cx+r,cy);
+    grad2.addColorStop(0,'#f43f5e'); grad2.addColorStop(.5,'#f59e0b'); grad2.addColorStop(1,'#22d3aa');
+    ctx.strokeStyle=grad2;
+    ctx.beginPath(); ctx.arc(cx,cy,r,Math.PI*0.75,Math.PI*0.75+Math.PI*1.5*pct); ctx.stroke();
+    // needle
+    const ang = Math.PI*0.75+Math.PI*1.5*pct;
+    ctx.save(); ctx.translate(cx,cy); ctx.rotate(ang);
+    ctx.strokeStyle='#fff'; ctx.lineWidth=4; ctx.beginPath(); ctx.moveTo(0,0); ctx.lineTo(r-24,0); ctx.stroke();
+    ctx.restore();
+    ctx.fillStyle='#fff'; ctx.beginPath(); ctx.arc(cx,cy,8,0,7); ctx.fill();
+    ctx.textAlign='center';
+    ctx.font='900 36px sans-serif'; ctx.fillStyle='#fff'; ctx.fillText(Math.round(pct*100)+'%', cx, cy+95);
+    ctx.font='700 15px sans-serif'; ctx.fillStyle='#8b89ad'; ctx.fillText('WEEKLY CONSISTENCY', cx, cy+119);
+    ctx.textAlign='left';
+
+    // stat row
+    const statsY = 520;
+    const items = [['STR',d.stats.STR],['END',d.stats.END],['VIT',d.stats.VIT],['AGI',d.stats.AGI]];
+    const colW = (W-80)/4;
+    items.forEach(([label,val],i)=>{
+      const x = 40+i*colW;
+      ctx.fillStyle='rgba(255,255,255,.05)'; roundRect(ctx,x,statsY,colW-10,90,16); ctx.fill();
+      ctx.textAlign='center';
+      ctx.fillStyle='#fff'; ctx.font='800 26px sans-serif'; ctx.fillText(val, x+(colW-10)/2, statsY+42);
+      ctx.fillStyle='#8b89ad'; ctx.font='700 13px sans-serif'; ctx.fillText(label, x+(colW-10)/2, statsY+68);
+    });
+    ctx.textAlign='left';
+
+    // water bar
+    const wy = 655;
+    drawIcon('M12 2s7 8.5 7 13a7 7 0 0 1-14 0c0-4.5 7-13 7-13z', 40, wy-16, 18, '#38bdf8');
+    ctx.fillStyle='#c7c6e6'; ctx.font='700 16px sans-serif'; ctx.fillText('Hydration today', 64, wy);
+    ctx.fillStyle='rgba(255,255,255,.1)'; roundRect(ctx,40,wy+16,W-80,16,8); ctx.fill();
+    ctx.fillStyle='#38bdf8'; roundRect(ctx,40,wy+16,(W-80)*AK.clamp(d.waterToday/d.waterGoal,0,1),16,8); ctx.fill();
+    ctx.fillStyle='#8b89ad'; ctx.font='600 13px sans-serif'; ctx.fillText(d.waterToday+' / '+d.waterGoal+'ml', 40, wy+52);
+
+    ctx.fillStyle='#5c5a80'; ctx.font='600 13px sans-serif'; ctx.fillText('Made with Arise Kage — 100% free, forever.', 40, H-30);
+
+    function roundRect(c,x,y,w,h,r){ c.beginPath(); c.moveTo(x+r,y); c.arcTo(x+w,y,x+w,y+h,r); c.arcTo(x+w,y+h,x,y+h,r); c.arcTo(x,y+h,x,y,r); c.arcTo(x,y,x+w,y,r); c.closePath(); }
+    // draws one of our SVG icon paths (24x24 viewBox) onto canvas at (x,y) top-left, scaled to `size` — keeps
+    // the share card's iconography identical to the rest of the app instead of falling back to emoji glyphs.
+    function drawIcon(pathD, x, y, size, color){
+      ctx.save();
+      ctx.translate(x, y);
+      ctx.scale(size/24, size/24);
+      ctx.fillStyle = color;
+      ctx.fill(new Path2D(pathD));
+      ctx.restore();
+    }
+    function resolveColor(cssVal){
+      if (!cssVal.startsWith('var(')) return cssVal;
+      const name = cssVal.slice(4,-1).trim();
+      const v = getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+      return v || '#fb923c';
+    }
+  }
+  return { open };
+})();
+</script>
+
+<script>
+/* ====================================================================
+   COMPANION — on-device "Coach" that reads your own logged data and turns
+   it into plain-language insights. Everything here is a deterministic
+   analysis of AK.state, computed locally in the browser: no network call,
+   no external AI API, no account, no cost. It reads your data back to you
+   with a bit of judgment, the way a good coach glancing at your log would.
+   ==================================================================== */
+AK.Companion = (() => {
+  const CATS = ['Push','Pull','Legs','Core','Cardio','Mobility'];
+
+  function last14Workouts(){
+    const cutoff = AK.today(); const since = new Date(); since.setDate(since.getDate()-14);
+    const sinceKey = AK.fmtDate(since);
+    return AK.state.workouts.filter(w => w.date >= sinceKey);
+  }
+  function countInRange(days){
+    const since = new Date(); since.setDate(since.getDate()-days);
+    const sinceKey = AK.fmtDate(since);
+    return AK.state.workouts.filter(w => w.date >= sinceKey).length;
+  }
+
+  function insightConsistency(){
+    const last7 = countInRange(7);
+    const prev7 = AK.state.workouts.filter(w => {
+      const d8 = new Date(); d8.setDate(d8.getDate()-14);
+      const d1 = new Date(); d1.setDate(d1.getDate()-7);
+      return w.date >= AK.fmtDate(d8) && w.date < AK.fmtDate(d1);
+    }).length;
+    if (last7===0 && prev7===0) return { icon:'i-target', tone:'info', text:'No sessions logged in the last two weeks. One logged workout today is enough to restart momentum — the streak counter doesn’t care how long the gap was.' };
+    if (last7 > prev7) return { icon:'i-trend', tone:'good', text:`You trained ${last7}x this week vs ${prev7}x the week before — trending up. Whatever changed, it's working.` };
+    if (last7 < prev7) return { icon:'i-trend', tone:'warn', text:`${last7} sessions this week vs ${prev7} last week — a step down. Not a crisis, just data. Even one more session this week reverses the trend.` };
+    return { icon:'i-trend', tone:'info', text:`Holding steady at ${last7} sessions a week for two weeks straight. Steady is how ranks actually get earned.` };
+  }
+
+  function insightBalance(){
+    const tally = Object.fromEntries(CATS.map(c=>[c,0]));
+    last14Workouts().forEach(w => w.exercises.forEach(e => {
+      const sets = e.sets.filter(s=>s.done).length;
+      if (tally[e.category]!=null) tally[e.category]+=sets; else tally.Push+=0;
+    }));
+    const total = Object.values(tally).reduce((a,b)=>a+b,0);
+    if (total < 6) return { icon:'i-balance', tone:'info', text:'Not enough logged sets in the last 2 weeks to judge balance yet — a few more sessions and this gets sharper.' };
+    const trained = CATS.filter(c=>tally[c]>0);
+    const untrained = ['Push','Pull','Legs'].filter(c=>tally[c]===0);
+    if (untrained.length){
+      return { icon:'i-balance', tone:'warn', text:`${untrained.join(' and ')} ${untrained.length>1?'haven’t':'hasn’t'} shown up in your last 14 days of training. If that's not intentional, it's the easiest imbalance to fix next session.` };
+    }
+    const max = Math.max(...trained.map(c=>tally[c])), min = Math.min(...trained.map(c=>tally[c]));
+    if (max > min*2.5 && min>0){
+      const heavy = trained.find(c=>tally[c]===max), light = trained.find(c=>tally[c]===min);
+      return { icon:'i-balance', tone:'warn', text:`${heavy} sets outnumber ${light} sets by more than 2:1 over two weeks. Worth a ${light} day soon to keep things even.` };
+    }
+    return { icon:'i-balance', tone:'good', text:'Muscle groups are reasonably balanced over the last two weeks. Nothing is being quietly neglected.' };
+  }
+
+  function insightHydration(){
+    let daysHit=0, daysLogged=0, totalMl=0;
+    for (let i=0;i<7;i++){
+      const d = new Date(); d.setDate(d.getDate()-i);
+      const key = AK.fmtDate(d);
+      const total = AK.Water.totalFor(key);
+      if (total>0) daysLogged++;
+      if (total>=AK.state.waterGoalMl) daysHit++;
+      totalMl += total;
+    }
+    const avg = Math.round(totalMl/7);
+    if (daysLogged===0) return { icon:'i-droplet', tone:'info', text:'No water logged this week yet. Even rough tracking tends to raise average intake — try logging for 3 days and see.' };
+    if (daysHit>=6) return { icon:'i-droplet', tone:'good', text:`Hydration goal hit ${daysHit}/7 days this week, averaging ${avg}ml/day. This is a genuinely strong habit — it usually shows up in energy during training too.` };
+    if (daysHit<=2) return { icon:'i-droplet', tone:'warn', text:`Only ${daysHit}/7 days hit your water goal this week (avg ${avg}ml). If ${AK.state.waterGoalMl}ml feels like a stretch, a lower, hit-able goal beats a big one you keep missing.` };
+    return { icon:'i-droplet', tone:'info', text:`${daysHit}/7 days hit your water goal this week, averaging ${avg}ml/day. Room to tighten this up.` };
+  }
+
+  function insightSleep(){
+    const entries = Object.entries(AK.state.sleep).sort((a,b)=>b[0].localeCompare(a[0])).slice(0,7);
+    if (entries.length < 3) return { icon:'i-moon', tone:'info', text:'Log sleep for a few more nights and I can start connecting it to how your training goes.' };
+    const avg = AK.round1(entries.reduce((a,[,h])=>a+h,0)/entries.length);
+    if (avg < 6.2) return { icon:'i-moon', tone:'warn', text:`Averaging ${avg}h of sleep this week. Recovery and progressive overload both get harder under ~6h consistently — this is usually the highest-leverage fix available.` };
+    if (avg >= 7.5) return { icon:'i-moon', tone:'good', text:`Averaging ${avg}h of sleep this week — solidly in the range where recovery actually keeps up with training.` };
+    return { icon:'i-moon', tone:'info', text:`Averaging ${avg}h of sleep this week. Fine, not optimal — an extra 30-45 minutes tends to be the highest-return change from here.` };
+  }
+
+  function insightOverload(){
+    const byExercise = {};
+    AK.state.workouts.forEach(w => w.exercises.forEach(e => {
+      const done = e.sets.filter(s=>s.done && s.weight>0);
+      if (!done.length) return;
+      const top = Math.max(...done.map(s=>s.weight));
+      (byExercise[e.name] ||= []).push({ date:w.date, top });
+    }));
+    const candidates = Object.entries(byExercise).filter(([,arr])=>arr.length>=3).sort((a,b)=>b[1].length-a[1].length);
+    if (!candidates.length) return { icon:'i-trend', tone:'info', text:'Log the same lift across 3+ sessions and I’ll track whether your top weight is actually climbing.' };
+    const [name, arr] = candidates[0];
+    const sorted = arr.sort((a,b)=>a.date.localeCompare(b.date));
+    const first = sorted[0].top, last = sorted[sorted.length-1].top;
+    if (last > first) return { icon:'i-trend', tone:'good', text:`${name} is up from ${AK.round1(first)}kg to ${AK.round1(last)}kg across your logged sessions — real progressive overload, not just showing up.` };
+    if (last < first) return { icon:'i-trend', tone:'warn', text:`${name}'s top weight has dipped from ${AK.round1(first)}kg to ${AK.round1(last)}kg. Could be a deload, could be fatigue — worth checking sleep and volume.` };
+    return { icon:'i-trend', tone:'info', text:`${name} has held steady at ${AK.round1(last)}kg across your last sessions. Fine for a maintenance phase — if the goal is growth, it's due for a push.` };
+  }
+
+  function insightDayPattern(){
+    const counts = [0,0,0,0,0,0,0];
+    AK.state.workouts.forEach(w => { counts[new Date(w.date+'T00:00:00').getDay()]++; });
+    const total = counts.reduce((a,b)=>a+b,0);
+    if (total < 5) return null;
+    const names = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+    const min = Math.min(...counts);
+    const minDays = names.filter((n,i)=>counts[i]===min);
+    if (min===0 && minDays.length<=2) return { icon:'i-calendar', tone:'info', text:`${minDays.join(' and ')} ${minDays.length>1?'are':'is'} historically your quietest training day${minDays.length>1?'s':''}. Not a problem unless it's meant to be a training day and keeps slipping.` };
+    return null;
+  }
+
+  function insightRank(){
+    const g = AK.state.gamification; const rank = AK.Game.rankFor(g.level); const need = AK.Game.xpForLevel(g.level);
+    const pct = Math.round(g.xp/need*100);
+    return { icon:'i-shield', tone:'info', text:`${pct}% of the way to Level ${g.level+1}${AK.Game.rankFor(g.level+1).key!==rank.key?` — and a rank-up to ${AK.Game.rankFor(g.level+1).label} not far behind`:''}.` };
+  }
+
+  function buildInsights(){
+    const list = [insightConsistency(), insightBalance(), insightHydration(), insightSleep(), insightOverload(), insightDayPattern(), insightRank()].filter(Boolean);
+    return list;
+  }
+
+  /* ---------------- Ask Kage: a keyword-routed Q&A layer on top of the
+     same deterministic insight functions above. Still zero network calls —
+     this is pattern matching against your own logged data, not a model. ---------------- */
+  function streakAnswer(){
+    const g = AK.state.gamification;
+    if (g.streak<=0) return { icon:'i-flame', tone:'info', text:'No active streak right now. Log anything today — a set, water, a photo — and it starts at 1.' };
+    if (g.streak>=30) return { icon:'i-flame', tone:'good', text:`${g.streak} days active. That's no longer motivation — that's identity. Very few people keep a streak this long.` };
+    if (g.streak>=7) return { icon:'i-flame', tone:'good', text:`${g.streak}-day streak. You're past the point where skipping one day feels normal — that's the habit doing its job.` };
+    return { icon:'i-flame', tone:'info', text:`${g.streak}-day streak. The first week is the hardest one to hold — you're in it right now.` };
+  }
+  function restAdvice(){
+    const since3 = new Date(); since3.setDate(since3.getDate()-2);
+    const recentDays = new Set(AK.state.workouts.filter(w=>w.date>=AK.fmtDate(since3)).map(w=>w.date)).size;
+    const sleepEntries = Object.entries(AK.state.sleep).sort((a,b)=>b[0].localeCompare(a[0])).slice(0,3);
+    const avgSleep = sleepEntries.length ? sleepEntries.reduce((a,[,h])=>a+h,0)/sleepEntries.length : null;
+    if (recentDays>=3) return { icon:'i-moon', tone:'warn', text:'You\'ve trained 3 days straight. Recovery is where the actual adaptation happens — a rest or light mobility day today is the disciplined move, not the lazy one.' };
+    if (avgSleep!=null && avgSleep<6 && recentDays>=1) return { icon:'i-moon', tone:'warn', text:`Recent sleep is averaging under 6h. Your body can't fully use a hard session on that little recovery — consider a lighter load today.` };
+    if (recentDays===0) return { icon:'i-target', tone:'info', text:'Nothing logged the last couple of days — today is a perfectly good day to train if you\'re feeling up for it.' };
+    return { icon:'i-shield', tone:'good', text:'Nothing in your recent data points to needing rest today — training as planned looks reasonable.' };
+  }
+  const QUESTIONS = [
+    { label:'Am I consistent?', run: insightConsistency },
+    { label:'Am I balanced?', run: insightBalance },
+    { label:'How\'s my hydration?', run: insightHydration },
+    { label:'How\'s my sleep?', run: insightSleep },
+    { label:'Am I getting stronger?', run: insightOverload },
+    { label:'What\'s my streak?', run: streakAnswer },
+    { label:'Should I rest today?', run: restAdvice },
+    { label:'My rank progress?', run: insightRank },
+  ];
+  function answerFor(raw){
+    const t = raw.toLowerCase();
+    const rules = [
+      [/consisten|often|frequency|how many times|missed|showing up/, insightConsistency],
+      [/balance|neglect|\bpush\b|\bpull\b|\bleg/, insightBalance],
+      [/water|hydrat|drink/, insightHydration],
+      [/sleep|rest.*night|tired/, insightSleep],
+      [/strong|progress|overload|1rm|pr\b|lift|heavier/, insightOverload],
+      [/rank|level|xp/, insightRank],
+      [/day.*quiet|pattern|which day|monday|tuesday|wednesday|thursday|friday|saturday|sunday/, () => insightDayPattern() || { icon:'i-calendar', tone:'info', text:'Not enough day-of-week data yet — a few more logged sessions and I can spot patterns there.' }],
+      [/streak/, streakAnswer],
+      [/rest today|should i (rest|train)|recover|deload|day off/, restAdvice],
+    ];
+    for (const [re, fn] of rules) if (re.test(t)) return fn();
+    return null;
+  }
+  const askHistory = [];
+  function ask(question){
+    if (!question || !question.trim()) return;
+    const result = answerFor(question) || { icon:'i-companion', tone:'info', text:"I can only answer from what's actually logged in this app — try asking about consistency, balance, hydration, sleep, strength progress, streak, or rest. (No account, no server — this is local pattern-matching, not a live model.)" };
+    askHistory.push({ q: question.trim(), a: result });
+    renderFeed();
+  }
+  function renderFeed(){
+    const feed = document.getElementById('askFeed');
+    if (!feed) return;
+    feed.innerHTML = askHistory.map(h => `
+      <div class="ask-q">${AK.escapeHtml(h.q)}</div>
+      <div class="insight-row">
+        <span class="dot-icon"><svg class="icon" viewBox="0 0 24 24"><use href="#${h.a.icon}"/></svg></span>
+        <span class="text-sm" style="line-height:1.55">${AK.escapeHtml(h.a.text)}</span>
+      </div>`).join('');
+    feed.scrollTop = feed.scrollHeight;
+  }
+
+  function headline(){
+    const g = AK.state.gamification;
+    if (g.streak >= 14) return 'You’re not motivated right now — you’re disciplined. That’s the version that lasts.';
+    if (g.streak >= 3) return `${g.streak}-day streak. Momentum is a real, physical thing — protect it today.`;
+    if (AK.state.workouts.length === 0) return 'No data yet. Log one workout and I’ll start finding real patterns instead of guessing.';
+    return 'Here’s an honest read of your last two weeks — not hype, just the log talking.';
+  }
+
+  function render(){
+    const el = document.getElementById('screen-coach');
+    const insights = buildInsights();
+    el.innerHTML = `
+      <h1 class="page-title">Coach</h1>
+      <p class="page-sub">Your on-device companion. Reads only what you've logged — no account, no server, no external AI call.</p>
+      <div class="card glow">
+        <div class="flex items-center gap-12">
+          <span class="companion-orb"><svg class="icon" viewBox="0 0 24 24"><use href="#i-companion"/></svg></span>
+          <div style="min-width:0"><b style="display:block;font-family:var(--font-display)">Kage's Read</b><span class="text-2 text-sm">${AK.escapeHtml(headline())}</span></div>
+        </div>
+      </div>
+      <div class="section-title">Ask Kage</div>
+      <div class="card">
+        <div class="chipset" id="askChips">${QUESTIONS.map((q,i)=>`<button class="chip" data-ask="${i}">${AK.escapeHtml(q.label)}</button>`).join('')}</div>
+        <div id="askFeed" class="mt-16" style="display:flex;flex-direction:column;gap:6px;max-height:38vh;overflow-y:auto"></div>
+        <div class="flex gap-8 mt-16">
+          <input class="input" id="askInput" placeholder="Ask about your training, sleep, hydration…">
+          <button class="btn btn-primary" id="askSendBtn" style="flex-shrink:0;padding:0 18px"><svg class="icon" viewBox="0 0 24 24"><use href="#i-chevron-right"/></svg></button>
+        </div>
+      </div>
+      <div class="section-title">What your data is showing</div>
+      <div class="card">
+        ${insights.map(i => `<div class="insight-row">
+          <span class="dot-icon"><svg class="icon" viewBox="0 0 24 24"><use href="#${i.icon}"/></svg></span>
+          <span class="text-sm" style="line-height:1.55">${AK.escapeHtml(i.text)}</span>
+        </div>`).join('')}
+      </div>
+      <div class="section-title">Tools</div>
+      <div class="grid-2">
+        <button class="card tap" id="openPlateCalc" style="text-align:left">
+          <svg class="icon" viewBox="0 0 24 24" style="width:20px;height:20px;color:var(--accent-2)"><use href="#i-barbell"/></svg>
+          <div style="font-weight:700;margin-top:8px">Plate Calculator</div>
+          <div class="text-2 text-sm">Figure out what to load</div>
+        </button>
+        <button class="card tap" id="open1RM" style="text-align:left">
+          <svg class="icon" viewBox="0 0 24 24" style="width:20px;height:20px;color:var(--accent-2)"><use href="#i-gauge"/></svg>
+          <div style="font-weight:700;margin-top:8px">1RM Estimator</div>
+          <div class="text-2 text-sm">From any working set</div>
+        </button>
+      </div>
+    `;
+    document.getElementById('openPlateCalc').addEventListener('click', AK.Tools.openPlateCalculator);
+    document.getElementById('open1RM').addEventListener('click', AK.Tools.open1RMEstimator);
+    renderFeed();
+    document.getElementById('askChips').querySelectorAll('[data-ask]').forEach(b=>b.addEventListener('click',()=>{
+      const q = QUESTIONS[parseInt(b.dataset.ask)];
+      askHistory.push({ q:q.label, a:q.run() }); renderFeed();
+    }));
+    const input = document.getElementById('askInput');
+    const send = () => { if (!input.value.trim()) return; ask(input.value); input.value=''; };
+    document.getElementById('askSendBtn').addEventListener('click', send);
+    input.addEventListener('keydown', (e) => { if (e.key==='Enter') send(); });
+  }
+
+  return { render, buildInsights };
+})();
+</script>
+
+<script>
+/* ====================================================================
+   TOOLS — small requested utilities: plate calculator + 1RM estimator
+   ==================================================================== */
+AK.Tools = (() => {
+  const PLATES_KG = [25,20,15,10,5,2.5,1.25];
+  const PLATES_LB = [45,35,25,10,5,2.5];
+
+  function openPlateCalculator(){
+    const unit = AK.state.settings.unit==='imperial' ? 'lb' : 'kg';
+    const barDefault = unit==='lb' ? 45 : 20;
+    render(unit, barDefault, unit==='lb' ? 135 : 60);
+    function render(unit, bar, target){
+      const plates = unit==='lb' ? PLATES_LB : PLATES_KG;
+      const perSide = Math.max(0, (target-bar)/2);
+      const breakdown = [];
+      let remaining = perSide;
+      plates.forEach(p => { const n = Math.floor(remaining/p + 1e-6); if (n>0){ breakdown.push({p,n}); remaining -= n*p; } });
+      const leftover = AK.round1(remaining);
+      AK.Sheet.open(`<div class="sheet-head"><h3>Plate Calculator</h3><button class="btn-icon" id="shClose"><svg class="icon" viewBox="0 0 24 24"><use href="#i-x"/></svg></button></div>
+        <div class="grid-2">
+          <div class="field"><label>Bar weight (${unit})</label><input class="input" id="pcBar" inputmode="decimal" value="${bar}"></div>
+          <div class="field"><label>Target weight (${unit})</label><input class="input" id="pcTarget" inputmode="decimal" value="${target}"></div>
+        </div>
+        <div class="card" style="margin-top:4px">
+          <div class="text-2 text-sm">Per side</div>
+          <div class="plate-bar">
+            ${breakdown.length ? breakdown.map(b => Array.from({length:b.n}).map(()=>platePill(b.p,unit)).join('')).join('') : '<span class="text-2 text-sm">Bar only</span>'}
+          </div>
+          ${leftover>0.01 ? `<div class="text-2 text-sm">+ ${leftover}${unit} not achievable with standard plates</div>` : ''}
+        </div>`);
+      document.getElementById('shClose').onclick = AK.Sheet.close;
+      const barInput = document.getElementById('pcBar'), targetInput = document.getElementById('pcTarget');
+      [barInput, targetInput].forEach(inp => inp.addEventListener('input', () => {
+        render(unit, parseFloat(barInput.value)||0, parseFloat(targetInput.value)||0);
+      }));
+    }
+  }
+  function platePill(weight, unit){
+    const size = 26 + Math.min(weight,25)*1.1;
+    const hue = weight>=20 ? 'var(--danger)' : weight>=10 ? 'var(--accent)' : weight>=5 ? 'var(--good)' : 'var(--info)';
+    return `<span class="plate" style="width:${Math.round(size*0.4)}px;height:${Math.round(size)}px;background:${hue}">${weight}</span>`;
+  }
+
+  function open1RMEstimator(){
+    render(100, 5);
+    function render(weight, reps){
+      const oneRm = reps<=1 ? weight : weight * (1 + reps/30); // Epley formula
+      const rows = [1,2,3,5,8,10,12].map(r => ({ r, w: r===1?oneRm:oneRm/(1+r/30) }));
+      AK.Sheet.open(`<div class="sheet-head"><h3>1RM Estimator</h3><button class="btn-icon" id="shClose"><svg class="icon" viewBox="0 0 24 24"><use href="#i-x"/></svg></button></div>
+        <div class="grid-2">
+          <div class="field"><label>Weight lifted</label><input class="input" id="rmWeight" inputmode="decimal" value="${weight}"></div>
+          <div class="field"><label>Reps completed</label><input class="input" id="rmReps" inputmode="numeric" value="${reps}"></div>
+        </div>
+        <div class="card" style="text-align:center">
+          <div class="text-2 text-sm">Estimated 1-rep max</div>
+          <div style="font-family:var(--font-display);font-size:34px;font-weight:700;margin-top:4px">${AK.round1(oneRm)}</div>
+          <div class="text-2 text-sm">Epley formula — treat as a planning estimate, not gospel</div>
+        </div>
+        <div class="section-title">Rep chart</div>
+        <div class="card">
+          ${rows.map(row=>`<div class="flex items-center justify-between" style="padding:7px 0"><span class="text-2">${row.r} rep${row.r>1?'s':''}</span><b>${AK.round1(row.w)}</b></div>`).join('')}
+        </div>`);
+      document.getElementById('shClose').onclick = AK.Sheet.close;
+      const w = document.getElementById('rmWeight'), r = document.getElementById('rmReps');
+      [w,r].forEach(inp=>inp.addEventListener('input',()=>{
+        render(parseFloat(w.value)||0, AK.clamp(parseInt(r.value)||1,1,20));
+      }));
+    }
+  }
+
+  return { openPlateCalculator, open1RMEstimator };
+})();
+</script>
+
+<script>
+/* ====================================================================
+   SETTINGS MODULE
+   ==================================================================== */
+AK.Settings = (() => {
+  function render(){
+    const el = document.getElementById('screen-settings');
+    const s = AK.state.settings;
+    const p = AK.state.profile;
+    el.innerHTML = `
+      <h1 class="page-title">More</h1>
+      <p class="page-sub">Customize everything. It's your app.</p>
+
+      <div class="section-title">Profile</div>
+      <div class="card flex items-center justify-between">
+        <span class="flex items-center gap-12">
+          <span class="btn-icon" style="background:var(--accent);color:#fff">${(p?.name||'H')[0].toUpperCase()}</span>
+          <span><b style="display:block">${AK.escapeHtml(p?.name||'Hunter')}</b><span class="text-2 text-sm">${AK.escapeHtml(p?.title||'Awakened Hunter')}</span></span>
+        </span>
+        <button class="btn-icon" id="editProfile"><svg class="icon" viewBox="0 0 24 24"><use href="#i-edit"/></svg></button>
+      </div>
+
+      <div class="section-title">Appearance</div>
+      <div class="card">
+        <div class="text-2 text-sm mb-8">Theme</div>
+        <div class="chipset">
+          ${AK.Onboard.THEMES.map(t=>`<button class="chip ${s.themeMode!=='auto' && s.theme===t.key?'active':''}" data-theme="${t.key}">${t.label}</button>`).join('')}
+          <button class="chip ${s.themeMode==='auto'?'active':''}" data-theme="auto"><svg class="icon" viewBox="0 0 24 24"><use href="#i-sun"/></svg>Auto</button>
+        </div>
+        <div class="text-2 text-sm mt-16 mb-8">Accent Color</div>
+        <div class="chipset" id="accentSwatches">
+          ${['#7c3aed','#ea580c','#38bdf8','#22d3aa','#f43f5e','#ffd54a'].map(c=>`<button data-accent="${c}" style="width:34px;height:34px;border-radius:10px;background:${c};border:2px solid ${s.accent===c?'#fff':'transparent'}"></button>`).join('')}
+          <input type="color" id="customAccent" value="${s.accent}" style="width:34px;height:34px;border:none;border-radius:10px;background:none;padding:0">
+        </div>
+        <div class="flex items-center justify-between mt-16">
+          <span>Reduced motion</span>
+          <button class="switch ${s.reducedMotion?'on':''}" id="toggleMotion" aria-label="Toggle reduced motion"></button>
+        </div>
+      </div>
+
+      <div class="section-title">Units</div>
+      <div class="card">
+        <div class="chipset">
+          <button class="chip ${s.unit==='metric'?'active':''}" data-unit="metric">Metric (kg/cm)</button>
+          <button class="chip ${s.unit==='imperial'?'active':''}" data-unit="imperial">Imperial (lb/in)</button>
+        </div>
+      </div>
+
+      <div class="section-title">Notifications & Sound</div>
+      <div class="card">
+        <div class="flex items-center justify-between"><span class="flex items-center gap-8"><svg class="icon" viewBox="0 0 24 24"><use href="#i-droplet"/></svg>Water reminders</span><button class="switch ${s.notifWater?'on':''}" id="toggleNotifWater" aria-label="Toggle water reminders"></button></div>
+        <div class="flex items-center justify-between mt-16"><span class="flex items-center gap-8"><svg class="icon" viewBox="0 0 24 24"><use href="#i-dumbbell"/></svg>Workout reminders</span><button class="switch ${s.notifWorkout?'on':''}" id="toggleNotifWorkout" aria-label="Toggle workout reminders"></button></div>
+        <div class="flex items-center justify-between mt-16"><span class="flex items-center gap-8"><svg class="icon" viewBox="0 0 24 24"><use href="#i-volume"/></svg>Rest-timer sound</span><button class="switch ${s.sound?'on':''}" id="toggleSound" aria-label="Toggle rest timer sound"></button></div>
+      </div>
+
+      <div class="section-title">Cloud Sync (optional, free Firebase Spark plan)</div>
+      <div class="card">
+        <p class="text-2 text-sm">Photos always stay on this device. Firebase can back up your workouts, water, nutrition & metrics across devices — completely free, no card required.</p>
+        <button class="btn btn-ghost btn-block mt-16" id="firebaseBtn"><svg class="icon" viewBox="0 0 24 24"><use href="#i-cloud"/></svg> ${s.firebaseEnabled?'Manage Firebase Sync (Connected)':'Connect Firebase'}</button>
+      </div>
+
+      <div class="section-title">Data</div>
+      <div class="card" style="display:flex;flex-direction:column;gap:10px">
+        <button class="btn btn-ghost btn-block" id="exportBtn"><svg class="icon" viewBox="0 0 24 24"><use href="#i-download"/></svg> Export Backup (JSON)</button>
+        <button class="btn btn-ghost btn-block" id="importBtn"><svg class="icon" viewBox="0 0 24 24"><use href="#i-upload"/></svg> Import Backup</button>
+        <input type="file" accept="application/json" id="importFile" style="display:none">
+        <button class="btn btn-danger btn-block" id="resetBtn"><svg class="icon" viewBox="0 0 24 24"><use href="#i-trash"/></svg> Reset All Data</button>
+      </div>
+
+      <div class="section-title">About</div>
+      <div class="card">
+        <p class="text-sm">Arise Kage v1.0 — 100% free, forever. No ads, no subscriptions, no locked features. Built for hunters who show up.</p>
+        <p class="text-2 text-sm mt-8">Tip: try the Konami code, or whisper the word of power somewhere on the Home screen.</p>
+      </div>
+    `;
+    bind(el);
+  }
+  function bind(el){
+    el.querySelector('#editProfile').addEventListener('click', () => {
+      const name = prompt('Your name:', AK.state.profile.name);
+      if (name) { AK.state.profile.name = name.trim(); AK.save(); render(); }
+    });
+    el.querySelectorAll('[data-theme]').forEach(b=>b.addEventListener('click',()=>{
+      if (b.dataset.theme==='auto') { AK.state.settings.themeMode='auto'; AK.applySystemTheme(); }
+      else {
+        AK.state.settings.themeMode = 'manual';
+        AK.state.settings.theme = b.dataset.theme;
+        const t = AK.Onboard.THEMES.find(x=>x.key===b.dataset.theme);
+        if (t) AK.state.settings.accent = t.accent;
+      }
+      AK.save(); AK.applyTheme(); render();
+    }));
+    el.querySelectorAll('[data-accent]').forEach(b=>b.addEventListener('click',()=>{
+      AK.state.settings.accent = b.dataset.accent; AK.save(); AK.applyTheme(); render();
+    }));
+    el.querySelector('#customAccent').addEventListener('input', (e) => { AK.state.settings.accent = e.target.value; AK.save(); AK.applyTheme(); });
+    el.querySelector('#toggleMotion').addEventListener('click', () => { AK.state.settings.reducedMotion = !AK.state.settings.reducedMotion; AK.save(); AK.applyTheme(); render(); });
+    el.querySelectorAll('[data-unit]').forEach(b=>b.addEventListener('click',()=>{ AK.state.settings.unit = b.dataset.unit; AK.save(); render(); }));
+    el.querySelector('#toggleNotifWater').addEventListener('click', () => { AK.state.settings.notifWater = !AK.state.settings.notifWater; AK.save(); render(); });
+    el.querySelector('#toggleNotifWorkout').addEventListener('click', () => { AK.state.settings.notifWorkout = !AK.state.settings.notifWorkout; AK.save(); render(); });
+    el.querySelector('#toggleSound').addEventListener('click', () => { AK.state.settings.sound = !AK.state.settings.sound; AK.save(); if (AK.state.settings.sound) AK.Fx.beep(880,120); render(); });
+    el.querySelector('#firebaseBtn').addEventListener('click', AK.Sync.openConfigSheet);
+    el.querySelector('#exportBtn').addEventListener('click', exportBackup);
+    el.querySelector('#importBtn').addEventListener('click', () => el.querySelector('#importFile').click());
+    el.querySelector('#importFile').addEventListener('change', importBackup);
+    el.querySelector('#resetBtn').addEventListener('click', resetAll);
+  }
+  function exportBackup(){
+    const blob = new Blob([JSON.stringify(AK.state,null,2)], {type:'application/json'});
+    const a = document.createElement('a'); a.download = `arise-kage-backup-${AK.today()}.json`; a.href = URL.createObjectURL(blob); a.click();
+    AK.toast('Backup downloaded','good');
+  }
+  function importBackup(e){
+    const f = e.target.files[0]; if (!f) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      try {
+        const data = JSON.parse(reader.result);
+        if (!confirm('This will replace your current data with the backup. Continue?')) return;
+        AK.state = Object.assign(AK.defaultState(), data);
+        AK.save(); AK.applyTheme(); AK.toast('Backup restored','good'); AK.Router.go('home');
+      } catch(err) { AK.toast('Invalid backup file','bad'); }
+    };
+    reader.readAsText(f);
+  }
+  function resetAll(){
+    if (!confirm('This will permanently erase ALL data on this device, including photos. This cannot be undone. Continue?')) return;
+    if (!confirm('Are you absolutely sure? Consider exporting a backup first.')) return;
+    localStorage.removeItem(DB_KEY);
+    AK.PhotoDB.all().then(all => Promise.all(all.map(r=>AK.PhotoDB.del(r.id)))).finally(()=>location.reload());
+  }
+  return { render };
+})();
+
+/* ====================================================================
+   FIREBASE SYNC (optional, free-tier, config supplied by user)
+   ==================================================================== */
+AK.Sync = (() => {
+  let fbApp=null, fbAuth=null, fbDb=null, ready=false;
+  async function init(){
+    const s = AK.state.settings;
+    if (!s.firebaseEnabled || !s.firebaseConfig) return;
+    try {
+      const [{ initializeApp }, { getAuth, signInAnonymously }, { getFirestore, doc, setDoc, getDoc }] = await Promise.all([
+        import('https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js'),
+        import('https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js'),
+        import('https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js'),
+      ]);
+      fbApp = initializeApp(s.firebaseConfig);
+      fbAuth = getAuth(fbApp);
+      await signInAnonymously(fbAuth);
+      fbDb = getFirestore(fbApp);
+      AK._fbHelpers = { doc, setDoc, getDoc };
+      ready = true;
+      AK.toast('Cloud sync connected','good');
+    } catch(e) { console.error('Firebase init failed', e); AK.toast('Cloud sync failed to connect — check your config','bad'); }
+  }
+  async function queuePush(){
+    if (!ready || !fbAuth?.currentUser) return;
+    try {
+      const { doc, setDoc } = AK._fbHelpers;
+      const snapshot = Object.assign({}, AK.state, { profileOnly:false });
+      delete snapshot.photoMeta; // metadata only, blobs never leave device
+      await setDoc(doc(fbDb, 'arisekage_users', fbAuth.currentUser.uid), { data: JSON.stringify(snapshot), updatedAt: Date.now() });
+    } catch(e) { console.warn('sync push failed', e); }
+  }
+  function openConfigSheet(){
+    const s = AK.state.settings;
+    AK.Sheet.open(`<div class="sheet-head"><h3>Firebase Cloud Sync</h3><button class="btn-icon" id="shClose"><svg class="icon" viewBox="0 0 24 24"><use href="#i-x"/></svg></button></div>
+      <p class="text-2 text-sm mb-16">Create a free Firebase project at firebase.google.com (Spark plan, no card needed), enable Anonymous Auth + Firestore, then paste your config below. Sensitive — don't share this with anyone or commit it to a public repo.</p>
+      <textarea class="input" id="fbConfigInput" rows="6" placeholder='{"apiKey":"...","authDomain":"...","projectId":"...","storageBucket":"...","messagingSenderId":"...","appId":"..."}'>${s.firebaseConfig?JSON.stringify(s.firebaseConfig,null,2):''}</textarea>
+      <div class="grid-2 mt-16">
+        <button class="btn btn-ghost btn-block" id="fbDisconnect">Disconnect</button>
+        <button class="btn btn-primary btn-block" id="fbConnect">Connect</button>
+      </div>`);
+    document.getElementById('shClose').onclick = AK.Sheet.close;
+    document.getElementById('fbDisconnect').onclick = () => { AK.state.settings.firebaseEnabled=false; AK.state.settings.firebaseConfig=null; AK.save(); AK.Sheet.close(); AK.toast('Disconnected'); };
+    document.getElementById('fbConnect').onclick = () => {
+      try {
+        const cfg = JSON.parse(document.getElementById('fbConfigInput').value);
+        AK.state.settings.firebaseConfig = cfg; AK.state.settings.firebaseEnabled = true; AK.save();
+        AK.Sheet.close(); init();
+      } catch(e) { AK.toast('Invalid JSON config','bad'); }
+    };
+  }
+  return { init, queuePush, openConfigSheet };
+})();
+</script>
+
+<script>
+/* ====================================================================
+   THEME APPLICATION
+   ==================================================================== */
+AK.applyTheme = () => {
+  const s = AK.state.settings;
+  document.documentElement.setAttribute('data-theme', s.theme);
+  document.documentElement.style.setProperty('--accent', s.accent);
+  // derive a lighter accent-2 automatically
+  document.documentElement.style.setProperty('--accent-2', lighten(s.accent, 22));
+  document.documentElement.style.setProperty('--accent-glow', s.accent + 'aa');
+  document.querySelector('meta[name="theme-color"]').setAttribute('content', s.accent);
+  document.body.classList.toggle('reduced-motion', !!s.reducedMotion);
+  const brandText = s.theme==='kage' ? 'KAGE HUNTER' : 'ARISE KAGE';
+  const label = document.getElementById('brandLabel'); if (label) label.textContent = brandText;
+  const labelSide = document.getElementById('brandLabelSide'); if (labelSide) labelSide.textContent = brandText;
+};
+/* "Auto" theme mode: follow the OS light/dark preference. We only ever
+   switch between 'shadow' (dark) and 'light' here — a user who picked the
+   'kage' preset explicitly is choosing manual mode by definition. */
+AK.applySystemTheme = () => {
+  if (AK.state.settings.themeMode !== 'auto') return;
+  const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+  AK.state.settings.theme = prefersDark ? 'shadow' : 'light';
+  AK.state.settings.accent = AK.state.settings.accent || '#7c3aed';
+};
+function lighten(hex, pct){
+  try {
+    const n = parseInt(hex.replace('#',''),16);
+    let r=(n>>16)&255, g=(n>>8)&255, b=n&255;
+    r=Math.min(255,Math.round(r+(255-r)*pct/100)); g=Math.min(255,Math.round(g+(255-g)*pct/100)); b=Math.min(255,Math.round(b+(255-b)*pct/100));
+    return '#'+[r,g,b].map(v=>v.toString(16).padStart(2,'0')).join('');
+  } catch(e){ return hex; }
+}
+
+/* ====================================================================
+   PWA: manifest + service worker registered via Blob URLs (single-file friendly)
+   ==================================================================== */
+AK.setupPWA = () => {
+  const iconSvg = `<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='24' fill='%23${(AK.state.settings.accent||'#7c3aed').replace('#','')}'/><path d='M30 70 L50 25 L70 70 M38 55 L62 55' stroke='white' stroke-width='7' fill='none' stroke-linecap='round' stroke-linejoin='round'/></svg>`;
+  const iconUrl = 'data:image/svg+xml,' + encodeURIComponent(iconSvg.replace(/%23/g,'#'));
+  const manifest = {
+    name: "Arise Kage — Level Up. For Real.", short_name: "Arise Kage",
+    description: "Track workouts, water, nutrition, and progress photos. Free forever.",
+    start_url: ".", display: "standalone", background_color: "#0a0a12", theme_color: AK.state.settings.accent||'#7c3aed',
+    icons: [{ src: iconUrl, sizes: "100x100", type: "image/svg+xml", purpose:"any maskable" }]
+  };
+  const manifestBlob = new Blob([JSON.stringify(manifest)], {type:'application/json'});
+  let link = document.querySelector('link[rel="manifest"]');
+  if (!link) { link = document.createElement('link'); link.rel='manifest'; document.head.appendChild(link); }
+  link.href = URL.createObjectURL(manifestBlob);
+
+  // NOTE: browsers refuse to register a service worker from a blob:/data: URL
+  // (script must be same-origin http/https) — so full offline caching needs the
+  // tiny companion sw.js file shipped next to this index.html. If that file
+  // isn't present (e.g. this HTML was opened standalone), registration just
+  // fails silently and the app continues to work online-only.
+  if ('serviceWorker' in navigator && (location.protocol==='http:'||location.protocol==='https:')) {
+    navigator.serviceWorker.register('./sw.js').catch(()=>{ /* offline caching unavailable, app still works fine online */ });
+  }
+};
+
+/* ====================================================================
+   EASTER EGGS
+   ==================================================================== */
+AK.setupEasterEggs = () => {
+  // Konami code
+  const seq = ['ArrowUp','ArrowUp','ArrowDown','ArrowDown','ArrowLeft','ArrowRight','ArrowLeft','ArrowRight','b','a'];
+  let pos = 0;
+  window.addEventListener('keydown', (e) => {
+    pos = (e.key === seq[pos]) ? pos+1 : (e.key===seq[0] ? 1 : 0);
+    if (pos === seq.length) { pos=0; AK.Achievements.unlock('konami'); AK.toast('Secret Technique unlocked!','good'); }
+  });
+  // Typing "arise" anywhere unlocks an achievement (buffer of last 10 keys)
+  let buf = '';
+  window.addEventListener('keypress', (e) => {
+    buf = (buf + e.key).slice(-10).toLowerCase();
+    if (buf.includes('arise')) { AK.Achievements.unlock('arise_typed'); buf=''; }
+  });
+  // Tap logo 7 times fast
+  let taps=[];
+  document.addEventListener('click', (e) => {
+    if (e.target.closest && e.target.closest('.topbar .mark')) {
+      const now = Date.now(); taps.push(now); taps = taps.filter(t=>now-t<2500);
+      if (taps.length>=7) { taps=[]; AK.Achievements.unlock('konami'); AK.Fx.confettiBurst(); }
+    }
+  });
+};
+
+/* ====================================================================
+   BOOTSTRAP
+   ==================================================================== */
+AK.boot2 = () => {
+  AK.Sync.init();
+  AK.Quests.ensureToday();
+  AK.UI.render(location.hash.replace('#','')||'home');
+};
+
+document.addEventListener('DOMContentLoaded', () => {
+  // inject app shell
+  const tpl = document.getElementById('app-shell-tpl');
+  document.getElementById('app').innerHTML = tpl.innerHTML;
+
+  AK.load();
+  AK.applySystemTheme();
+  AK.applyTheme();
+  AK.setupPWA();
+  AK.setupEasterEggs();
+  if (window.matchMedia) {
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
+      if (AK.state.settings.themeMode==='auto') { AK.applySystemTheme(); AK.applyTheme(); }
+    });
+  }
+
+  document.getElementById('sheetOverlay').addEventListener('click', (e) => { if (e.target.id==='sheetOverlay') AK.Sheet.close(); });
+
+  if (AK.state.profile) {
+    document.getElementById('screen-onboard').classList.remove('active');
+    document.getElementById('appChrome').classList.remove('hidden');
+    AK.Router.init();
+    AK.boot2();
+  } else {
+    document.getElementById('screen-onboard').classList.add('active');
+    AK.Onboard.render();
+  }
+});
+
+window.addEventListener('beforeinstallprompt', (e) => { AK._deferredInstall = e; });
+</script>
+
+</body>
+</html>
